@@ -1,6 +1,7 @@
 android {
     buildToolsVersion "33.0.1"
     compileSdkVersion 33
+    namespace 'org.grup7.deheroes'
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
