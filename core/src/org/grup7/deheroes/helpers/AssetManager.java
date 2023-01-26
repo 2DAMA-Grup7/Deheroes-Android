@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 
 public class AssetManager {
-    public static Texture sprite;
     public static Texture spriteSheet;
 
     public static void load() {

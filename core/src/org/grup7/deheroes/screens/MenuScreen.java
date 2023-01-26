@@ -12,10 +12,12 @@ import org.grup7.deheroes.utils.Settings;
 public class MenuScreen implements Screen {
     private final Stage stage;
     private final MyGdxGame game;
+    public static OrthographicCamera camera;
 
     public MenuScreen(MyGdxGame game) {
         this.game = game;
-        OrthographicCamera camera = new OrthographicCamera(Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
+        camera = new OrthographicCamera(Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
+
         StretchViewport viewport = new StretchViewport(Settings.GAME_WIDTH, Settings.GAME_HEIGHT, camera);
         stage = new Stage(viewport);
     }
