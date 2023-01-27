@@ -10,9 +10,9 @@ import org.grup7.deheroes.MyGdxGame;
 import org.grup7.deheroes.utils.Settings;
 
 public class MenuScreen implements Screen {
+    public static OrthographicCamera camera;
     private final Stage stage;
     private final MyGdxGame game;
-    public static OrthographicCamera camera;
 
     public MenuScreen(MyGdxGame game) {
         this.game = game;
