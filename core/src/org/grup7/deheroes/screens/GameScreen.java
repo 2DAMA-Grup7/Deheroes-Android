@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import org.grup7.deheroes.helpers.InputHandler;
 import org.grup7.deheroes.objects.MainChar;
 import org.grup7.deheroes.utils.Settings;
 
@@ -32,6 +33,7 @@ public class GameScreen implements Screen {
 
 
     public GameScreen(Batch prevBatch, Viewport prevViewport) {
+        Gdx.input.setInputProcessor(new InputHandler(this));
         camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
         camera.update();
         stage = new Stage(prevViewport, prevBatch);
