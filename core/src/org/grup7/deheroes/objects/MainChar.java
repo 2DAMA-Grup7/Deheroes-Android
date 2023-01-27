@@ -24,6 +24,7 @@ public class MainChar extends Actor {
     private final Rectangle collisionRect;
     private Animation<TextureRegion> animation;
     private float stateTime;
+    public static int direction;
 
     public MainChar(float x, float y, int width, int height) {
         this.width = width;
@@ -55,23 +56,14 @@ public class MainChar extends Actor {
     }
     public void act(float delta) {
         stateTime += delta;
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            animation = new Animation<>(frameDuration, walkDown);
-            animation.setPlayMode(Animation.PlayMode.LOOP);
-
-            if (this.position.y - Settings.MainChar_VELOCITY * delta >= 0) {
-                this.position.y -= Settings.MainChar_VELOCITY * delta;
-            }
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+        if (direction == 1) {
             animation = new Animation<>(frameDuration, walkUp);
             animation.setPlayMode(Animation.PlayMode.LOOP);
-
             if (this.position.y + height + Settings.MainChar_VELOCITY * delta <= Settings.GAME_HEIGHT) {
                 this.position.y += Settings.MainChar_VELOCITY * delta;
             }
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+        if (direction == 2) {
             animation = new Animation<>(frameDuration, walkLeft);
             animation.setPlayMode(Animation.PlayMode.LOOP);
 
@@ -79,15 +71,49 @@ public class MainChar extends Actor {
                 this.position.x -= Settings.MainChar_VELOCITY * delta;
             }
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+        if (direction == 3) {
+            animation = new Animation<>(frameDuration, walkDown);
+            animation.setPlayMode(Animation.PlayMode.LOOP);
+            if (this.position.y - Settings.MainChar_VELOCITY * delta >= 0) {
+                this.position.y -= Settings.MainChar_VELOCITY * delta;
+            }
+        }
+        if (direction == 4) {
             animation = new Animation<>(frameDuration, walkRight);
             animation.setPlayMode(Animation.PlayMode.LOOP);
-
             if (this.position.x + width + Settings.MainChar_VELOCITY * delta <= Settings.GAME_WIDTH) {
                 this.position.x += Settings.MainChar_VELOCITY * delta;
             }
         }
     }
+
+    public void stopimation(int idle){
+        switch (idle){
+            case 1:
+                animation = new Animation<>(frameDuration, walkUp);
+                animation.setPlayMode(Animation.PlayMode.NORMAL);
+                direction=0;
+                break;
+            case 2:
+                animation = new Animation<>(frameDuration, walkLeft);
+                animation.setPlayMode(Animation.PlayMode.NORMAL);
+                direction=0;
+                break;
+
+            case 3:
+                animation = new Animation<>(frameDuration, walkDown);
+                animation.setPlayMode(Animation.PlayMode.NORMAL);
+                direction=0;
+                break;
+            case 4:
+                animation = new Animation<>(frameDuration, walkRight);
+                animation.setPlayMode(Animation.PlayMode.NORMAL);
+                direction=0;
+                break;
+
+        }
+    }
+
     public float getX() {
         return position.x;
     }
