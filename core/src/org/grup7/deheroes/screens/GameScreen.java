@@ -18,12 +18,18 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import org.grup7.deheroes.helpers.InputHandler;
 import org.grup7.deheroes.objects.MainChar;
+import org.grup7.deheroes.objects.Mob;
 import org.grup7.deheroes.utils.Settings;
 
 import java.util.ArrayList;
 
 public class GameScreen implements Screen {
     public static MainChar mainChar = new MainChar(Settings.MainChar_STARTX, Settings.MainChar_STARTY, Settings.MainChar_WIDTH, Settings.MainChar_HEIGHT);
+
+
+
+    // TODO CAMBIAR ESTO QUE TRIGGEREA A ALEXIA
+    public static Mob mob = new Mob(Settings.MainChar_STARTX, Settings.MainChar_STARTY, Settings.MainChar_WIDTH, Settings.MainChar_HEIGHT);
     private final Stage stage;
     TmxMapLoader mapLoader = new TmxMapLoader();
 
@@ -59,6 +65,7 @@ public class GameScreen implements Screen {
         camera.update();
         stage = new Stage(prevViewport, prevBatch);
         stage.addActor(mainChar);
+        stage.addActor(mob);
     }
 
     @Override
@@ -90,6 +97,7 @@ public class GameScreen implements Screen {
         renderer.render();
         stage.draw();
         mainChar.act(delta);
+        mob.act(delta, mainChar.getPosition());
     }
 
     @Override

@@ -15,13 +15,17 @@ import org.grup7.deheroes.utils.Settings;
 
 public class MainChar extends Actor {
     public static int direction;
-
     private final float frameDuration = 0.1F;
     private final TextureRegion[] walkDown;
     private final TextureRegion[] walkLeft;
     private final TextureRegion[] walkRight;
     private final TextureRegion[] walkUp;
-    public final Vector2 position;
+
+    public Vector2 getPosition() {
+        return position;
+    }
+
+    private final Vector2 position;
     private final int width;
     private final int height;
     private Rectangle collisionRect;
@@ -39,7 +43,7 @@ public class MainChar extends Actor {
         // use TextureRegion.split() to create 2D array of TextureRegions
         int rows = 4;
         int cols = 5;
-        TextureRegion[][] textureRegions = TextureRegion.split(AssetManager.spriteSheet, AssetManager.spriteSheet.getWidth() / cols, AssetManager.spriteSheet.getHeight() / rows);
+        TextureRegion[][] textureRegions = TextureRegion.split(AssetManager.HeroSheet, AssetManager.HeroSheet.getWidth() / cols, AssetManager.HeroSheet.getHeight() / rows);
 
         // create TextureRegion arrays for each walking direction
         walkDown = new TextureRegion[cols];
@@ -119,7 +123,6 @@ public class MainChar extends Actor {
                 animation.setPlayMode(Animation.PlayMode.NORMAL);
                 direction = 0;
                 break;
-
             case 2:
                 animation = new Animation<>(frameDuration, walkLeft);
                 animation.setPlayMode(Animation.PlayMode.NORMAL);
@@ -131,7 +134,6 @@ public class MainChar extends Actor {
                 animation.setPlayMode(Animation.PlayMode.NORMAL);
                 direction = 0;
                 break;
-
             case 4:
                 animation = new Animation<>(frameDuration, walkRight);
                 animation.setPlayMode(Animation.PlayMode.NORMAL);
