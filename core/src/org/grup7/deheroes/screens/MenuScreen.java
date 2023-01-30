@@ -2,40 +2,65 @@ package org.grup7.deheroes.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import org.grup7.deheroes.MyGdxGame;
 import org.grup7.deheroes.utils.Settings;
 
+import java.util.Set;
+
 public class MenuScreen implements Screen {
     public static OrthographicCamera camera;
-    private final Stage stage;
     private final MyGdxGame game;
+    private final Stage stage;
+    private final BitmapFont font = new BitmapFont();
+
 
     public MenuScreen(MyGdxGame game) {
         this.game = game;
         camera = new OrthographicCamera(Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
-
         StretchViewport viewport = new StretchViewport(Settings.GAME_WIDTH, Settings.GAME_HEIGHT, camera);
         stage = new Stage(viewport);
     }
 
     @Override
     public void show() {
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.fontColor = Color.WHITE;
+        textButtonStyle.font = font;
+        TextButton startButton = new TextButton("Start", textButtonStyle);
+        startButton.setPosition(Settings.GAME_WIDTH / 2F - startButton.getWidth() / 2, Settings.GAME_HEIGHT / 2F);
+        TextButton exitButton = new TextButton("Exit", textButtonStyle);
+        exitButton.setPosition(Settings.GAME_WIDTH / 2F - exitButton.getWidth() / 2, Settings.GAME_HEIGHT / 2F - exitButton.getHeight());
+        startButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                dispose();
+                game.setScreen(new GameScreen(stage.getBatch(), stage.getViewport()));
+            }
+        });
+        exitButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.exit();
+            }
+        });
+        stage.addActor(startButton);
+        stage.addActor(exitButton);
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
     public void render(float delta) {
         stage.draw();
         stage.act(delta);
-
-        if (Gdx.input.isTouched()) {
-            game.setScreen(new GameScreen(stage.getBatch(), stage.getViewport()));
-            dispose();
-        }
-
     }
 
     @Override
@@ -56,5 +81,6 @@ public class MenuScreen implements Screen {
 
     @Override
     public void dispose() {
+        font.dispose();
     }
 }
