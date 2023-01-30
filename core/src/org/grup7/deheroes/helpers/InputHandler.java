@@ -37,54 +37,60 @@ public class InputHandler extends InputAdapter implements InputProcessor {
 
     @Override
     public boolean keyUp(int keycode) {
-        if (keycode == Input.Keys.W) {
-            if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+        if(keycode==Input.Keys.W){
+            if(Gdx.input.isKeyPressed(Input.Keys.A)){
                 keyDown(Input.Keys.A);
-            } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+            }
+            else if(Gdx.input.isKeyPressed(Input.Keys.S)){
                 keyDown(Input.Keys.S);
-            } else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            }
+            else if(Gdx.input.isKeyPressed(Input.Keys.D)){
                 keyDown(Input.Keys.D);
-            } else {
-                MainChar.direction = 0;
+            }else{
+                mainChar.direction=0;
                 mainChar.stopAnimation(1);
             }
         }
-        if (keycode == Input.Keys.A) {
-            if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+        if(keycode==Input.Keys.A){
+            if(Gdx.input.isKeyPressed(Input.Keys.W)){
                 keyDown(Input.Keys.W);
-            } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-                keyDown(Input.Keys.S);
-            } else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-                keyDown(Input.Keys.D);
-            } else {
-                MainChar.direction = 0;
-                mainChar.stopAnimation(2);
             }
-        }
-        if (keycode == Input.Keys.S) {
-            if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-                keyDown(Input.Keys.W);
-            } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-                keyDown(Input.Keys.A);
-            } else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            else if(Gdx.input.isKeyPressed(Input.Keys.S)){
+                keyDown(Input.Keys.S);
+            }
+            else if(Gdx.input.isKeyPressed(Input.Keys.D)){
                 keyDown(Input.Keys.D);
-            } else {
-                MainChar.direction = 0;
+            }else{
+                mainChar.direction=0;
+                mainChar.stopAnimation(2);
+            }        }
+        if(keycode==Input.Keys.S){
+            if(Gdx.input.isKeyPressed(Input.Keys.W)){
+                keyDown(Input.Keys.W);
+            }
+            else if(Gdx.input.isKeyPressed(Input.Keys.A)){
+                keyDown(Input.Keys.A);
+            }
+            else if(Gdx.input.isKeyPressed(Input.Keys.D)){
+                keyDown(Input.Keys.D);
+            }else{
+                mainChar.direction=0;
                 mainChar.stopAnimation(3);
             }
         }
-        if (keycode == Input.Keys.D) {
-            if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+        if(keycode==Input.Keys.D){
+            if(Gdx.input.isKeyPressed(Input.Keys.W)){
                 keyDown(Input.Keys.W);
-            } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-                keyDown(Input.Keys.A);
-            } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-                keyDown(Input.Keys.S);
-            } else {
-                MainChar.direction = 0;
-                mainChar.stopAnimation(4);
             }
-        }
+            else if(Gdx.input.isKeyPressed(Input.Keys.A)){
+                keyDown(Input.Keys.A);
+            }
+            else if(Gdx.input.isKeyPressed(Input.Keys.S)){
+                keyDown(Input.Keys.S);
+            }else{
+                mainChar.direction=0;
+                mainChar.stopAnimation(4);
+            }        }
         return false;
     }
 

@@ -74,8 +74,7 @@ public class GameScreen implements Screen {
         for (Rectangle obstacleRect : obstacleRectangles) {
             if (Intersector.overlaps(mainChar.getCollisionRect(), obstacleRect)) {
                 // Collision detected, stop the player's movement
-                mainChar.setPlayer_x(mainChar.getPrev_x());
-                mainChar.setPlayer_y(mainChar.getPrev_y());
+            mainChar.ObjectCollision();
             }
         }
 
@@ -87,10 +86,8 @@ public class GameScreen implements Screen {
         // Update the camera
         camera.update();
         renderer.setView(camera);
-
         // Render the map
         renderer.render();
-
         stage.draw();
         mainChar.act(delta);
     }

@@ -1,5 +1,6 @@
 package org.grup7.deheroes.objects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -20,7 +21,7 @@ public class MainChar extends Actor {
     private final TextureRegion[] walkLeft;
     private final TextureRegion[] walkRight;
     private final TextureRegion[] walkUp;
-    private final Vector2 position;
+    public final Vector2 position;
     private final int width;
     private final int height;
     private Rectangle collisionRect;
@@ -32,8 +33,6 @@ public class MainChar extends Actor {
     public MainChar(float x, float y, int width, int height) {
         this.width = width;
         this.height = height;
-        prev_x = 0;
-        prev_y = 0;
         position = new Vector2(x, y);
         setBounds(position.x, position.y, width, height);
         setTouchable(Touchable.enabled);
@@ -94,6 +93,25 @@ public class MainChar extends Actor {
         }
     }
 
+    public void ObjectCollision(){
+        if(direction==1){
+            setPlayer_y(getY()-(Settings.MainChar_VELOCITY * Gdx.graphics.getDeltaTime()));
+            direction=0;
+        }
+        else if(direction==2){
+            setPlayer_x(getX()+(Settings.MainChar_VELOCITY * Gdx.graphics.getDeltaTime()));
+            direction=0;
+        }
+        else if(direction==3){
+            setPlayer_y(getY()+(Settings.MainChar_VELOCITY * Gdx.graphics.getDeltaTime()));
+            direction=0;
+        }
+        else if(direction==4){
+            setPlayer_x(getX()-(Settings.MainChar_VELOCITY * Gdx.graphics.getDeltaTime()));
+            direction=0;
+        }
+    }
+
     public void stopAnimation(int idle) {
         switch (idle) {
             case 1:
@@ -101,6 +119,7 @@ public class MainChar extends Actor {
                 animation.setPlayMode(Animation.PlayMode.NORMAL);
                 direction = 0;
                 break;
+
             case 2:
                 animation = new Animation<>(frameDuration, walkLeft);
                 animation.setPlayMode(Animation.PlayMode.NORMAL);
@@ -112,6 +131,7 @@ public class MainChar extends Actor {
                 animation.setPlayMode(Animation.PlayMode.NORMAL);
                 direction = 0;
                 break;
+
             case 4:
                 animation = new Animation<>(frameDuration, walkRight);
                 animation.setPlayMode(Animation.PlayMode.NORMAL);
