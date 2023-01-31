@@ -9,26 +9,26 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import org.grup7.deheroes.helpers.AssetManager;
 import org.grup7.deheroes.utils.Settings;
 
+import java.util.Random;
+
 public class Mob extends Actor {
 
 
     private final Vector2 position;
-
     private final int width;
     private final int height;
+    private Rectangle collisionRect;
 
 
-    private final Rectangle collisionRect;
-
-
-    public Mob(float x, float y, int width, int height) {
+    public Mob(int width, int height) {
         this.width = width;
         this.height = height;
-        position = new Vector2(x,y);
-
+        Random rand = new Random();
+        float randomX = rand.nextInt(960);
+        float randomY = rand.nextInt(640);
+        position = new Vector2(randomX,randomY);
         collisionRect = new Rectangle();
-
-        setBounds(position.x, position.y, width, height);
+        setBounds(randomX, randomY, width, height);
         setTouchable(Touchable.enabled);
 
     }
@@ -85,5 +85,10 @@ public class Mob extends Actor {
         return collisionRect;
     }
 
-
+    public void setCollisionRect(Rectangle collisionRect) {
+        this.collisionRect = collisionRect;
+    }
+    public void dispose(){
+        dispose();
+    }
 }

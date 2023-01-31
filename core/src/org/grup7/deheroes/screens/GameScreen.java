@@ -14,8 +14,10 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import org.grup7.deheroes.MyGdxGame;
 import org.grup7.deheroes.helpers.InputHandler;
 import org.grup7.deheroes.objects.MainChar;
 import org.grup7.deheroes.objects.Mob;
@@ -24,26 +26,25 @@ import org.grup7.deheroes.utils.Settings;
 import java.util.ArrayList;
 
 public class GameScreen implements Screen {
-    public static MainChar mainChar = new MainChar(Settings.MainChar_STARTX, Settings.MainChar_STARTY, Settings.MainChar_WIDTH, Settings.MainChar_HEIGHT);
+    public static MainChar mainChar = new MainChar(Settings.MainChar_STARTX, Settings.MainChar_STARTY, Settings.MainChar_WIDTH, Settings.MainChar_HEIGHT, 100);
+    // TODO CAMBRIA EST QUE TRIGGERED A ALEXIA
+    public static HealthBar healthBar;
+    public static Mob mob;
 
-
-
-    // TODO CAMBIAR ESTO QUE TRIGGEREA A ALEXIA
-    public static Mob mob = new Mob(Settings.MainChar_STARTX, Settings.MainChar_STARTY, Settings.MainChar_WIDTH, Settings.MainChar_HEIGHT);
+    private final ArrayList<Mob> mobs = new ArrayList<>();
     private final Stage stage;
-    TmxMapLoader mapLoader = new TmxMapLoader();
-
+    private final TmxMapLoader mapLoader = new TmxMapLoader();
     // Load the Tiled map
-    TiledMap map = mapLoader.load("maps/tilemap.tmx");
-    // Get the collision layer from the Tiled map
-    TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("collision");
+    private final TiledMap map = mapLoader.load("maps/tilemap.tmx");
     // Create a new TiledMapRenderer and set the map
-    TiledMapRenderer renderer = new OrthogonalTiledMapRenderer(map);
+    private final TiledMapRenderer renderer = new OrthogonalTiledMapRenderer(map);
     // Create an ArrayList to store the collision rectangles
-    ArrayList<Rectangle> obstacleRectangles = new ArrayList<>();
+    private final ArrayList<Rectangle> obstacleRectangles = new ArrayList<>();
 
     public GameScreen(Batch prevBatch, Viewport prevViewport) {
         // Iterate through the cells in the collision layer
+        // Get the collision layer from the Tiled map
+        TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("collision");
         for (int x = 0; x < collisionLayer.getWidth(); x++) {
             for (int y = 0; y < collisionLayer.getHeight(); y++) {
                 TiledMapTileLayer.Cell cell = collisionLayer.getCell(x, y);
@@ -65,7 +66,19 @@ public class GameScreen implements Screen {
         camera.update();
         stage = new Stage(prevViewport, prevBatch);
         stage.addActor(mainChar);
-        stage.addActor(mob);
+        healthBar = new HealthBar(100, mainChar.getX(), mainChar.getY());
+        stage.addActor(healthBar);
+        Timer.schedule(new Timer.Task(){
+            @Override
+            public void run() {
+                mob = new Mob(Settings.MainChar_WIDTH, Settings.MainChar_HEIGHT);
+                mob.setCollisionRect(new Rectangle(mob.getX(), mob.getY(), mob.getWidth(), mob.getHeight()));
+                mobs.add(mob);
+                stage.addActor(mob);
+            }
+        }, 0, 2);
+
+
     }
 
     @Override
@@ -75,29 +88,46 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        mainChar.setCollisionRect(new Rectangle(mainChar.getX(), mainChar.getY(), mainChar.getWidth(), mainChar.getHeight()));
+        if(mainChar.getHp()<0){
+            //stage.dispose();
+            // TODO add death menu
+            Gdx.app.exit();
+        } else {
+            healthBar.setX_Y(mainChar.getX(), mainChar.getY());
+            healthBar.setHealth(mainChar.getHp());
+            mainChar.setCollisionRect(new Rectangle(mainChar.getX(), mainChar.getY(), mainChar.getWidth(), mainChar.getHeight()));
+            // Iterate through the obstacle rectangles
+            for (Rectangle obstacleRect : obstacleRectangles) {
+                if (Intersector.overlaps(mainChar.getCollisionRect(), obstacleRect)) {
+                    // Collision detected, stop the player's movement
+                    mainChar.ObjectCollision();
+                }
 
-        // Iterate through the obstacle rectangles
-        for (Rectangle obstacleRect : obstacleRectangles) {
-            if (Intersector.overlaps(mainChar.getCollisionRect(), obstacleRect)) {
-                // Collision detected, stop the player's movement
-            mainChar.ObjectCollision();
+            }
+            for (Mob mob : mobs) {
+                if (Intersector.overlaps(mainChar.getCollisionRect(), mob.getCollisionRect())) {
+                    // Collision detected, stop the player's movement
+                    mainChar.setHp(mainChar.getHp()-0.1F);
+                }
+            }
+
+            Gdx.gl.glClearColor(0, 0, 0, 1);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+            camera.position.set(mainChar.getX(), mainChar.getY(), 0);
+            camera.zoom = 0.4f;
+            // Update the camera
+            camera.update();
+            renderer.setView(camera);
+            // Render the map
+            renderer.render();
+            stage.draw();
+            mainChar.act(delta);
+            for (Mob mob:mobs) {
+                mob.act(delta, mainChar.getPosition());
+                mob.setCollisionRect(new Rectangle(mob.getX(), mob.getY(), mob.getWidth(), mob.getHeight()));
+
             }
         }
-
-
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        camera.position.set(mainChar.getX(), mainChar.getY(), 0);
-        camera.zoom = 0.4f;
-        // Update the camera
-        camera.update();
-        renderer.setView(camera);
-        // Render the map
-        renderer.render();
-        stage.draw();
-        mainChar.act(delta);
-        mob.act(delta, mainChar.getPosition());
     }
 
     @Override
@@ -118,6 +148,9 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
+        mainChar.dispose();
+        healthBar.dispose();
+        mob.dispose();
     }
 
     public MainChar getMainChar() {

@@ -20,11 +20,6 @@ public class MainChar extends Actor {
     private final TextureRegion[] walkLeft;
     private final TextureRegion[] walkRight;
     private final TextureRegion[] walkUp;
-
-    public Vector2 getPosition() {
-        return position;
-    }
-
     private final Vector2 position;
     private final int width;
     private final int height;
@@ -33,10 +28,12 @@ public class MainChar extends Actor {
     private float stateTime;
     private float prev_x;
     private float prev_y;
+    private float hp;
 
-    public MainChar(float x, float y, int width, int height) {
+    public MainChar(float x, float y, int width, int height, float hp) {
         this.width = width;
         this.height = height;
+        this.hp = hp;
         position = new Vector2(x, y);
         setBounds(position.x, position.y, width, height);
         setTouchable(Touchable.enabled);
@@ -143,13 +140,21 @@ public class MainChar extends Actor {
         }
     }
 
+    public float getHp() {
+        return hp;
+    }
 
+    public void setHp(float hp) {
+        this.hp = hp;
+    }
+
+    public Vector2 getPosition() {
+        return position;
+    }
 
     public void setPlayer_x(float player_x) {
         this.position.x = player_x;
     }
-
-
 
     public void setPlayer_y(float player_y) {
         this.position.y = player_y;
@@ -204,5 +209,7 @@ public class MainChar extends Actor {
         this.prev_y = prev_y;
     }
 
-
+    public void dispose(){
+        dispose();
+    }
 }
