@@ -9,7 +9,7 @@ public class HealthBar extends Actor {
     private final Texture fullBar;
     private final float maxHealth;
     private float currentHealth;
-    private float y,x;
+    private float y, x;
 
     public HealthBar(float maxHealth, float x, float y) {
         this.maxHealth = maxHealth;
@@ -22,8 +22,8 @@ public class HealthBar extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        batch.draw(emptyBar, x, y+35);
-        batch.draw(fullBar, x, y+35, fullBar.getWidth() * currentHealth / maxHealth, fullBar.getHeight());
+        batch.draw(emptyBar, x, y + 35);
+        batch.draw(fullBar, x, y + 35, fullBar.getWidth() * currentHealth / maxHealth, fullBar.getHeight());
     }
 
     public void setHealth(float health) {
@@ -45,7 +45,7 @@ public class HealthBar extends Actor {
         return x;
     }
 
-    public void dispose(){
+    public void dispose() {
         dispose();
     }
 }

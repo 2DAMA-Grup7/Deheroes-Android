@@ -1,6 +1,5 @@
 package org.grup7.deheroes.helpers;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
@@ -38,60 +37,54 @@ public class InputHandler extends InputAdapter implements InputProcessor {
 
     @Override
     public boolean keyUp(int keycode) {
-        if(keycode==Input.Keys.W){
-            if(Gdx.input.isKeyPressed(Input.Keys.A)){
+        if (keycode == Input.Keys.W) {
+            if (Gdx.input.isKeyPressed(Input.Keys.A)) {
                 keyDown(Input.Keys.A);
-            }
-            else if(Gdx.input.isKeyPressed(Input.Keys.S)){
+            } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
                 keyDown(Input.Keys.S);
-            }
-            else if(Gdx.input.isKeyPressed(Input.Keys.D)){
+            } else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
                 keyDown(Input.Keys.D);
-            }else{
+            } else {
                 GameScreen.mainChar.setDirection(0);
                 mainChar.stopAnimation(1);
             }
         }
-        if(keycode==Input.Keys.A){
-            if(Gdx.input.isKeyPressed(Input.Keys.W)){
+        if (keycode == Input.Keys.A) {
+            if (Gdx.input.isKeyPressed(Input.Keys.W)) {
                 keyDown(Input.Keys.W);
-            }
-            else if(Gdx.input.isKeyPressed(Input.Keys.S)){
+            } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
                 keyDown(Input.Keys.S);
-            }
-            else if(Gdx.input.isKeyPressed(Input.Keys.D)){
+            } else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
                 keyDown(Input.Keys.D);
-            }else{
+            } else {
                 GameScreen.mainChar.setDirection(0);
                 mainChar.stopAnimation(2);
-            }        }
-        if(keycode==Input.Keys.S){
-            if(Gdx.input.isKeyPressed(Input.Keys.W)){
+            }
+        }
+        if (keycode == Input.Keys.S) {
+            if (Gdx.input.isKeyPressed(Input.Keys.W)) {
                 keyDown(Input.Keys.W);
-            }
-            else if(Gdx.input.isKeyPressed(Input.Keys.A)){
+            } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
                 keyDown(Input.Keys.A);
-            }
-            else if(Gdx.input.isKeyPressed(Input.Keys.D)){
+            } else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
                 keyDown(Input.Keys.D);
-            }else{
+            } else {
                 GameScreen.mainChar.setDirection(0);
                 mainChar.stopAnimation(3);
             }
         }
-        if(keycode==Input.Keys.D){
-            if(Gdx.input.isKeyPressed(Input.Keys.W)){
+        if (keycode == Input.Keys.D) {
+            if (Gdx.input.isKeyPressed(Input.Keys.W)) {
                 keyDown(Input.Keys.W);
-            }
-            else if(Gdx.input.isKeyPressed(Input.Keys.A)){
+            } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
                 keyDown(Input.Keys.A);
-            }
-            else if(Gdx.input.isKeyPressed(Input.Keys.S)){
+            } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
                 keyDown(Input.Keys.S);
-            }else{
+            } else {
                 GameScreen.mainChar.setDirection(0);
                 mainChar.stopAnimation(4);
-            }        }
+            }
+        }
         return false;
     }
 

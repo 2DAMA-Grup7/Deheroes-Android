@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+
 import org.grup7.deheroes.helpers.AssetManager;
 import org.grup7.deheroes.utils.Settings;
 
@@ -18,15 +19,17 @@ public class Mob extends Actor {
     private final int width;
     private final int height;
     private Rectangle collisionRect;
+    private float hp;
 
 
-    public Mob(int width, int height) {
+    public Mob(int width, int height, float hp) {
         this.width = width;
         this.height = height;
+        this.hp = hp;
         Random rand = new Random();
         float randomX = rand.nextInt(960);
         float randomY = rand.nextInt(640);
-        position = new Vector2(randomX,randomY);
+        position = new Vector2(randomX, randomY);
         collisionRect = new Rectangle();
         setBounds(randomX, randomY, width, height);
         setTouchable(Touchable.enabled);
@@ -35,44 +38,45 @@ public class Mob extends Actor {
 
 
     public void act(float delta, Vector2 positionHero) {
-            if(position.x>positionHero.x){
-                this.position.x -= Settings.Mob_VELOCITY * delta;
-            }
-            if(position.x<positionHero.x){
-                this.position.x += Settings.Mob_VELOCITY * delta;
-            }
-            if(position.y>positionHero.y){
-                this.position.y -= Settings.Mob_VELOCITY * delta;
-            }
-            if(position.y<positionHero.y){
-                this.position.y += Settings.Mob_VELOCITY * delta;
-            }
-
-            /*float HeroMidX = GameScreen.mainChar.getX()+ GameScreen.mainChar.getWidth()/2;
-            float HeroMidY = GameScreen.mainChar.getY()+ GameScreen.mainChar.getHeight()/2;
-            float mobMidX = GameScreen.mob.getX()+ GameScreen.mob.getWidth()/2;
-            float mobMidY = GameScreen.mob.getY()+ GameScreen.mob.getHeight()/2;
-            float distX= HeroMidX-mobMidX;
-            float distY = HeroMidY-mobMidY;*/
-
-
-
-
+        if (position.x > positionHero.x) {
+            this.position.x -= Settings.Mob_VELOCITY * delta;
+        }
+        if (position.x < positionHero.x) {
+            this.position.x += Settings.Mob_VELOCITY * delta;
+        }
+        if (position.y > positionHero.y) {
+            this.position.y -= Settings.Mob_VELOCITY * delta;
+        }
+        if (position.y < positionHero.y) {
+            this.position.y += Settings.Mob_VELOCITY * delta;
+        }
     }
+
+    public float getHp() {
+        return hp;
+    }
+
+    public void setHp(float hp) {
+        this.hp = hp;
+    }
+
     public float getX() {
         return position.x;
     }
+
     public float getY() {
         return position.y;
     }
+
     public float getWidth() {
         return width;
     }
+
     public float getHeight() {
         return height;
     }
 
-    public Texture getTexture(){
+    public Texture getTexture() {
         return AssetManager.PurpleFlameSheet;
     }
 
@@ -88,7 +92,8 @@ public class Mob extends Actor {
     public void setCollisionRect(Rectangle collisionRect) {
         this.collisionRect = collisionRect;
     }
-    public void dispose(){
+
+    public void dispose() {
         this.remove();
     }
 }

@@ -9,17 +9,18 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+
 import org.grup7.deheroes.utils.Settings;
 
 public class Spell extends Actor {
+    public static Texture iceSpellSheet;
     private final Vector2 position;
     private final int width;
     private final int height;
+    private final TextureRegion[] walk;
     private Rectangle collisionRect;
     private int direction;
-    public static Texture iceSpellSheet;
     private Animation<TextureRegion> animation;
-    private final TextureRegion[] walk;
     private float stateTime;
 
 
@@ -27,7 +28,17 @@ public class Spell extends Actor {
         this.width = width;
         this.height = height;
         this.direction = direction;
-        position = new Vector2(x,y);
+        switch (direction) {
+            case 1:
+                y += 32;
+            case 2:
+                x -= 32;
+            case 3:
+                y -= 32;
+            case 4:
+                x += 32;
+        }
+        position = new Vector2(x, y);
         collisionRect = new Rectangle();
         iceSpellSheet = new Texture(Gdx.files.internal("spells/ice-ball-sheet.png"));
         iceSpellSheet.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
@@ -43,23 +54,40 @@ public class Spell extends Actor {
     }
 
 
+    public void act(float delta, float x, float y) {
+        stateTime += delta;
+        Vector2 positionMob = new Vector2(x,y);
+        if (position.x > positionMob.x) {
+            this.position.x -= Settings.Mob_VELOCITY * delta;
+        }
+        if (position.x < positionMob.x) {
+            this.position.x += Settings.Mob_VELOCITY * delta;
+        }
+        if (position.y > positionMob.y) {
+            this.position.y -= Settings.Mob_VELOCITY * delta;
+        }
+        if (position.y < positionMob.y) {
+            this.position.y += Settings.Mob_VELOCITY * delta;
+        }
+    }
+
     public void act(float delta) {
         stateTime += delta;
 
-        switch (direction){
+        switch (direction) {
             case 1: {
                 this.position.y += Settings.Spell_VELOCITY * delta;
             }
 
-            case 2:{
+            case 2: {
                 this.position.x -= Settings.Spell_VELOCITY * delta;
             }
 
-            case 3:{
+            case 3: {
                 this.position.y -= Settings.Spell_VELOCITY * delta;
             }
 
-            case 4:{
+            case 4: {
                 this.position.x += Settings.Spell_VELOCITY * delta;
             }
             default:
@@ -79,12 +107,15 @@ public class Spell extends Actor {
     public float getX() {
         return position.x;
     }
+
     public float getY() {
         return position.y;
     }
+
     public float getWidth() {
         return width;
     }
+
     public float getHeight() {
         return height;
     }
@@ -106,12 +137,12 @@ public class Spell extends Actor {
         return collisionRect;
     }
 
-    public void dispose(){
-        this.remove();
-    }
-
     public void setCollisionRect(Rectangle collisionRect) {
         this.collisionRect = collisionRect;
+    }
+
+    public void dispose() {
+        this.remove();
     }
 
 }

@@ -14,8 +14,6 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import org.grup7.deheroes.MyGdxGame;
 import org.grup7.deheroes.utils.Settings;
 
-import java.util.Set;
-
 public class MenuScreen implements Screen {
     public static OrthographicCamera camera;
     private final MyGdxGame game;

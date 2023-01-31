@@ -100,22 +100,19 @@ public class MainChar extends Actor {
         }
     }
 
-    public void ObjectCollision(){
-        if(direction==1){
-            setPlayer_y(getY()-(Settings.MainChar_VELOCITY * Gdx.graphics.getDeltaTime()));
-            direction=0;
-        }
-        else if(direction==2){
-            setPlayer_x(getX()+(Settings.MainChar_VELOCITY * Gdx.graphics.getDeltaTime()));
-            direction=0;
-        }
-        else if(direction==3){
-            setPlayer_y(getY()+(Settings.MainChar_VELOCITY * Gdx.graphics.getDeltaTime()));
-            direction=0;
-        }
-        else if(direction==4){
-            setPlayer_x(getX()-(Settings.MainChar_VELOCITY * Gdx.graphics.getDeltaTime()));
-            direction=0;
+    public void ObjectCollision() {
+        if (direction == 1) {
+            setPlayer_y(getY() - (Settings.MainChar_VELOCITY * Gdx.graphics.getDeltaTime()));
+            direction = 0;
+        } else if (direction == 2) {
+            setPlayer_x(getX() + (Settings.MainChar_VELOCITY * Gdx.graphics.getDeltaTime()));
+            direction = 0;
+        } else if (direction == 3) {
+            setPlayer_y(getY() + (Settings.MainChar_VELOCITY * Gdx.graphics.getDeltaTime()));
+            direction = 0;
+        } else if (direction == 4) {
+            setPlayer_x(getX() - (Settings.MainChar_VELOCITY * Gdx.graphics.getDeltaTime()));
+            direction = 0;
         }
     }
 
@@ -232,7 +229,7 @@ public class MainChar extends Actor {
         this.prev_y = prev_y;
     }
 
-    public void dispose(){
+    public void dispose() {
         this.remove();
     }
 }

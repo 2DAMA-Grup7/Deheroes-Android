@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -17,14 +18,12 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import org.grup7.deheroes.MyGdxGame;
 import org.grup7.deheroes.helpers.InputHandler;
 import org.grup7.deheroes.objects.MainChar;
 import org.grup7.deheroes.objects.Mob;
 import org.grup7.deheroes.objects.Spell;
 import org.grup7.deheroes.utils.Settings;
 
-import java.awt.peer.ScrollbarPeer;
 import java.util.ArrayList;
 
 public class GameScreen implements Screen {
@@ -33,7 +32,8 @@ public class GameScreen implements Screen {
     public static HealthBar healthBar;
     public static Mob mob;
     public static Spell spell;
-
+    private int points;
+    private BitmapFont show_points;
     private final ArrayList<Mob> mobs = new ArrayList<>();
     private final ArrayList<Spell> spells = new ArrayList<>();
     private final Stage stage;
@@ -72,28 +72,26 @@ public class GameScreen implements Screen {
         stage.addActor(mainChar);
         healthBar = new HealthBar(100, mainChar.getX(), mainChar.getY());
         stage.addActor(healthBar);
-        Timer.schedule(new Timer.Task(){
+        Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
-                mob = new Mob(Settings.MainChar_WIDTH, Settings.MainChar_HEIGHT);
+                mob = new Mob(Settings.MainChar_WIDTH, Settings.MainChar_HEIGHT, 10);
                 mob.setCollisionRect(new Rectangle(mob.getX(), mob.getY(), mob.getWidth(), mob.getHeight()));
                 mobs.add(mob);
                 stage.addActor(mob);
             }
         }, 0, 2);
 
-        Timer.schedule(new Timer.Task(){
+        Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
-                spell = new Spell(Settings.MainChar_WIDTH, Settings.MainChar_HEIGHT, mainChar.getY(), mainChar.getX()+32, mainChar.getWalkDirection());
+                spell = new Spell(Settings.MainChar_WIDTH, Settings.MainChar_HEIGHT, mainChar.getY(), mainChar.getX(), mainChar.getWalkDirection());
                 spell.setCollisionRect(new Rectangle(spell.getX(), spell.getY(), spell.getWidth(), spell.getHeight()));
                 spells.add(spell);
                 stage.addActor(spell);
 
             }
         }, 0, 1);
-
-
 
 
     }
@@ -105,7 +103,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        if(mainChar.getHp()<0){
+        if (mainChar.getHp() < 0) {
             //stage.dispose();
             // TODO add death menu
             Gdx.app.exit();
@@ -119,13 +117,41 @@ public class GameScreen implements Screen {
                     // Collision detected, stop the player's movement
                     mainChar.ObjectCollision();
                 }
-
             }
+            ArrayList<Spell> spells_removed = new ArrayList<>();
+            ArrayList<Mob> mobs_eliminated = new ArrayList<>();
             for (Mob mob : mobs) {
+                mob.act(delta, mainChar.getPosition());
+                mob.setCollisionRect(new Rectangle(mob.getX(), mob.getY(), mob.getWidth(), mob.getHeight()));
                 if (Intersector.overlaps(mainChar.getCollisionRect(), mob.getCollisionRect())) {
                     // Collision detected, stop the player's movement
-                    mainChar.setHp(mainChar.getHp()-0.1F);
+                    mainChar.setHp(mainChar.getHp() - 0.1F);
                 }
+                for (Spell spell : spells) {
+                    if (spell.getX() > 2000 || spell.getY() > 2000) {
+                        spells_removed.add(spell);
+                        spell.dispose();
+                    } else {
+                        spell.act(delta, mobs.get(0).getX(),mobs.get(0).getY());
+                        spell.setCollisionRect(new Rectangle(spell.getX(), spell.getY(), spell.getWidth(), spell.getHeight()));
+                        if (Intersector.overlaps(spell.getCollisionRect(), mob.getCollisionRect())) {
+                            // Collision detected, stop the player's movement
+                            mob.setHp(mob.getHp() - 5);
+                            spells_removed.add(spell);
+                            spell.dispose();
+                        }
+                        if (mob.getHp() < 0){
+                            mob.dispose();
+                            mobs_eliminated.add(mob);
+                        }
+                    }
+                }
+            }
+            for (Spell spell : spells_removed) {
+                spells.remove(spell);
+            }
+            for (Mob mob : mobs_eliminated) {
+                mobs.remove(mob);
             }
 
             Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -139,23 +165,6 @@ public class GameScreen implements Screen {
             renderer.render();
             stage.draw();
             mainChar.act(delta);
-            for (Mob mob:mobs) {
-                mob.act(delta, mainChar.getPosition());
-                mob.setCollisionRect(new Rectangle(mob.getX(), mob.getY(), mob.getWidth(), mob.getHeight()));
-
-            }
-            for (Spell spell:spells) {
-                if(spell.getX() > 2000 || spell.getY() > 2000){
-                    spells.remove(spell);
-                    spell.dispose();
-                    break;
-                } else {
-                    spell.act(delta);
-                    spell.setCollisionRect(new Rectangle(spell.getX(), spell.getY(), spell.getWidth(), spell.getHeight()));
-                }
-            }
-
-
         }
     }
 
