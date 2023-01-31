@@ -56,7 +56,7 @@ public class Spell extends Actor {
 
     public void act(float delta, float x, float y) {
         stateTime += delta;
-        Vector2 positionMob = new Vector2(x,y);
+        Vector2 positionMob = new Vector2(x, y);
         if (position.x > positionMob.x) {
             this.position.x -= Settings.Mob_VELOCITY * delta;
         }

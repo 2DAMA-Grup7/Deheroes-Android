@@ -4,6 +4,7 @@ import static org.grup7.deheroes.screens.MenuScreen.camera;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -32,8 +34,6 @@ public class GameScreen implements Screen {
     public static HealthBar healthBar;
     public static Mob mob;
     public static Spell spell;
-    private int points;
-    private BitmapFont show_points;
     private final ArrayList<Mob> mobs = new ArrayList<>();
     private final ArrayList<Spell> spells = new ArrayList<>();
     private final Stage stage;
@@ -44,6 +44,8 @@ public class GameScreen implements Screen {
     private final TiledMapRenderer renderer = new OrthogonalTiledMapRenderer(map);
     // Create an ArrayList to store the collision rectangles
     private final ArrayList<Rectangle> obstacleRectangles = new ArrayList<>();
+    private int points = 0;
+    private final Label show_points;
 
     public GameScreen(Batch prevBatch, Viewport prevViewport) {
         // Iterate through the cells in the collision layer
@@ -64,7 +66,6 @@ public class GameScreen implements Screen {
                 }
             }
         }
-
         Gdx.input.setInputProcessor(new InputHandler(this));
         camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
         camera.update();
@@ -72,6 +73,8 @@ public class GameScreen implements Screen {
         stage.addActor(mainChar);
         healthBar = new HealthBar(100, mainChar.getX(), mainChar.getY());
         stage.addActor(healthBar);
+        show_points = new Label("", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        stage.addActor(show_points);
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
@@ -93,18 +96,20 @@ public class GameScreen implements Screen {
             }
         }, 0, 1);
 
-
     }
 
     @Override
     public void show() {
-
     }
 
     @Override
     public void render(float delta) {
+
+        show_points.setPosition(mainChar.getX() - 30, mainChar.getY() + 120);
+        show_points.setText("Points: " + points);
+
+        //show_points.draw(batch, "Points:"+points, Settings.MainChar_STARTX, Settings.MainChar_STARTY);
         if (mainChar.getHp() < 0) {
-            //stage.dispose();
             // TODO add death menu
             Gdx.app.exit();
         } else {
@@ -132,17 +137,19 @@ public class GameScreen implements Screen {
                         spells_removed.add(spell);
                         spell.dispose();
                     } else {
-                        spell.act(delta, mobs.get(0).getX(),mobs.get(0).getY());
+                        //spell.act(delta);
+                        spell.act(delta, mobs.get(0).getX(), mobs.get(0).getY());
                         spell.setCollisionRect(new Rectangle(spell.getX(), spell.getY(), spell.getWidth(), spell.getHeight()));
                         if (Intersector.overlaps(spell.getCollisionRect(), mob.getCollisionRect())) {
                             // Collision detected, stop the player's movement
-                            mob.setHp(mob.getHp() - 5);
+                            mob.setHp(mob.getHp() - 10);
                             spells_removed.add(spell);
                             spell.dispose();
                         }
-                        if (mob.getHp() < 0){
+                        if (mob.getHp() < 0) {
                             mob.dispose();
                             mobs_eliminated.add(mob);
+                            points += 1;
                         }
                     }
                 }
