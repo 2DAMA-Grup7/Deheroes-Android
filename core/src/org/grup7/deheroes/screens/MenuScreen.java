@@ -14,8 +14,6 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import org.grup7.deheroes.MyGdxGame;
 import org.grup7.deheroes.utils.Settings;
 
-import java.util.Set;
-
 public class MenuScreen implements Screen {
     public static OrthographicCamera camera;
     private final MyGdxGame game;
@@ -33,12 +31,20 @@ public class MenuScreen implements Screen {
     @Override
     public void show() {
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+
         textButtonStyle.fontColor = Color.WHITE;
+
         textButtonStyle.font = font;
+
         TextButton startButton = new TextButton("Start", textButtonStyle);
-        startButton.setPosition(Settings.GAME_WIDTH / 2F - startButton.getWidth() / 2, Settings.GAME_HEIGHT / 2F);
+        startButton.setPosition(Settings.GAME_WIDTH / 2F - startButton.getWidth() / 2, Settings.GAME_HEIGHT / 2F );
+
         TextButton exitButton = new TextButton("Exit", textButtonStyle);
-        exitButton.setPosition(Settings.GAME_WIDTH / 2F - exitButton.getWidth() / 2, Settings.GAME_HEIGHT / 2F - exitButton.getHeight());
+        exitButton.setPosition(Settings.GAME_WIDTH / 2F - exitButton.getWidth() / 2, Settings.GAME_HEIGHT / 2F - startButton.getHeight());
+
+        TextButton chatButton = new TextButton("Chat", textButtonStyle);
+        chatButton.setPosition(Settings.GAME_WIDTH / 2F -chatButton.getWidth() / 2,Settings.GAME_HEIGHT/ 2F - startButton.getHeight()- exitButton.getHeight() );
+
         startButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -52,8 +58,18 @@ public class MenuScreen implements Screen {
                 Gdx.app.exit();
             }
         });
+
+        chatButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                dispose();
+                game.setScreen(new ChatScreen(stage.getBatch(), stage.getViewport()));
+            }
+        });
+
         stage.addActor(startButton);
         stage.addActor(exitButton);
+        stage.addActor(chatButton);
         Gdx.input.setInputProcessor(stage);
     }
 
