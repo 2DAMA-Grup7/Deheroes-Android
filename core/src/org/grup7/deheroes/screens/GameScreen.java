@@ -21,8 +21,10 @@ import org.grup7.deheroes.MyGdxGame;
 import org.grup7.deheroes.helpers.InputHandler;
 import org.grup7.deheroes.objects.MainChar;
 import org.grup7.deheroes.objects.Mob;
+import org.grup7.deheroes.objects.Spell;
 import org.grup7.deheroes.utils.Settings;
 
+import java.awt.peer.ScrollbarPeer;
 import java.util.ArrayList;
 
 public class GameScreen implements Screen {
@@ -30,8 +32,10 @@ public class GameScreen implements Screen {
     // TODO CAMBRIA EST QUE TRIGGERED A ALEXIA
     public static HealthBar healthBar;
     public static Mob mob;
+    public static Spell spell;
 
     private final ArrayList<Mob> mobs = new ArrayList<>();
+    private final ArrayList<Spell> spells = new ArrayList<>();
     private final Stage stage;
     private final TmxMapLoader mapLoader = new TmxMapLoader();
     // Load the Tiled map
@@ -77,6 +81,19 @@ public class GameScreen implements Screen {
                 stage.addActor(mob);
             }
         }, 0, 2);
+
+        Timer.schedule(new Timer.Task(){
+            @Override
+            public void run() {
+                spell = new Spell(Settings.MainChar_WIDTH, Settings.MainChar_HEIGHT, mainChar.getY(), mainChar.getX()+32, mainChar.getWalkDirection());
+                spell.setCollisionRect(new Rectangle(spell.getX(), spell.getY(), spell.getWidth(), spell.getHeight()));
+                spells.add(spell);
+                stage.addActor(spell);
+
+            }
+        }, 0, 1);
+
+
 
 
     }
@@ -127,6 +144,18 @@ public class GameScreen implements Screen {
                 mob.setCollisionRect(new Rectangle(mob.getX(), mob.getY(), mob.getWidth(), mob.getHeight()));
 
             }
+            for (Spell spell:spells) {
+                if(spell.getX() > 2000 || spell.getY() > 2000){
+                    spells.remove(spell);
+                    spell.dispose();
+                    break;
+                } else {
+                    spell.act(delta);
+                    spell.setCollisionRect(new Rectangle(spell.getX(), spell.getY(), spell.getWidth(), spell.getHeight()));
+                }
+            }
+
+
         }
     }
 

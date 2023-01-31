@@ -89,6 +89,6 @@ public class Mob extends Actor {
         this.collisionRect = collisionRect;
     }
     public void dispose(){
-        dispose();
+        this.remove();
     }
 }

@@ -14,11 +14,14 @@ public class AssetManager {
 
         PurpleFlameSheet = new Texture(Gdx.files.internal("mobs/purple-flame.png"));
         PurpleFlameSheet.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+
+
     }
 
     public static void dispose() {
         HeroSheet.dispose();
         PurpleFlameSheet.dispose();
+
     }
 
 }

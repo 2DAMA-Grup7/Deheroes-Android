@@ -14,7 +14,7 @@ import org.grup7.deheroes.screens.GameScreen;
 import org.grup7.deheroes.utils.Settings;
 
 public class MainChar extends Actor {
-    public static int direction;
+    private static int direction;
     private final float frameDuration = 0.1F;
     private final TextureRegion[] walkDown;
     private final TextureRegion[] walkLeft;
@@ -29,11 +29,13 @@ public class MainChar extends Actor {
     private float prev_x;
     private float prev_y;
     private float hp;
+    private int walkDirection;
 
     public MainChar(float x, float y, int width, int height, float hp) {
         this.width = width;
         this.height = height;
         this.hp = hp;
+
         position = new Vector2(x, y);
         setBounds(position.x, position.y, width, height);
         setTouchable(Touchable.enabled);
@@ -62,6 +64,7 @@ public class MainChar extends Actor {
         stateTime += delta;
         if (direction == 1) {
             prev_x = GameScreen.mainChar.getX();
+            walkDirection = 1;
             animation = new Animation<>(frameDuration, walkUp);
             animation.setPlayMode(Animation.PlayMode.LOOP);
             if (this.position.y + height + Settings.MainChar_VELOCITY * delta <= Settings.GAME_HEIGHT) {
@@ -71,6 +74,7 @@ public class MainChar extends Actor {
         if (direction == 2) {
             prev_y = GameScreen.mainChar.getY();
             animation = new Animation<>(frameDuration, walkLeft);
+            walkDirection = 2;
             animation.setPlayMode(Animation.PlayMode.LOOP);
             if (this.position.x - Settings.MainChar_VELOCITY * delta >= 0) {
                 this.position.x -= Settings.MainChar_VELOCITY * delta;
@@ -79,6 +83,7 @@ public class MainChar extends Actor {
         if (direction == 3) {
             prev_x = GameScreen.mainChar.getX();
             animation = new Animation<>(frameDuration, walkDown);
+            walkDirection = 3;
             animation.setPlayMode(Animation.PlayMode.LOOP);
             if (this.position.y - Settings.MainChar_VELOCITY * delta >= 0) {
                 this.position.y -= Settings.MainChar_VELOCITY * delta;
@@ -86,6 +91,7 @@ public class MainChar extends Actor {
         }
         if (direction == 4) {
             prev_y = GameScreen.mainChar.getY();
+            walkDirection = 4;
             animation = new Animation<>(frameDuration, walkRight);
             animation.setPlayMode(Animation.PlayMode.LOOP);
             if (this.position.x + width + Settings.MainChar_VELOCITY * delta <= Settings.GAME_WIDTH) {
@@ -140,6 +146,14 @@ public class MainChar extends Actor {
         }
     }
 
+    public int getWalkDirection() {
+        return walkDirection;
+    }
+
+    public void setWalkDirection(int walkDirection) {
+        this.walkDirection = walkDirection;
+    }
+
     public float getHp() {
         return hp;
     }
@@ -185,12 +199,21 @@ public class MainChar extends Actor {
         batch.draw(getCurrentFrame(), position.x, position.y, width, height);
     }
 
+
     public Rectangle getCollisionRect() {
         return collisionRect;
     }
 
     public void setCollisionRect(Rectangle collisionRect) {
         this.collisionRect = collisionRect;
+    }
+
+    public int getDirection() {
+        return direction;
+    }
+
+    public void setDirection(int direction) {
+        MainChar.direction = direction;
     }
 
     public float getPrev_x() {
@@ -210,6 +233,6 @@ public class MainChar extends Actor {
     }
 
     public void dispose(){
-        dispose();
+        this.remove();
     }
 }

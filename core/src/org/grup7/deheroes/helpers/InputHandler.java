@@ -1,5 +1,6 @@
 package org.grup7.deheroes.helpers;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
@@ -20,16 +21,16 @@ public class InputHandler extends InputAdapter implements InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == (Input.Keys.W)) {
-            MainChar.direction = 1;
+            GameScreen.mainChar.setDirection(1);
         }
         if (keycode == (Input.Keys.A)) {
-            MainChar.direction = 2;
+            GameScreen.mainChar.setDirection(2);
         }
         if (keycode == (Input.Keys.S)) {
-            MainChar.direction = 3;
+            GameScreen.mainChar.setDirection(3);
         }
         if (keycode == (Input.Keys.D)) {
-            MainChar.direction = 4;
+            GameScreen.mainChar.setDirection(4);
         }
         mainChar.act(Gdx.graphics.getDeltaTime());
         return true;
@@ -47,7 +48,7 @@ public class InputHandler extends InputAdapter implements InputProcessor {
             else if(Gdx.input.isKeyPressed(Input.Keys.D)){
                 keyDown(Input.Keys.D);
             }else{
-                mainChar.direction=0;
+                GameScreen.mainChar.setDirection(0);
                 mainChar.stopAnimation(1);
             }
         }
@@ -61,7 +62,7 @@ public class InputHandler extends InputAdapter implements InputProcessor {
             else if(Gdx.input.isKeyPressed(Input.Keys.D)){
                 keyDown(Input.Keys.D);
             }else{
-                mainChar.direction=0;
+                GameScreen.mainChar.setDirection(0);
                 mainChar.stopAnimation(2);
             }        }
         if(keycode==Input.Keys.S){
@@ -74,7 +75,7 @@ public class InputHandler extends InputAdapter implements InputProcessor {
             else if(Gdx.input.isKeyPressed(Input.Keys.D)){
                 keyDown(Input.Keys.D);
             }else{
-                mainChar.direction=0;
+                GameScreen.mainChar.setDirection(0);
                 mainChar.stopAnimation(3);
             }
         }
@@ -88,7 +89,7 @@ public class InputHandler extends InputAdapter implements InputProcessor {
             else if(Gdx.input.isKeyPressed(Input.Keys.S)){
                 keyDown(Input.Keys.S);
             }else{
-                mainChar.direction=0;
+                GameScreen.mainChar.setDirection(0);
                 mainChar.stopAnimation(4);
             }        }
         return false;
