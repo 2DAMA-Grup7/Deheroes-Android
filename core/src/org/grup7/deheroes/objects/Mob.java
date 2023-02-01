@@ -1,7 +1,9 @@
 package org.grup7.deheroes.objects;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -20,12 +22,17 @@ public class Mob extends Actor {
     private final int height;
     private Rectangle collisionRect;
     private float hp;
+    private Animation<TextureRegion> animation;
+    private float stateTime;
+    private final TextureRegion[] walk;
+    private final int distance;
 
 
-    public Mob(int width, int height, float hp) {
+    public Mob(int width, int height, float hp, Texture mobSheet, int distance) {
         this.width = width;
         this.height = height;
         this.hp = hp;
+        this.distance = distance;
         Random rand = new Random();
         float randomX = rand.nextInt(960);
         float randomY = rand.nextInt(640);
@@ -33,21 +40,29 @@ public class Mob extends Actor {
         collisionRect = new Rectangle();
         setBounds(randomX, randomY, width, height);
         setTouchable(Touchable.enabled);
+        int rows = 1;
+        int cols = 6;
+        TextureRegion[][] textureRegions = TextureRegion.split(mobSheet, mobSheet.getWidth() / cols, mobSheet.getHeight() / rows);
+        // create TextureRegion arrays for each walking direction
+        walk = new TextureRegion[cols];
+        System.arraycopy(textureRegions[0], 0, walk, 0, cols);
+        stateTime = 0f;
 
     }
 
 
     public void act(float delta, Vector2 positionHero) {
-        if (position.x > positionHero.x) {
+        stateTime += delta;
+        if (position.x > positionHero.x+distance) {
             this.position.x -= Settings.Mob_VELOCITY * delta;
         }
-        if (position.x < positionHero.x) {
+        if (position.x < positionHero.x+distance) {
             this.position.x += Settings.Mob_VELOCITY * delta;
         }
-        if (position.y > positionHero.y) {
+        if (position.y > positionHero.y+distance) {
             this.position.y -= Settings.Mob_VELOCITY * delta;
         }
-        if (position.y < positionHero.y) {
+        if (position.y < positionHero.y+distance) {
             this.position.y += Settings.Mob_VELOCITY * delta;
         }
     }
@@ -76,13 +91,17 @@ public class Mob extends Actor {
         return height;
     }
 
-    public Texture getTexture() {
-        return AssetManager.PurpleFlameSheet;
+    public TextureRegion getCurrentFrame() {
+        return animation.getKeyFrame(stateTime);
     }
+
 
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
-        batch.draw(getTexture(), position.x, position.y, width, height);
+        float frameDuration = 0.1F;
+        animation = new Animation<>(frameDuration, walk);
+        animation.setPlayMode(Animation.PlayMode.LOOP);
+        batch.draw(getCurrentFrame(), position.x, position.y, width, height);
     }
 
     public Rectangle getCollisionRect() {

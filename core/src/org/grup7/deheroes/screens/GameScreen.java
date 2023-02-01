@@ -20,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import org.grup7.deheroes.helpers.AssetManager;
 import org.grup7.deheroes.helpers.InputHandler;
 import org.grup7.deheroes.objects.MainChar;
 import org.grup7.deheroes.objects.Mob;
@@ -33,6 +34,7 @@ public class GameScreen implements Screen {
     // TODO CAMBRIA EST QUE TRIGGERED A ALEXIA
     public static HealthBar healthBar;
     public static Mob mob;
+    public static Mob mob_boss;
     public static Spell spell;
     private final ArrayList<Mob> mobs = new ArrayList<>();
     private final ArrayList<Spell> spells = new ArrayList<>();
@@ -75,10 +77,15 @@ public class GameScreen implements Screen {
         stage.addActor(healthBar);
         show_points = new Label("", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         stage.addActor(show_points);
+        if (mob_boss == null){
+            mob_boss = new Mob(64,64,500, AssetManager.PurpleFlameBossSheet, 70);
+            mob_boss.setCollisionRect(new Rectangle(mob_boss.getX(), mob_boss.getY(), mob_boss.getWidth(), mob_boss.getHeight()));
+            stage.addActor(mob_boss);
+        }
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
-                mob = new Mob(Settings.MainChar_WIDTH, Settings.MainChar_HEIGHT, 10);
+                mob = new Mob(Settings.MainChar_WIDTH, Settings.MainChar_HEIGHT, 10, AssetManager.PurpleFlameSheet,0);
                 mob.setCollisionRect(new Rectangle(mob.getX(), mob.getY(), mob.getWidth(), mob.getHeight()));
                 mobs.add(mob);
                 stage.addActor(mob);
@@ -104,15 +111,14 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-
         show_points.setPosition(mainChar.getX() - 30, mainChar.getY() + 120);
         show_points.setText("Points: " + points);
-
         //show_points.draw(batch, "Points:"+points, Settings.MainChar_STARTX, Settings.MainChar_STARTY);
         if (mainChar.getHp() < 0) {
             // TODO add death menu
             Gdx.app.exit();
         } else {
+
             healthBar.setX_Y(mainChar.getX(), mainChar.getY());
             healthBar.setHealth(mainChar.getHp());
             mainChar.setCollisionRect(new Rectangle(mainChar.getX(), mainChar.getY(), mainChar.getWidth(), mainChar.getHeight()));
@@ -171,6 +177,9 @@ public class GameScreen implements Screen {
             // Render the map
             renderer.render();
             stage.draw();
+            if (points > 1){
+                mob_boss.act(delta, mainChar.getPosition());
+            }
             mainChar.act(delta);
         }
     }

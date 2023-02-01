@@ -46,6 +46,6 @@ public class HealthBar extends Actor {
     }
 
     public void dispose() {
-        dispose();
+        this.remove();
     }
 }
