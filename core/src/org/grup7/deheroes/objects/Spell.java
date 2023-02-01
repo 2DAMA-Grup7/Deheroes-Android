@@ -54,9 +54,17 @@ public class Spell extends Actor {
     }
 
 
-    public void act(float delta, float x, float y) {
+    public void act(float delta, float x, float y,Vector2 startPos) {
         stateTime += delta;
         Vector2 positionMob = new Vector2(x, y);
+
+       //Vector2 destination= new Vector2(((float)Math.sqrt(positionMob.x-startPos.x)),(float)Math.sqrt((positionMob.y-startPos.y)));
+
+        //System.out.println("X: " + startPos.x + " Y: " + startPos.y);
+        //System.out.println("X: " + positionMob.x + " Y: " + positionMob.y);
+        //System.out.println("X: " + destination.x + " Y: " + destination.y);
+        //System.out.println("X: " + (destination.x-startPos.x) + " Y: " + (destination.y-startPos.y));
+
         if (position.x > positionMob.x) {
             this.position.x -= Settings.Mob_VELOCITY * delta;
         }
@@ -77,21 +85,26 @@ public class Spell extends Actor {
         switch (direction) {
             case 1: {
                 this.position.y += Settings.Spell_VELOCITY * delta;
+                break;
             }
 
             case 2: {
                 this.position.x -= Settings.Spell_VELOCITY * delta;
+                break;
             }
 
             case 3: {
                 this.position.y -= Settings.Spell_VELOCITY * delta;
+                break;
             }
 
             case 4: {
                 this.position.x += Settings.Spell_VELOCITY * delta;
+                break;
             }
             default:
                 this.position.x += Settings.Spell_VELOCITY * delta;
+                break;
 
         }
     }

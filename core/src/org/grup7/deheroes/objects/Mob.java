@@ -9,7 +9,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 
-import org.grup7.deheroes.helpers.AssetManager;
 import org.grup7.deheroes.utils.Settings;
 
 import java.util.Random;
@@ -17,22 +16,20 @@ import java.util.Random;
 public class Mob extends Actor {
 
 
-    private final Vector2 position;
+    protected final Vector2 position;
     private final int width;
     private final int height;
     private Rectangle collisionRect;
     private float hp;
     private Animation<TextureRegion> animation;
-    private float stateTime;
+    protected float stateTime;
     private final TextureRegion[] walk;
-    private final int distance;
 
 
-    public Mob(int width, int height, float hp, Texture mobSheet, int distance) {
+    public Mob(int width, int height, float hp, Texture mobSheet) {
         this.width = width;
         this.height = height;
         this.hp = hp;
-        this.distance = distance;
         Random rand = new Random();
         float randomX = rand.nextInt(960);
         float randomY = rand.nextInt(640);
@@ -53,16 +50,16 @@ public class Mob extends Actor {
 
     public void act(float delta, Vector2 positionHero) {
         stateTime += delta;
-        if (position.x > positionHero.x+distance) {
+        if (position.x > positionHero.x) {
             this.position.x -= Settings.Mob_VELOCITY * delta;
         }
-        if (position.x < positionHero.x+distance) {
+        if (position.x < positionHero.x) {
             this.position.x += Settings.Mob_VELOCITY * delta;
         }
-        if (position.y > positionHero.y+distance) {
+        if (position.y > positionHero.y) {
             this.position.y -= Settings.Mob_VELOCITY * delta;
         }
-        if (position.y < positionHero.y+distance) {
+        if (position.y < positionHero.y) {
             this.position.y += Settings.Mob_VELOCITY * delta;
         }
     }

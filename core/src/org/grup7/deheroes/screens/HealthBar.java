@@ -11,20 +11,19 @@ public class HealthBar extends Actor {
     private float currentHealth;
     private float y, x;
 
-    public HealthBar(float maxHealth, float x, float y) {
+    public HealthBar(float maxHealth) {
         this.maxHealth = maxHealth;
         this.currentHealth = maxHealth;
-        this.x = x;
-        this.y = y;
         emptyBar = new Texture("ui/empty-bar.png");
         fullBar = new Texture("ui/full-bar.png");
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        batch.draw(emptyBar, x, y + 35);
-        batch.draw(fullBar, x, y + 35, fullBar.getWidth() * currentHealth / maxHealth, fullBar.getHeight());
+        batch.draw(emptyBar, x, y);
+        batch.draw(fullBar, x, y, fullBar.getWidth() * currentHealth / maxHealth, fullBar.getHeight());
     }
+
 
     public void setHealth(float health) {
         currentHealth = health;

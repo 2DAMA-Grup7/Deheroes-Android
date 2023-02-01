@@ -24,6 +24,7 @@ import org.grup7.deheroes.helpers.AssetManager;
 import org.grup7.deheroes.helpers.InputHandler;
 import org.grup7.deheroes.objects.MainChar;
 import org.grup7.deheroes.objects.Mob;
+import org.grup7.deheroes.objects.MobBoss;
 import org.grup7.deheroes.objects.Spell;
 import org.grup7.deheroes.utils.Settings;
 
@@ -33,6 +34,7 @@ public class GameScreen implements Screen {
     public static MainChar mainChar = new MainChar(Settings.MainChar_STARTX, Settings.MainChar_STARTY, Settings.MainChar_WIDTH, Settings.MainChar_HEIGHT, 100);
     // TODO CAMBRIA EST QUE TRIGGERED A ALEXIA
     public static HealthBar healthBar;
+    public static HealthBar boss_healthBar;
     public static Mob mob;
     public static Mob mob_boss;
     public static Spell spell;
@@ -60,8 +62,8 @@ public class GameScreen implements Screen {
                     // Create a rectangle for the cell
                     float xPos = x * collisionLayer.getTileWidth();
                     float yPos = y * collisionLayer.getTileHeight();
-                    float width = collisionLayer.getTileWidth();
-                    float height = collisionLayer.getTileHeight();
+                    float width = collisionLayer.getTileWidth()-10;
+                    float height = collisionLayer.getTileHeight()-10;
                     Rectangle rect = new Rectangle(xPos, yPos, width, height);
                     // Add the rectangle to the ArrayList
                     obstacleRectangles.add(rect);
@@ -73,19 +75,15 @@ public class GameScreen implements Screen {
         camera.update();
         stage = new Stage(prevViewport, prevBatch);
         stage.addActor(mainChar);
-        healthBar = new HealthBar(100, mainChar.getX(), mainChar.getY());
+        healthBar = new HealthBar(100);
         stage.addActor(healthBar);
         show_points = new Label("", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         stage.addActor(show_points);
-        if (mob_boss == null){
-            mob_boss = new Mob(64,64,500, AssetManager.PurpleFlameBossSheet, 70);
-            mob_boss.setCollisionRect(new Rectangle(mob_boss.getX(), mob_boss.getY(), mob_boss.getWidth(), mob_boss.getHeight()));
-            stage.addActor(mob_boss);
-        }
+
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
-                mob = new Mob(Settings.MainChar_WIDTH, Settings.MainChar_HEIGHT, 10, AssetManager.PurpleFlameSheet,0);
+                mob = new Mob(Settings.MainChar_WIDTH, Settings.MainChar_HEIGHT, 10, AssetManager.PurpleFlameSheet);
                 mob.setCollisionRect(new Rectangle(mob.getX(), mob.getY(), mob.getWidth(), mob.getHeight()));
                 mobs.add(mob);
                 stage.addActor(mob);
@@ -118,9 +116,26 @@ public class GameScreen implements Screen {
             // TODO add death menu
             Gdx.app.exit();
         } else {
-
-            healthBar.setX_Y(mainChar.getX(), mainChar.getY());
+            if (points > 50){
+                if (mob_boss == null) {
+                    mob_boss = new MobBoss(64,64,500, AssetManager.PurpleFlameBossSheet, 50);
+                    mobs.add(mob_boss);
+                    mob_boss.setCollisionRect(new Rectangle(mob_boss.getX(), mob_boss.getY(), mob_boss.getWidth(), mob_boss.getHeight()));
+                    boss_healthBar = new HealthBar(500);
+                    stage.addActor(mob_boss);
+                    stage.addActor(boss_healthBar);
+                }
+                if (mob_boss.getHp()<0){
+                    mob_boss.dispose();
+                } else{
+                    boss_healthBar.setX_Y(mob_boss.getX()+15, mob_boss.getY()+60);
+                    boss_healthBar.setHealth(mob_boss.getHp());
+                    mob_boss.act(delta, mainChar.getPosition());
+                }
+            }
+            healthBar.setX_Y(mainChar.getX(), mainChar.getY()+32);
             healthBar.setHealth(mainChar.getHp());
+
             mainChar.setCollisionRect(new Rectangle(mainChar.getX(), mainChar.getY(), mainChar.getWidth(), mainChar.getHeight()));
             // Iterate through the obstacle rectangles
             for (Rectangle obstacleRect : obstacleRectangles) {
@@ -144,7 +159,7 @@ public class GameScreen implements Screen {
                         spell.dispose();
                     } else {
                         //spell.act(delta);
-                        spell.act(delta, mobs.get(0).getX(), mobs.get(0).getY());
+                        spell.act(delta, mobs.get(0).getX(), mobs.get(0).getY(), mainChar.getPosition());
                         spell.setCollisionRect(new Rectangle(spell.getX(), spell.getY(), spell.getWidth(), spell.getHeight()));
                         if (Intersector.overlaps(spell.getCollisionRect(), mob.getCollisionRect())) {
                             // Collision detected, stop the player's movement
@@ -177,9 +192,6 @@ public class GameScreen implements Screen {
             // Render the map
             renderer.render();
             stage.draw();
-            if (points > 1){
-                mob_boss.act(delta, mainChar.getPosition());
-            }
             mainChar.act(delta);
         }
     }
