@@ -11,8 +11,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
+import org.grup7.deheroes.Chat.ChatV1;
 import org.grup7.deheroes.MyGdxGame;
 import org.grup7.deheroes.utils.Settings;
+
+import java.net.URISyntaxException;
+
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+
 
 public class MenuScreen implements Screen {
     public static OrthographicCamera camera;
@@ -62,6 +70,11 @@ public class MenuScreen implements Screen {
         chatButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                try {
+                    ChatV1.main(null);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
                 dispose();
                 game.setScreen(new ChatScreen(stage.getBatch(), stage.getViewport()));
             }
