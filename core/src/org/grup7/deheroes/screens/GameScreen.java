@@ -103,16 +103,6 @@ public class GameScreen implements Screen {
             }
         }, 0, 1);
 
-        Timer.schedule(new Timer.Task() {
-            @Override
-            public void run() {
-                if (spell_boss != null) {
-                    spell_boss.dispose();
-                    spell_boss = null;
-                }
-            }
-        }, 10, 10);
-
     }
 
     @Override
@@ -128,6 +118,18 @@ public class GameScreen implements Screen {
             // TODO add death menu
             Gdx.app.exit();
         } else {
+            healthBar.setX_Y(mainChar.getX(), mainChar.getY() + 32);
+            healthBar.setHealth(mainChar.getHp());
+
+            mainChar.setCollisionRect(new Rectangle(mainChar.getX(), mainChar.getY(), mainChar.getWidth(), mainChar.getHeight()));
+            // Iterate through the obstacle rectangles
+            for (Rectangle obstacleRect : obstacleRectangles) {
+                if (Intersector.overlaps(mainChar.getCollisionRect(), obstacleRect)) {
+                    // Collision detected, stop the player's movement
+                    mainChar.ObjectCollision();
+                }
+            }
+
             if (points > 1) {
                 if (mob_boss == null) {
                     mob_boss = new MobBoss(64, 64, 500, AssetManager.PurpleFlameBossSheet, 50);
@@ -138,28 +140,27 @@ public class GameScreen implements Screen {
                     stage.addActor(boss_healthBar);
                 }
                 if (spell_boss == null) {
-                    spell_boss = new SpellBoss(Settings.MainChar_WIDTH, Settings.MainChar_HEIGHT, mainChar.getY(), mainChar.getX(), mainChar.getWalkDirection(), AssetManager.explosionSpellSheet);
+                    spell_boss = new SpellBoss(64, 64, mainChar.getY() - 16, mainChar.getX() - 16, mainChar.getWalkDirection(), AssetManager.explosionSpellSheet);
                     spell_boss.setCollisionRect(new Rectangle(spell_boss.getX(), spell_boss.getY(), spell_boss.getWidth(), spell_boss.getHeight()));
                     stage.addActor(spell_boss);
+                } else {
+                    if (spell_boss.isAnimationFinished()) {
+                        if (Intersector.overlaps(mainChar.getCollisionRect(), spell_boss.getCollisionRect())) {
+                            mainChar.setHp(mainChar.getHp() - 20);
+                        }
+                        spell_boss.dispose();
+                        spell_boss = null;
+                    } else {
+                        spell_boss.explosion(delta);
+                    }
                 }
+
                 if (mob_boss.getHp() < 0) {
                     mob_boss.dispose();
                 } else {
                     boss_healthBar.setX_Y(mob_boss.getX() + 15, mob_boss.getY() + 60);
                     boss_healthBar.setHealth(mob_boss.getHp());
-                    spell_boss.explosion(delta, mainChar.getX(), mainChar.getY());
                     mob_boss.act(delta, mainChar.getPosition());
-                }
-            }
-            healthBar.setX_Y(mainChar.getX(), mainChar.getY()+32);
-            healthBar.setHealth(mainChar.getHp());
-
-            mainChar.setCollisionRect(new Rectangle(mainChar.getX(), mainChar.getY(), mainChar.getWidth(), mainChar.getHeight()));
-            // Iterate through the obstacle rectangles
-            for (Rectangle obstacleRect : obstacleRectangles) {
-                if (Intersector.overlaps(mainChar.getCollisionRect(), obstacleRect)) {
-                    // Collision detected, stop the player's movement
-                    mainChar.ObjectCollision();
                 }
             }
             ArrayList<Spell> spells_removed = new ArrayList<>();

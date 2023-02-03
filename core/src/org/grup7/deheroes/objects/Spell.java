@@ -129,6 +129,12 @@ public class Spell extends Actor {
         return height;
     }
 
+
+    public boolean isAnimationFinished() {
+        return animation.isAnimationFinished(stateTime);
+    }
+
+
     public TextureRegion getCurrentFrame() {
         return animation.getKeyFrame(stateTime);
     }
@@ -154,6 +160,6 @@ public class Spell extends Actor {
         this.remove();
     }
 
-    public void explosion(float delta, float x, float y) {
+    public void explosion(float delta) {
     }
 }
