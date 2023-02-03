@@ -10,10 +10,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 
+import org.grup7.deheroes.helpers.AssetManager;
 import org.grup7.deheroes.utils.Settings;
 
 public class Spell extends Actor {
-    public static Texture iceSpellSheet;
+
     private final Vector2 position;
     private final int width;
     private final int height;
@@ -40,11 +41,9 @@ public class Spell extends Actor {
         }
         position = new Vector2(x, y);
         collisionRect = new Rectangle();
-        iceSpellSheet = new Texture(Gdx.files.internal("spells/ice-ball-sheet.png"));
-        iceSpellSheet.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         int rows = 1;
         int cols = 5;
-        TextureRegion[][] textureRegions = TextureRegion.split(iceSpellSheet, iceSpellSheet.getWidth() / cols, iceSpellSheet.getHeight() / rows);
+        TextureRegion[][] textureRegions = TextureRegion.split(AssetManager.iceSpellSheet, AssetManager.iceSpellSheet.getWidth() / cols, AssetManager.iceSpellSheet.getHeight() / rows);
         // create TextureRegion arrays for each walking direction
         walk = new TextureRegion[cols];
         setBounds(x, y, width, height);
