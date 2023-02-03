@@ -15,7 +15,6 @@ import java.util.Random;
 
 public class Mob extends Actor {
 
-
     protected final Vector2 position;
     private final int width;
     private final int height;
@@ -44,6 +43,7 @@ public class Mob extends Actor {
         walk = new TextureRegion[cols];
         System.arraycopy(textureRegions[0], 0, walk, 0, cols);
         stateTime = 0f;
+
 
     }
 
@@ -111,5 +111,9 @@ public class Mob extends Actor {
 
     public void dispose() {
         this.remove();
+    }
+
+    public boolean isBoss() {
+        return false;
     }
 }

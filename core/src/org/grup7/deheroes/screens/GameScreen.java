@@ -105,6 +105,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
+        AssetManager.GameScreenMusic.setLooping(true);
+        AssetManager.GameScreenMusic.play();
     }
 
     @Override
@@ -114,14 +116,17 @@ public class GameScreen implements Screen {
         //show_points.draw(batch, "Points:"+points, Settings.MainChar_STARTX, Settings.MainChar_STARTY);
         if (mainChar.getHp() < 0) {
             // TODO add death menu
+            AssetManager.HeroDiesSound.play();
+            //Separar dead and game over
+            AssetManager.GameOverSound.play();
             Gdx.app.exit();
         } else {
-            if (points > 50){
+            if (points > 1){
                 if (mob_boss == null) {
                     mob_boss = new MobBoss(64,64,500, AssetManager.PurpleFlameBossSheet, 50);
                     mobs.add(mob_boss);
                     mob_boss.setCollisionRect(new Rectangle(mob_boss.getX(), mob_boss.getY(), mob_boss.getWidth(), mob_boss.getHeight()));
-                    boss_healthBar = new HealthBar(500);
+                    boss_healthBar = new HealthBar(mob_boss.getHp());
                     stage.addActor(mob_boss);
                     stage.addActor(boss_healthBar);
                 }
@@ -152,6 +157,7 @@ public class GameScreen implements Screen {
                 if (Intersector.overlaps(mainChar.getCollisionRect(), mob.getCollisionRect())) {
                     // Collision detected, stop the player's movement
                     mainChar.setHp(mainChar.getHp() - 0.1F);
+                    AssetManager.GetHitHeroSound.play();
                 }
                 for (Spell spell : spells) {
                     if (spell.getX() > 2000 || spell.getY() > 2000) {
@@ -162,15 +168,24 @@ public class GameScreen implements Screen {
                         spell.act(delta, mobs.get(0).getX(), mobs.get(0).getY(), mainChar.getPosition());
                         spell.setCollisionRect(new Rectangle(spell.getX(), spell.getY(), spell.getWidth(), spell.getHeight()));
                         if (Intersector.overlaps(spell.getCollisionRect(), mob.getCollisionRect())) {
-                            // Collision detected, stop the player's movement
+                            // Collision detected, remove hp mobs
                             mob.setHp(mob.getHp() - 10);
                             spells_removed.add(spell);
+
                             spell.dispose();
                         }
                         if (mob.getHp() < 0) {
                             mob.dispose();
                             mobs_eliminated.add(mob);
-                            points += 1;
+                            if (mob.isBoss()) {
+                                AssetManager.PurpleBossDiesSound.play();
+                                points += 50;
+
+                            } else {
+                                AssetManager.PurpleFLameDiesSound.play();
+                                points += 1;
+
+                            }
                         }
                     }
                 }
@@ -217,6 +232,19 @@ public class GameScreen implements Screen {
         mainChar.dispose();
         healthBar.dispose();
         mob.dispose();
+        AssetManager.GameScreenMusic.dispose();
+        AssetManager.GameOverSound.dispose();
+        AssetManager.GetHitHeroSound.dispose();
+        AssetManager.GetHitPurpleFlameSound.dispose();
+        AssetManager.GetHitFlameBossSound.dispose();
+
+        AssetManager.HeroDiesSound.dispose();
+        AssetManager.PurpleFLameDiesSound.dispose();
+        AssetManager.PurpleBossDiesSound.dispose();
+
+        AssetManager.IceSpellSound.dispose();
+
+
     }
 
     public MainChar getMainChar() {

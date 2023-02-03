@@ -75,8 +75,6 @@ public class AssetManager {
         PurpleBossDiesSound.dispose();
 
         IceSpellSound.dispose();
-
-
     }
 
 }
