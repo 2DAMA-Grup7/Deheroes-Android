@@ -7,12 +7,17 @@ import com.badlogic.gdx.InputProcessor;
 
 import org.grup7.deheroes.objects.MainChar;
 import org.grup7.deheroes.screens.GameScreen;
+import org.grup7.deheroes.screens.OnlineScreen;
 
 public class InputHandler extends InputAdapter implements InputProcessor {
 
     private final MainChar mainChar;
 
     public InputHandler(GameScreen screen) {
+        mainChar = screen.getMainChar();
+    }
+
+    public InputHandler(OnlineScreen screen) {
         mainChar = screen.getMainChar();
     }
 

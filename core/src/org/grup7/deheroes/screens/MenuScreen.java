@@ -37,11 +37,20 @@ public class MenuScreen implements Screen {
         startButton.setPosition(Settings.GAME_WIDTH / 2F - startButton.getWidth() / 2, Settings.GAME_HEIGHT / 2F);
         TextButton exitButton = new TextButton("Exit", textButtonStyle);
         exitButton.setPosition(Settings.GAME_WIDTH / 2F - exitButton.getWidth() / 2, Settings.GAME_HEIGHT / 2F - exitButton.getHeight());
+        TextButton onlineButton = new TextButton("Online", textButtonStyle);
+        onlineButton.setPosition(Settings.GAME_WIDTH / 2F - onlineButton.getWidth() / 2, Settings.GAME_HEIGHT / 2F - onlineButton.getHeight() - exitButton.getHeight());
         startButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 dispose();
                 game.setScreen(new GameScreen(stage.getBatch(), stage.getViewport()));
+            }
+        });
+        onlineButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                dispose();
+                game.setScreen(new OnlineScreen(stage.getBatch(), stage.getViewport()));
             }
         });
         exitButton.addListener(new ClickListener() {
@@ -50,6 +59,7 @@ public class MenuScreen implements Screen {
                 Gdx.app.exit();
             }
         });
+        stage.addActor(onlineButton);
         stage.addActor(startButton);
         stage.addActor(exitButton);
         Gdx.input.setInputProcessor(stage);

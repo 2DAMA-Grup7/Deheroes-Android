@@ -1,6 +1,5 @@
 package org.grup7.deheroes.objects;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -13,18 +12,17 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import org.grup7.deheroes.utils.Settings;
 
 public class Spell extends Actor {
-    public static Texture iceSpellSheet;
-    private final Vector2 position;
-    private final int width;
-    private final int height;
-    private final TextureRegion[] walk;
-    private Rectangle collisionRect;
-    private int direction;
-    private Animation<TextureRegion> animation;
-    private float stateTime;
+    protected final Vector2 position;
+    protected final int width;
+    protected final int height;
+    protected final TextureRegion[] walk;
+    protected Rectangle collisionRect;
+    protected int direction;
+    protected Animation<TextureRegion> animation;
+    protected float stateTime;
 
 
-    public Spell(int width, int height, float y, float x, int direction) {
+    public Spell(int width, int height, float y, float x, int direction, Texture spellSheet) {
         this.width = width;
         this.height = height;
         this.direction = direction;
@@ -40,11 +38,9 @@ public class Spell extends Actor {
         }
         position = new Vector2(x, y);
         collisionRect = new Rectangle();
-        iceSpellSheet = new Texture(Gdx.files.internal("spells/ice-ball-sheet.png"));
-        iceSpellSheet.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         int rows = 1;
         int cols = 5;
-        TextureRegion[][] textureRegions = TextureRegion.split(iceSpellSheet, iceSpellSheet.getWidth() / cols, iceSpellSheet.getHeight() / rows);
+        TextureRegion[][] textureRegions = TextureRegion.split(spellSheet, spellSheet.getWidth() / cols, spellSheet.getHeight() / rows);
         // create TextureRegion arrays for each walking direction
         walk = new TextureRegion[cols];
         setBounds(x, y, width, height);
@@ -158,4 +154,6 @@ public class Spell extends Actor {
         this.remove();
     }
 
+    public void explosion(float delta, float x, float y) {
+    }
 }
