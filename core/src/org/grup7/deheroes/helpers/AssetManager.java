@@ -38,20 +38,20 @@ public class AssetManager {
         iceSpellSheet = new Texture(Gdx.files.internal("spells/ice-ball-sheet.png"));
         iceSpellSheet.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
 
-        MenuMusic = Gdx.audio.newMusic(Gdx.files.internal("Music/ music.mp3"));
-        GameScreenMusic = Gdx.audio.newMusic(Gdx.files.internal("Music/ music.mp3"));
+        MenuMusic = Gdx.audio.newMusic(Gdx.files.internal("Music/264295__foolboymedia__sky-loop.wav"));
+        GameScreenMusic = Gdx.audio.newMusic(Gdx.files.internal("Music/178374__klankbeeld__estate-february-nl-haanwijk-130217_00.mp3"));
 
-        GameOverSound = Gdx.audio.newSound(Gdx.files.internal("Music/ music.mp3"));
+        GameOverSound = Gdx.audio.newSound(Gdx.files.internal("Music/620792__melokacool__game-over.mp3"));
 
-        GetHitHeroSound = Gdx.audio.newSound(Gdx.files.internal("Music/ music.mp3"));
-        GetHitPurpleFlameSound = Gdx.audio.newSound(Gdx.files.internal("Music/ music.mp3"));
-        GetHitFlameBossSound = Gdx.audio.newSound(Gdx.files.internal("Music/ music.mp3"));
+        GetHitHeroSound = Gdx.audio.newSound(Gdx.files.internal("Music/437650__dersuperanton__getting-hit-damage-scream.wav"));
+        GetHitPurpleFlameSound = Gdx.audio.newSound(Gdx.files.internal("Music/660769__madpancake__headshot-sound.mp3"));
+        GetHitFlameBossSound = Gdx.audio.newSound(Gdx.files.internal("Music/639751__ryanz-official__plate-impact.wav"));
 
-        HeroDiesSound = Gdx.audio.newSound(Gdx.files.internal("Music/ music.mp3"));
-        PurpleFLameDiesSound = Gdx.audio.newSound(Gdx.files.internal("Music/ music.mp3"));
-        PurpleBossDiesSound = Gdx.audio.newSound(Gdx.files.internal("Music/ music.mp3"));
+        HeroDiesSound = Gdx.audio.newSound(Gdx.files.internal("Music/660769__madpancake__headshot-sound.wav"));
+        PurpleFLameDiesSound = Gdx.audio.newSound(Gdx.files.internal("Music/FireBurstStarting.wav"));
+        PurpleBossDiesSound = Gdx.audio.newSound(Gdx.files.internal("Music/333496__ebcrosby__die-sound.wav"));
 
-        IceSpellSound = Gdx.audio.newSound(Gdx.files.internal("Music/ music.mp3"));
+        IceSpellSound = Gdx.audio.newSound(Gdx.files.internal("Music/396499__alonsotm__icespell03.wav"));
 
     }
 
