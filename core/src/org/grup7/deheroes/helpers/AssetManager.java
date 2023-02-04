@@ -44,14 +44,14 @@ public class AssetManager {
         GameOverSound = Gdx.audio.newSound(Gdx.files.internal("Music/620792__melokacool__game-over.mp3"));
 
         GetHitHeroSound = Gdx.audio.newSound(Gdx.files.internal("Music/437650__dersuperanton__getting-hit-damage-scream.wav"));
-        GetHitPurpleFlameSound = Gdx.audio.newSound(Gdx.files.internal("Music/660769__madpancake__headshot-sound.mp3"));
+        GetHitPurpleFlameSound = Gdx.audio.newSound(Gdx.files.internal("Music/660769__madpancake__headshot-sound.wav"));
         GetHitFlameBossSound = Gdx.audio.newSound(Gdx.files.internal("Music/639751__ryanz-official__plate-impact.wav"));
 
         HeroDiesSound = Gdx.audio.newSound(Gdx.files.internal("Music/660769__madpancake__headshot-sound.wav"));
         PurpleFLameDiesSound = Gdx.audio.newSound(Gdx.files.internal("Music/FireBurstStarting.wav"));
         PurpleBossDiesSound = Gdx.audio.newSound(Gdx.files.internal("Music/333496__ebcrosby__die-sound.wav"));
 
-        IceSpellSound = Gdx.audio.newSound(Gdx.files.internal("Music/396499__alonsotm__icespell03.wav"));
+        IceSpellSound = Gdx.audio.newSound(Gdx.files.internal("Music/396499__alonsotm__icespell03.mp3"));
 
     }
 

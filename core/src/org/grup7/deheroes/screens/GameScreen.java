@@ -97,6 +97,7 @@ public class GameScreen implements Screen {
                 spell.setCollisionRect(new Rectangle(spell.getX(), spell.getY(), spell.getWidth(), spell.getHeight()));
                 spells.add(spell);
                 stage.addActor(spell);
+                AssetManager.IceSpellSound.play();
 
             }
         }, 0, 1);
@@ -155,7 +156,7 @@ public class GameScreen implements Screen {
                 mob.act(delta, mainChar.getPosition());
                 mob.setCollisionRect(new Rectangle(mob.getX(), mob.getY(), mob.getWidth(), mob.getHeight()));
                 if (Intersector.overlaps(mainChar.getCollisionRect(), mob.getCollisionRect())) {
-                    // Collision detected, stop the player's movement
+                    // Collision detected, hero gets hit
                     mainChar.setHp(mainChar.getHp() - 0.1F);
                     AssetManager.GetHitHeroSound.play();
                 }
@@ -171,8 +172,10 @@ public class GameScreen implements Screen {
                             // Collision detected, remove hp mobs
                             mob.setHp(mob.getHp() - 10);
                             spells_removed.add(spell);
-
                             spell.dispose();
+                            if (mob.isBoss()) {
+                                AssetManager.GetHitFlameBossSound.play();
+                            } else {AssetManager.GetHitPurpleFlameSound.play();}
                         }
                         if (mob.getHp() < 0) {
                             mob.dispose();
@@ -180,7 +183,6 @@ public class GameScreen implements Screen {
                             if (mob.isBoss()) {
                                 AssetManager.PurpleBossDiesSound.play();
                                 points += 50;
-
                             } else {
                                 AssetManager.PurpleFLameDiesSound.play();
                                 points += 1;
