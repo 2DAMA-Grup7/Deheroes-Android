@@ -7,7 +7,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.0'
+        classpath 'com.android.tools.build:gradle:7.4.1'
     }
 }
 
@@ -69,7 +69,7 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-arm64-v8a"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86_64"
-        implementation 'javax.websocket:javax.websocket-api:1.1'
+
 
 
     }
