@@ -6,6 +6,8 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+
 
 public class AssetManager {
     public static Texture HeroSheet;
@@ -29,6 +31,9 @@ public class AssetManager {
     public static Sound PurpleFLameDiesSound;
     public static Sound PurpleBossDiesSound;
     public static Sound IceSpellSound;
+    public static Skin UIskin;
+    public static String chatURL;
+
 
     public static void load() {
         // PLAYER
@@ -64,6 +69,10 @@ public class AssetManager {
 
         IceSpellSound = Gdx.audio.newSound(Gdx.files.internal("Music/396499__alonsotm__icespell03.mp3"));
 
+
+        UIskin = new Skin(Gdx.files.internal("ui/Skin/uiskin.json"));
+
+        chatURL = "http://localhost:3000";
     }
 
     public static void dispose() {
@@ -96,6 +105,9 @@ public class AssetManager {
         PurpleBossDiesSound.dispose();
 
         IceSpellSound.dispose();
+
+        UIskin.dispose();
+
 
     }
 

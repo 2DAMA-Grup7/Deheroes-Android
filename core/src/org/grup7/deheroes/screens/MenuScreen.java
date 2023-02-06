@@ -40,9 +40,12 @@ public class MenuScreen implements Screen {
         TextButton startButton = new TextButton("Start", textButtonStyle);
         startButton.setPosition(Settings.GAME_WIDTH / 2F - startButton.getWidth() / 2, Settings.GAME_HEIGHT / 2F);
         TextButton exitButton = new TextButton("Exit", textButtonStyle);
-        exitButton.setPosition(Settings.GAME_WIDTH / 2F - exitButton.getWidth() / 2, Settings.GAME_HEIGHT / 2F - exitButton.getHeight());
+        exitButton.setPosition(Settings.GAME_WIDTH / 2F - exitButton.getWidth() / 2, Settings.GAME_HEIGHT / 2F - startButton.getHeight());
         TextButton onlineButton = new TextButton("Online", textButtonStyle);
-        onlineButton.setPosition(Settings.GAME_WIDTH / 2F - onlineButton.getWidth() / 2, Settings.GAME_HEIGHT / 2F - onlineButton.getHeight() - exitButton.getHeight());
+        onlineButton.setPosition(Settings.GAME_WIDTH / 2F - onlineButton.getWidth() / 2, Settings.GAME_HEIGHT / 2F - startButton.getHeight() - exitButton.getHeight());
+        TextButton chatButton = new TextButton("Chat", textButtonStyle);
+        chatButton.setPosition(Settings.GAME_WIDTH / 2F -chatButton.getWidth() / 2,Settings.GAME_HEIGHT/ 2F - startButton.getHeight()- exitButton.getHeight()- onlineButton.getHeight());
+
         startButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -57,15 +60,26 @@ public class MenuScreen implements Screen {
                 game.setScreen(new OnlineScreen(stage.getBatch(), stage.getViewport()));
             }
         });
+
         exitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.exit();
             }
         });
+
+        chatButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                dispose();
+                game.setScreen(new ChatScreen(stage.getBatch(), stage.getViewport()));
+            }
+        });
         stage.addActor(onlineButton);
         stage.addActor(startButton);
         stage.addActor(exitButton);
+        stage.addActor(chatButton);
+
         Gdx.input.setInputProcessor(stage);
     }
 
@@ -95,6 +109,7 @@ public class MenuScreen implements Screen {
     public void dispose() {
         font.dispose();
         AssetManager.MenuMusic.dispose();
+
 
     }
 }
