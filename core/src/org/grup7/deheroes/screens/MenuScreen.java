@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import org.grup7.deheroes.MyGdxGame;
+import org.grup7.deheroes.helpers.AssetManager;
 import org.grup7.deheroes.utils.Settings;
 
 public class MenuScreen implements Screen {
@@ -30,6 +31,9 @@ public class MenuScreen implements Screen {
 
     @Override
     public void show() {
+        AssetManager.MenuMusic.setLooping(true);
+        AssetManager.MenuMusic.play();
+
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.fontColor = Color.WHITE;
         textButtonStyle.font = font;
@@ -90,5 +94,7 @@ public class MenuScreen implements Screen {
     @Override
     public void dispose() {
         font.dispose();
+        AssetManager.MenuMusic.dispose();
+
     }
 }

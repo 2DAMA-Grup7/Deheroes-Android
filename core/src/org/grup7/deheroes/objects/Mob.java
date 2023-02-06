@@ -109,6 +109,9 @@ public class Mob extends Actor {
         this.collisionRect = collisionRect;
     }
 
+    public boolean isBoss() {
+        return false;
+    }
     public void dispose() {
         this.remove();
     }

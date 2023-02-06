@@ -30,5 +30,8 @@ public class MobBoss extends Mob{
             this.position.y += Settings.Boss_VELOCITY * delta;
         }
     }
+    public boolean isBoss() {
+        return true;
+    }
 
 }
