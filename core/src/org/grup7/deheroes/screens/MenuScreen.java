@@ -6,57 +6,76 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import org.grup7.deheroes.MyGdxGame;
 import org.grup7.deheroes.helpers.AssetManager;
 import org.grup7.deheroes.utils.Settings;
 
+import java.net.URISyntaxException;
+
+import io.socket.client.IO;
+
 public class MenuScreen implements Screen {
+    private final Table setMenu;
     public static OrthographicCamera camera;
     private final MyGdxGame game;
     private final Stage stage;
-    private final BitmapFont font = new BitmapFont();
+
 
 
     public MenuScreen(MyGdxGame game) {
         this.game = game;
         camera = new OrthographicCamera(Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
         StretchViewport viewport = new StretchViewport(Settings.GAME_WIDTH, Settings.GAME_HEIGHT, camera);
-
         stage = new Stage(viewport);
+        setMenu = mainMenu();
+        stage.addActor(mainMenu());
 
     }
 
-    @Override
-    public void show() {
-        AssetManager.MenuMusic.setLooping(true);
-        AssetManager.MenuMusic.play();
+    private Table mainMenu() {
+        final Table table = new Table();
+        table.setFillParent(true);
 
-        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.fontColor = Color.WHITE;
-        textButtonStyle.font = font;
-        TextButton startButton = new TextButton("Start", textButtonStyle);
-        startButton.setPosition(Settings.GAME_WIDTH / 2F - startButton.getWidth() / 2, Settings.GAME_HEIGHT / 2F);
-        TextButton exitButton = new TextButton("Exit", textButtonStyle);
-        exitButton.setPosition(Settings.GAME_WIDTH / 2F - exitButton.getWidth() / 2, Settings.GAME_HEIGHT / 2F - startButton.getHeight());
-        TextButton onlineButton = new TextButton("Online", textButtonStyle);
-        onlineButton.setPosition(Settings.GAME_WIDTH / 2F - onlineButton.getWidth() / 2, Settings.GAME_HEIGHT / 2F - startButton.getHeight() - exitButton.getHeight());
-        TextButton chatButton = new TextButton("Chat", textButtonStyle);
-        chatButton.setPosition(Settings.GAME_WIDTH / 2F -chatButton.getWidth() / 2,Settings.GAME_HEIGHT/ 2F - startButton.getHeight()- exitButton.getHeight()- onlineButton.getHeight());
 
-        startButton.addListener(new ClickListener() {
+        Window window = new Window("   Menu", AssetManager.UIskin);
+      // uso espacios para mover al medio lol, no encuentro otra forma
+
+        TextButton StarButton = new TextButton("Start", AssetManager.UIskin);
+        TextButton OnlineButton = new TextButton("Online", AssetManager.UIskin);
+        TextButton ChatButton = new TextButton("Chat", AssetManager.UIskin);
+        TextButton ExitButton = new TextButton("Exit", AssetManager.UIskin);
+
+        window.add(StarButton).center();
+        window.row();
+        window.add(OnlineButton).center();
+        window.row();
+        window.add(ChatButton).center();
+        window.row();
+        window.add(ExitButton).center();
+        table.add(window);
+
+        StarButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 dispose();
                 game.setScreen(new GameScreen(stage.getBatch(), stage.getViewport()));
             }
         });
-        onlineButton.addListener(new ClickListener() {
+        OnlineButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 dispose();
@@ -64,27 +83,28 @@ public class MenuScreen implements Screen {
             }
         });
 
-        exitButton.addListener(new ClickListener() {
+        ExitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.exit();
             }
         });
 
-        chatButton.addListener(new ClickListener() {
+        ChatButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 dispose();
                 game.setScreen(new ChatScreen(stage.getBatch(), stage.getViewport()));
             }
         });
-        stage.addActor(onlineButton);
-        stage.addActor(startButton);
-        stage.addActor(exitButton);
-        stage.addActor(chatButton);
-
+        return table;
+    }
+    @Override
+    public void show() {
+        AssetManager.MenuMusic.setLooping(true);
+        AssetManager.MenuMusic.play();
         Gdx.input.setInputProcessor(stage);
-        camera.update();
+
     }
 
     @Override
@@ -93,6 +113,8 @@ public class MenuScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.draw();
         stage.act(delta);
+
+
     }
 
     @Override
@@ -114,8 +136,9 @@ public class MenuScreen implements Screen {
 
     @Override
     public void dispose() {
-        font.dispose();
+
         AssetManager.MenuMusic.dispose();
+        stage.dispose();
 
 
     }

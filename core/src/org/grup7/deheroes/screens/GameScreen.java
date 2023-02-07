@@ -79,7 +79,7 @@ public class GameScreen implements Screen {
         stage.addActor(mainChar);
         healthBar = new HealthBar(100);
         stage.addActor(healthBar);
-        show_points = new Label("", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        show_points = new Label("", AssetManager.UIskin);
         stage.addActor(show_points);
 
         Timer.schedule(new Timer.Task() {
@@ -224,7 +224,7 @@ public class GameScreen implements Screen {
             Gdx.gl.glClearColor(0, 0, 0, 1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             camera.position.set(mainChar.getX(), mainChar.getY(), 0);
-            camera.zoom = 0.4f;
+            camera.zoom = 0.2f;
             // Update the camera
             camera.update();
             renderer.setView(camera);
@@ -269,6 +269,7 @@ public class GameScreen implements Screen {
         AssetManager.PurpleBossDiesSound.dispose();
 
         AssetManager.IceSpellSound.dispose();
+        AssetManager.UIskin.dispose();
 
     }
 

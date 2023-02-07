@@ -42,7 +42,6 @@ public class ChatScreen implements Screen {
     private Socket socket;
     private String nickname;
     private TextArea textArea;
-
     private List<String> usersList;
     private Label ChatSpace;
     private TextField nickInput;
@@ -76,6 +75,7 @@ public class ChatScreen implements Screen {
         window.add(nickInput);
         window.row();
         window.add(join_button);
+
 
         table.add(window);
         join_button.addListener(new ChangeListener() {
@@ -111,7 +111,7 @@ public class ChatScreen implements Screen {
 
         table.add(chatScroll).width(400).height(400f).colspan(2);
 
-        usersList = new List<String>(skin, "dimmed");
+        usersList = new List<String>(skin);
 
         ScrollPane usersScroll = new ScrollPane(usersList, skin);
         usersScroll.setFadeScrollBars(false);
@@ -208,7 +208,7 @@ public class ChatScreen implements Screen {
     }
     @Override
     public void resize(int width, int height){
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(0, 0, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.getViewport().update(width, height, true);
     }

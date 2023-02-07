@@ -70,7 +70,7 @@ public class AssetManager {
         IceSpellSound = Gdx.audio.newSound(Gdx.files.internal("Music/396499__alonsotm__icespell03.mp3"));
 
 
-        UIskin = new Skin(Gdx.files.internal("ui/Skin/uiskin.json"));
+        UIskin = new Skin(Gdx.files.internal("ui/dark-hdpi/Holo-dark-hdpi.json"));
 
         chatURL = "http://localhost:3000";
     }
