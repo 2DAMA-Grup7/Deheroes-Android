@@ -208,6 +208,8 @@ public class ChatScreen implements Screen {
     }
     @Override
     public void resize(int width, int height){
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.getViewport().update(width, height, true);
     }
     @Override
