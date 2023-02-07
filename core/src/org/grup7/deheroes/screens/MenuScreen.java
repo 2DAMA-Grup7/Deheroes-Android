@@ -26,7 +26,9 @@ public class MenuScreen implements Screen {
         this.game = game;
         camera = new OrthographicCamera(Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
         StretchViewport viewport = new StretchViewport(Settings.GAME_WIDTH, Settings.GAME_HEIGHT, camera);
+
         stage = new Stage(viewport);
+
     }
 
     @Override
@@ -87,10 +89,13 @@ public class MenuScreen implements Screen {
     public void render(float delta) {
         stage.draw();
         stage.act(delta);
+
+
     }
 
     @Override
-    public void resize(int width, int height) {
+    public void resize(int width, int height){
+        stage.getViewport().update(width, height, true);
     }
 
     @Override
