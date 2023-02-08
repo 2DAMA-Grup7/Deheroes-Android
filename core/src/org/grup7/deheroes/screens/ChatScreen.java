@@ -111,7 +111,7 @@ public class ChatScreen implements Screen {
 
         table.add(chatScroll).width(400).height(400f).colspan(2);
 
-        usersList = new List<String>(skin);
+        usersList = new List<>(skin);
 
         ScrollPane usersScroll = new ScrollPane(usersList, skin);
         usersScroll.setFadeScrollBars(false);
@@ -154,7 +154,7 @@ public class ChatScreen implements Screen {
             @Override
             public void call(Object... args) {
                 JSONArray array = (JSONArray)args[0];
-                Array<String> users = new Array<String>();
+                Array<String> users = new Array<>();
                 try{
                     for(int i = 0; i < array.length(); i++){
                         String nick = array.getJSONObject(i).getString("name");
@@ -208,7 +208,7 @@ public class ChatScreen implements Screen {
     }
     @Override
     public void resize(int width, int height){
-        Gdx.gl.glClearColor(0, 0, 1, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.getViewport().update(width, height, true);
     }
@@ -220,7 +220,6 @@ public class ChatScreen implements Screen {
     public void resume() {
 
     }
-
     @Override
     public void hide() {
 

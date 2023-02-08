@@ -2,54 +2,36 @@ package org.grup7.deheroes.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import org.grup7.deheroes.MyGdxGame;
 import org.grup7.deheroes.helpers.AssetManager;
 import org.grup7.deheroes.utils.Settings;
 
-import java.net.URISyntaxException;
-
-import io.socket.client.IO;
-
 public class MenuScreen implements Screen {
-    private final Table setMenu;
     public static OrthographicCamera camera;
     private final MyGdxGame game;
     private final Stage stage;
-
-
 
     public MenuScreen(MyGdxGame game) {
         this.game = game;
         camera = new OrthographicCamera(Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
         StretchViewport viewport = new StretchViewport(Settings.GAME_WIDTH, Settings.GAME_HEIGHT, camera);
         stage = new Stage(viewport);
-        setMenu = mainMenu();
         stage.addActor(mainMenu());
-
     }
 
     private Table mainMenu() {
         final Table table = new Table();
         table.setFillParent(true);
-
 
         Window window = new Window("   Menu", AssetManager.UIskin);
       // uso espacios para mover al medio lol, no encuentro otra forma
@@ -136,10 +118,7 @@ public class MenuScreen implements Screen {
 
     @Override
     public void dispose() {
-
         AssetManager.MenuMusic.dispose();
-        stage.dispose();
-
 
     }
 }
