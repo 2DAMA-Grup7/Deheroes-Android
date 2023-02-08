@@ -114,7 +114,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        show_points.setPosition(mainChar.getX() - 30, mainChar.getY() + 120);
+        show_points.setPosition(camera.position.x-200,camera.position.y+95);
+
         show_points.setText("Points: " + points);
         //show_points.draw(batch, "Points:"+points, Settings.MainChar_STARTX, Settings.MainChar_STARTY);
         if (mainChar.getHp() < 0) {
@@ -202,7 +203,7 @@ public class GameScreen implements Screen {
                         if (mob.getHp() < 0) {
                             mob.dispose();
                             mobs_eliminated.add(mob);
-                            points += 1;
+
                             if (mob.isBoss()) {
                                 AssetManager.PurpleBossDiesSound.play();
                                 points += 50;
