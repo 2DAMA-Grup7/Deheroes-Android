@@ -1,5 +1,4 @@
-package org.grup7.deheroes.helpers;
-
+package org.grup7.deheroes.Helpers;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;

@@ -1,5 +1,4 @@
-package org.grup7.deheroes.utils;
-
+package org.grup7.deheroes.Utils;
 public class Settings {
     public static final float Spell_VELOCITY = 60.0f;
     public static final float Mob_VELOCITY = 60.0f;

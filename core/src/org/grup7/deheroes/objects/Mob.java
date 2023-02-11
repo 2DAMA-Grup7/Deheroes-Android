@@ -1,5 +1,6 @@
 package org.grup7.deheroes.objects;
 
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -9,7 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 
-import org.grup7.deheroes.utils.Settings;
+import org.grup7.deheroes.Utils.Settings;
 
 import java.util.Random;
 

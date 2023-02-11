@@ -1,4 +1,4 @@
-package org.grup7.deheroes.screens;
+package org.grup7.deheroes.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -10,31 +10,80 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
+import org.grup7.deheroes.Helpers.AssetManager;
 import org.grup7.deheroes.MyGdxGame;
-import org.grup7.deheroes.helpers.AssetManager;
-import org.grup7.deheroes.utils.Settings;
+import org.grup7.deheroes.Utils.Settings;
 
 public class MenuScreen implements Screen {
-    public static OrthographicCamera camera;
-    private final MyGdxGame game;
-    private final Stage stage;
+    private MyGdxGame game;
+    private OrthographicCamera camera;
+    private Viewport viewport;
+
+    private  Stage stage;
 
     public MenuScreen(MyGdxGame game) {
         this.game = game;
-        camera = new OrthographicCamera(Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
-        StretchViewport viewport = new StretchViewport(Settings.GAME_WIDTH, Settings.GAME_HEIGHT, camera);
-        stage = new Stage(viewport);
+        camera = new OrthographicCamera();
+        viewport = new StretchViewport(Settings.GAME_WIDTH,Settings.GAME_HEIGHT,camera);
+        stage = new Stage();
         stage.addActor(mainMenu());
     }
+
+    @Override
+    public void show() {
+        AssetManager.MenuMusic.setLooping(true);
+        AssetManager.MenuMusic.play();
+        Gdx.input.setInputProcessor(stage);
+
+    }
+
+    @Override
+    public void render(float delta) {
+        Gdx.gl.glClearColor(0,0,0,1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+       // game.batch.setProjectionMatrix(camera.combined);
+        stage.draw();
+        stage.act();
+
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resume() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
+    public void dispose() {
+        AssetManager.MenuMusic.dispose();
+
+    }
+
 
     private Table mainMenu() {
         final Table table = new Table();
         table.setFillParent(true);
 
         Window window = new Window("   Menu", AssetManager.UIskin);
-      // uso espacios para mover al medio lol, no encuentro otra forma
+        // uso espacios para mover al medio lol, no encuentro otra forma
 
         TextButton StarButton = new TextButton("Start", AssetManager.UIskin);
         TextButton OnlineButton = new TextButton("Online", AssetManager.UIskin);
@@ -54,14 +103,7 @@ public class MenuScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 dispose();
-                game.setScreen(new GameScreen(stage.getBatch(), stage.getViewport()));
-            }
-        });
-        OnlineButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                dispose();
-                game.setScreen(new OnlineScreen(stage.getBatch(), stage.getViewport()));
+                game.setScreen(new GameScreen(game));
             }
         });
 
@@ -76,49 +118,9 @@ public class MenuScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 dispose();
-                game.setScreen(new ChatScreen(stage.getBatch(), stage.getViewport()));
+                game.setScreen(new ChatScreen());
             }
         });
         return table;
-    }
-    @Override
-    public void show() {
-        AssetManager.MenuMusic.setLooping(true);
-        AssetManager.MenuMusic.play();
-        Gdx.input.setInputProcessor(stage);
-
-    }
-
-    @Override
-    public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stage.draw();
-        stage.act(delta);
-
-
-    }
-
-    @Override
-    public void resize(int width, int height){
-        stage.getViewport().update(width, height, true);
-    }
-
-    @Override
-    public void pause() {
-    }
-
-    @Override
-    public void resume() {
-    }
-
-    @Override
-    public void hide() {
-    }
-
-    @Override
-    public void dispose() {
-        AssetManager.MenuMusic.dispose();
-
     }
 }

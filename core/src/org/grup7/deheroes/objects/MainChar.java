@@ -9,9 +9,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 
-import org.grup7.deheroes.helpers.AssetManager;
-import org.grup7.deheroes.screens.GameScreen;
-import org.grup7.deheroes.utils.Settings;
+import org.grup7.deheroes.Helpers.AssetManager;
+import org.grup7.deheroes.Screens.GameScreen;
+import org.grup7.deheroes.Utils.Settings;
 
 public class MainChar extends Actor {
     private static int direction;
@@ -30,7 +30,6 @@ public class MainChar extends Actor {
     private float prev_y;
     private float hp;
     private int walkDirection;
-
     public MainChar(float x, float y, int width, int height, float hp) {
         this.width = width;
         this.height = height;
