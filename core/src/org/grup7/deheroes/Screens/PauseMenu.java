@@ -7,28 +7,31 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import org.grup7.deheroes.Helpers.AssetManager;
 import org.grup7.deheroes.MyGdxGame;
-
 public class PauseMenu implements Screen {
-    private final Stage stage;
-    private final Skin skin;
-    private final TextButton resumeButton;
-    private final TextButton quitButton;
-    private final MyGdxGame game;
+    private Stage stage;
+    private Skin skin;
+    private Table table;
+    private TextButton resumeButton;
+    private TextButton quitButton;
 
     public PauseMenu(final MyGdxGame game) {
-        this.game = game;
         // Initialize the stage and skin
         stage = new Stage();
         skin = AssetManager.UIskin;
 
+        // Create the table
+        table = new Table();
+        table.setFillParent(true);
+        table.center();
+
         // Create the resume button
         resumeButton = new TextButton("Resume", skin);
-        resumeButton.setPosition(Gdx.graphics.getWidth() / 2 - 100, 200);
         resumeButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -39,7 +42,6 @@ public class PauseMenu implements Screen {
 
         // Create the quit button
         quitButton = new TextButton("Quit", skin);
-        quitButton.setPosition(Gdx.graphics.getWidth() / 2 - 100, 100);
         quitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -48,9 +50,13 @@ public class PauseMenu implements Screen {
             }
         });
 
-        // Add the buttons to the stage
-        stage.addActor(resumeButton);
-        stage.addActor(quitButton);
+        // Add the buttons to the table
+        table.add(resumeButton).pad(10);
+        table.row();
+        table.add(quitButton).pad(10);
+
+        // Add the table to the stage
+        stage.addActor(table);
     }
 
     @Override
