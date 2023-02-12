@@ -5,7 +5,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -16,7 +15,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 import org.grup7.deheroes.Helpers.AssetManager;
 import org.grup7.deheroes.Helpers.InputHandler;
@@ -52,12 +50,10 @@ public class GameScreen implements Screen {
     // Create an ArrayList to store the collision rectangles
     private final ArrayList<Rectangle> obstacleRectangles = new ArrayList<>();
     private final MyGdxGame game;
-    private Hud hud;
+    private final Hud hud;
     private boolean paused;
 
-
-
-    private OrthographicCamera camera;
+    private final OrthographicCamera camera;
 
     public GameScreen(MyGdxGame game) {
         this.game = game;
@@ -91,7 +87,7 @@ public class GameScreen implements Screen {
         stage.addActor(mainChar);
         healthBar = new HealthBar(100);
         stage.addActor(healthBar);
-        hud.score=0;
+        Hud.score =0;
     //see https://libgdx.com/wiki/start/a-simple-game how it spams drops
         Timer.schedule(new Timer.Task() {
             @Override
@@ -141,7 +137,10 @@ public class GameScreen implements Screen {
                 AssetManager.HeroDiesSound.play();
                 //Separar dead and game over
                 AssetManager.GameOverSound.play();
-                Gdx.app.exit();
+
+                game.setScreen(new DeadScreen());
+
+
             } else {
                 healthBar.setX_Y(mainChar.getX(), mainChar.getY() + 32);
                 healthBar.setHealth(mainChar.getHp());
@@ -155,7 +154,7 @@ public class GameScreen implements Screen {
                     }
                 }
 
-                if (hud.score > 1) {
+                if (Hud.score > 1) {
                     if (mob_boss == null) {
                         mob_boss = new MobBoss(64, 64, 500, AssetManager.PurpleFlameBossSheet, 50);
                         mobs.add(mob_boss);
