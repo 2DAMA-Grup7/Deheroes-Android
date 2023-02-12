@@ -1,6 +1,7 @@
 package org.grup7.deheroes.Screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -52,6 +53,7 @@ public class GameScreen implements Screen {
     private final ArrayList<Rectangle> obstacleRectangles = new ArrayList<>();
     private final MyGdxGame game;
     private Hud hud;
+    private boolean paused;
 
 
 
@@ -123,129 +125,139 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        if(Gdx.input.isKeyJustPressed(Input.Keys.P)){
+            paused=!paused;
+        }
 
-        //show_points.draw(batch, "Points:"+points, Settings.MainChar_STARTX, Settings.MainChar_STARTY);
-        if (mainChar.getHp() < 0) {
-            // TODO add death menu
-            AssetManager.HeroDiesSound.play();
-            //Separar dead and game over
-            AssetManager.GameOverSound.play();
-            Gdx.app.exit();
-        } else {
-            healthBar.setX_Y(mainChar.getX(), mainChar.getY() + 32);
-            healthBar.setHealth(mainChar.getHp());
+        if (paused){
+            game.setScreen(new PauseMenu(game));
 
-            mainChar.setCollisionRect(new Rectangle(mainChar.getX(), mainChar.getY(), mainChar.getWidth(), mainChar.getHeight()));
-            // Iterate through the obstacle rectangles
-            for (Rectangle obstacleRect : obstacleRectangles) {
-                if (Intersector.overlaps(mainChar.getCollisionRect(), obstacleRect)) {
-                    // Collision detected, stop the player's movement
-                    mainChar.ObjectCollision();
-                }
-            }
 
-            if (hud.score > 1) {
-                if (mob_boss == null) {
-                    mob_boss = new MobBoss(64, 64, 500, AssetManager.PurpleFlameBossSheet, 50);
-                    mobs.add(mob_boss);
-                    mob_boss.setCollisionRect(new Rectangle(mob_boss.getX(), mob_boss.getY(), mob_boss.getWidth(), mob_boss.getHeight()));
-                    boss_healthBar = new HealthBar(500);
-                    stage.addActor(mob_boss);
-                    stage.addActor(boss_healthBar);
-                }
-                if (spell_boss == null) {
-                    spell_boss = new SpellBoss(64, 64, mainChar.getY() - 16, mainChar.getX() - 16, mainChar.getWalkDirection(), AssetManager.explosionSpellSheet);
-                    spell_boss.setCollisionRect(new Rectangle(spell_boss.getX(), spell_boss.getY(), spell_boss.getWidth(), spell_boss.getHeight()));
-                    stage.addActor(spell_boss);
-                } else {
-                    if (spell_boss.isAnimationFinished()) {
-                        if (Intersector.overlaps(mainChar.getCollisionRect(), spell_boss.getCollisionRect())) {
-                            mainChar.setHp(mainChar.getHp() - 20);
-                        }
-                        spell_boss.dispose();
-                        spell_boss = null;
-                    } else {
-                        spell_boss.explosion(delta);
+        }else {
+
+            //show_points.draw(batch, "Points:"+points, Settings.MainChar_STARTX, Settings.MainChar_STARTY);
+            if (mainChar.getHp() < 0) {
+                // TODO add death menu
+                AssetManager.HeroDiesSound.play();
+                //Separar dead and game over
+                AssetManager.GameOverSound.play();
+                Gdx.app.exit();
+            } else {
+                healthBar.setX_Y(mainChar.getX(), mainChar.getY() + 32);
+                healthBar.setHealth(mainChar.getHp());
+
+                mainChar.setCollisionRect(new Rectangle(mainChar.getX(), mainChar.getY(), mainChar.getWidth(), mainChar.getHeight()));
+                // Iterate through the obstacle rectangles
+                for (Rectangle obstacleRect : obstacleRectangles) {
+                    if (Intersector.overlaps(mainChar.getCollisionRect(), obstacleRect)) {
+                        // Collision detected, stop the player's movement
+                        mainChar.ObjectCollision();
                     }
                 }
 
-                if (mob_boss.getHp() < 0) {
-                    mob_boss.dispose();
-                } else {
-                    boss_healthBar.setX_Y(mob_boss.getX() + 15, mob_boss.getY() + 60);
-                    boss_healthBar.setHealth(mob_boss.getHp());
-                    mob_boss.act(delta, mainChar.getPosition());
-                }
-            }
-            ArrayList<Spell> spells_removed = new ArrayList<>();
-            ArrayList<Mob> mobs_eliminated = new ArrayList<>();
-            for (Mob mob : mobs) {
-                mob.act(delta, mainChar.getPosition());
-                mob.setCollisionRect(new Rectangle(mob.getX(), mob.getY(), mob.getWidth(), mob.getHeight()));
-                if (Intersector.overlaps(mainChar.getCollisionRect(), mob.getCollisionRect())) {
-                    // Collision detected, hero gets hit
-                    mainChar.setHp(mainChar.getHp() - 0.1F);
-                    AssetManager.GetHitHeroSound.play();
-
-                }
-                for (Spell spell : spells) {
-                    if (spell.getX() > 2000 || spell.getY() > 2000) {
-                        spells_removed.add(spell);
-                        spell.dispose();
+                if (hud.score > 1) {
+                    if (mob_boss == null) {
+                        mob_boss = new MobBoss(64, 64, 500, AssetManager.PurpleFlameBossSheet, 50);
+                        mobs.add(mob_boss);
+                        mob_boss.setCollisionRect(new Rectangle(mob_boss.getX(), mob_boss.getY(), mob_boss.getWidth(), mob_boss.getHeight()));
+                        boss_healthBar = new HealthBar(500);
+                        stage.addActor(mob_boss);
+                        stage.addActor(boss_healthBar);
+                    }
+                    if (spell_boss == null) {
+                        spell_boss = new SpellBoss(64, 64, mainChar.getY() - 16, mainChar.getX() - 16, mainChar.getWalkDirection(), AssetManager.explosionSpellSheet);
+                        spell_boss.setCollisionRect(new Rectangle(spell_boss.getX(), spell_boss.getY(), spell_boss.getWidth(), spell_boss.getHeight()));
+                        stage.addActor(spell_boss);
                     } else {
-                        //spell.act(delta);
-                        spell.act(delta, mobs.get(0).getX(), mobs.get(0).getY(), mainChar.getPosition());
-                        spell.setCollisionRect(new Rectangle(spell.getX(), spell.getY(), spell.getWidth(), spell.getHeight()));
-                        if (Intersector.overlaps(spell.getCollisionRect(), mob.getCollisionRect())) {
-                            // Collision detected, stop the player's movement
-                            mob.setHp(mob.getHp() - 10);
+                        if (spell_boss.isAnimationFinished()) {
+                            if (Intersector.overlaps(mainChar.getCollisionRect(), spell_boss.getCollisionRect())) {
+                                mainChar.setHp(mainChar.getHp() - 20);
+                            }
+                            spell_boss.dispose();
+                            spell_boss = null;
+                        } else {
+                            spell_boss.explosion(delta);
+                        }
+                    }
+
+                    if (mob_boss.getHp() < 0) {
+                        mob_boss.dispose();
+                    } else {
+                        boss_healthBar.setX_Y(mob_boss.getX() + 15, mob_boss.getY() + 60);
+                        boss_healthBar.setHealth(mob_boss.getHp());
+                        mob_boss.act(delta, mainChar.getPosition());
+                    }
+                }
+                ArrayList<Spell> spells_removed = new ArrayList<>();
+                ArrayList<Mob> mobs_eliminated = new ArrayList<>();
+                for (Mob mob : mobs) {
+                    mob.act(delta, mainChar.getPosition());
+                    mob.setCollisionRect(new Rectangle(mob.getX(), mob.getY(), mob.getWidth(), mob.getHeight()));
+                    if (Intersector.overlaps(mainChar.getCollisionRect(), mob.getCollisionRect())) {
+                        // Collision detected, hero gets hit
+                        mainChar.setHp(mainChar.getHp() - 0.1F);
+                        AssetManager.GetHitHeroSound.play();
+
+                    }
+                    for (Spell spell : spells) {
+                        if (spell.getX() > 2000 || spell.getY() > 2000) {
                             spells_removed.add(spell);
                             spell.dispose();
-                            if (mob.isBoss()) {
-                                AssetManager.GetHitFlameBossSound.play();
-                            } else {AssetManager.GetHitPurpleFlameSound.play();}
+                        } else {
+                            //spell.act(delta);
+                            spell.act(delta, mobs.get(0).getX(), mobs.get(0).getY(), mainChar.getPosition());
+                            spell.setCollisionRect(new Rectangle(spell.getX(), spell.getY(), spell.getWidth(), spell.getHeight()));
+                            if (Intersector.overlaps(spell.getCollisionRect(), mob.getCollisionRect())) {
+                                // Collision detected, stop the player's movement
+                                mob.setHp(mob.getHp() - 10);
+                                spells_removed.add(spell);
+                                spell.dispose();
+                                if (mob.isBoss()) {
+                                    AssetManager.GetHitFlameBossSound.play();
+                                } else {
+                                    AssetManager.GetHitPurpleFlameSound.play();
+                                }
 
 
-                        }
-                        if (mob.getHp() < 0) {
-                            mob.dispose();
-                            mobs_eliminated.add(mob);
+                            }
+                            if (mob.getHp() < 0) {
+                                mob.dispose();
+                                mobs_eliminated.add(mob);
 
-                            if (mob.isBoss()) {
-                                AssetManager.PurpleBossDiesSound.play();
-                                Hud.addScore(50);
+                                if (mob.isBoss()) {
+                                    AssetManager.PurpleBossDiesSound.play();
+                                    Hud.addScore(50);
 
-                            } else {
-                                AssetManager.PurpleFLameDiesSound.play();
-
-                               Hud.addScore(1);
+                                } else {
+                                    AssetManager.PurpleFLameDiesSound.play();
+                                    Hud.addScore(1);
+                                }
                             }
                         }
                     }
                 }
-            }
-            for (Spell spell : spells_removed) {
-                spells.remove(spell);
-            }
-            for (Mob mob : mobs_eliminated) {
-                mobs.remove(mob);
-            }
-            Gdx.gl.glClearColor(0, 0, 0, 1);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-            camera.position.set(mainChar.getX(), mainChar.getY(), 0);
-            camera.zoom = 0.2f;
-            game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+                for (Spell spell : spells_removed) {
+                    spells.remove(spell);
+                }
+                for (Mob mob : mobs_eliminated) {
+                    mobs.remove(mob);
+                }
+                Gdx.gl.glClearColor(0, 0, 0, 1);
+                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+                camera.position.set(mainChar.getX(), mainChar.getY(), 0);
+                camera.zoom = 0.2f;
+                game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
 
-            // Update the camera
-            camera.update();
-            renderer.setView(camera);
-            // Render the map
-            renderer.render();
-            hud.stage.draw();
-            stage.draw();
-            mainChar.act(delta);
+                // Update the camera
+                camera.update();
+                renderer.setView(camera);
+                // Render the map
+                renderer.render();
+                hud.stage.draw();
+                stage.draw();
+                mainChar.act(delta);
+            }
         }
-
     }
 
     @Override
