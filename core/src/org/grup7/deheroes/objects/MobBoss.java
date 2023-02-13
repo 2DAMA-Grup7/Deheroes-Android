@@ -3,7 +3,7 @@ package org.grup7.deheroes.objects;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 
-import org.grup7.deheroes.utils.Settings;
+import org.grup7.deheroes.Utils.Settings;
 
 public class MobBoss extends Mob{
 

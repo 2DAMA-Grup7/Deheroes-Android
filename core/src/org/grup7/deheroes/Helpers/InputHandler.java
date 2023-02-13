@@ -1,13 +1,13 @@
-package org.grup7.deheroes.helpers;
+package org.grup7.deheroes.Helpers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputProcessor;
 
+import org.grup7.deheroes.Screens.GameScreen;
+import org.grup7.deheroes.Screens.OnlineScreen;
 import org.grup7.deheroes.objects.MainChar;
-import org.grup7.deheroes.screens.GameScreen;
-import org.grup7.deheroes.screens.OnlineScreen;
 
 public class InputHandler extends InputAdapter implements InputProcessor {
 

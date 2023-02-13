@@ -1,4 +1,4 @@
-package org.grup7.deheroes.screens;
+package org.grup7.deheroes.Screens;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;

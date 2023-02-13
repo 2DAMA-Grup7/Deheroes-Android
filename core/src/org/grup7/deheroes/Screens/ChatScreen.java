@@ -1,13 +1,15 @@
-package org.grup7.deheroes.screens;
-
-
-import io.socket.client.IO;
-import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
+package org.grup7.deheroes.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -21,18 +23,15 @@ import com.badlogic.gdx.utils.JsonWriter;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import org.grup7.deheroes.helpers.AssetManager;
+import org.grup7.deheroes.Helpers.AssetManager;
 import org.json.JSONArray;
 import org.json.JSONException;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+
 import java.net.URISyntaxException;
+
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 public class ChatScreen implements Screen {
     private final Stage stage;
@@ -42,14 +41,13 @@ public class ChatScreen implements Screen {
     private Socket socket;
     private String nickname;
     private TextArea textArea;
-
     private List<String> usersList;
     private Label ChatSpace;
     private TextField nickInput;
     private final String chatURL;
 
 
-    public ChatScreen(Batch prevBatch, Viewport prevViewport) {
+    public ChatScreen() {
         chatURL = AssetManager.chatURL;
         skin = AssetManager.UIskin;
         stage = new Stage(new ScreenViewport());
@@ -76,6 +74,7 @@ public class ChatScreen implements Screen {
         window.add(nickInput);
         window.row();
         window.add(join_button);
+
 
         table.add(window);
         join_button.addListener(new ChangeListener() {
@@ -111,7 +110,7 @@ public class ChatScreen implements Screen {
 
         table.add(chatScroll).width(400).height(400f).colspan(2);
 
-        usersList = new List<String>(skin, "dimmed");
+        usersList = new List<>(skin);
 
         ScrollPane usersScroll = new ScrollPane(usersList, skin);
         usersScroll.setFadeScrollBars(false);
@@ -154,7 +153,7 @@ public class ChatScreen implements Screen {
             @Override
             public void call(Object... args) {
                 JSONArray array = (JSONArray)args[0];
-                Array<String> users = new Array<String>();
+                Array<String> users = new Array<>();
                 try{
                     for(int i = 0; i < array.length(); i++){
                         String nick = array.getJSONObject(i).getString("name");
@@ -208,6 +207,8 @@ public class ChatScreen implements Screen {
     }
     @Override
     public void resize(int width, int height){
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.getViewport().update(width, height, true);
     }
     @Override
@@ -218,7 +219,6 @@ public class ChatScreen implements Screen {
     public void resume() {
 
     }
-
     @Override
     public void hide() {
 

@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 
-import org.grup7.deheroes.utils.Settings;
+import org.grup7.deheroes.Utils.Settings;
 
 public class Spell extends Actor {
     protected final Vector2 position;
@@ -54,7 +54,7 @@ public class Spell extends Actor {
         stateTime += delta;
         Vector2 positionMob = new Vector2(x, y);
 
-       //Vector2 destination= new Vector2(((float)Math.sqrt(positionMob.x-startPos.x)),(float)Math.sqrt((positionMob.y-startPos.y)));
+        //Vector2 destination= new Vector2(((float)Math.sqrt(positionMob.x-startPos.x)),(float)Math.sqrt((positionMob.y-startPos.y)));
 
         //System.out.println("X: " + startPos.x + " Y: " + startPos.y);
         //System.out.println("X: " + positionMob.x + " Y: " + positionMob.y);
