@@ -48,11 +48,11 @@ public class SinglePlayer implements Screen {
     private final Hero player;
     private final World world;
 
-    public SinglePlayer(Batch prevBatch, String map) {
+    public SinglePlayer( String map) {
         this.world = new World(new Vector2(0, 0), true);
         this.debugRenderer = new Box2DDebugRenderer();
         this.camera = new OrthographicCamera(Vars.gameWidth, Vars.gameHeight);
-        this.stage = new Stage(new StretchViewport(Vars.gameWidth, Vars.gameHeight, camera), prevBatch);
+        this.stage = new Stage(new StretchViewport(Vars.gameWidth, Vars.gameHeight, camera));
         this.player = new Witch(world);
         this.mapRenderer = new OrthogonalTiledMapRenderer(loadMap(map));
         world.setContactListener(new WorldContactListener(player));
