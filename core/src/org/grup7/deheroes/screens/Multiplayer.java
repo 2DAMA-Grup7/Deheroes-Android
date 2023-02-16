@@ -36,6 +36,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import io.socket.client.IO;
@@ -58,6 +59,8 @@ public class Multiplayer implements Screen {
     Texture playerPenguin;
     Texture friendPenguin;
     HashMap<String, Penguin> friendlyPlayers;
+    private boolean p2 ;
+
 
     public Multiplayer(String map) {
         playerPenguin = new Texture("sprites/heroes/penguin.png");
@@ -68,10 +71,7 @@ public class Multiplayer implements Screen {
         this.stage = new Stage(new StretchViewport(Vars.gameWidth, Vars.gameHeight, camera));
 
         this.mapRenderer = new OrthogonalTiledMapRenderer(loadMap(map));
-
-
-
-
+        this.p2 = false;
     }
 
     @Override
@@ -93,6 +93,13 @@ public class Multiplayer implements Screen {
             camera.position.set(player.getX(), player.getY(), 0);
 
         }
+       if(friendlyPlayers !=null){ for(Map.Entry<String,Penguin>entry: friendlyPlayers.entrySet()){
+            entry.getValue().draw(stage.getBatch());
+        }}
+
+       if (p2=true){
+           new Penguin(friendPenguin).draw(stage.getBatch());
+       }
         stage.getBatch().end();
 
 
@@ -126,6 +133,8 @@ public class Multiplayer implements Screen {
 
     @Override
     public void dispose() {
+        playerPenguin.dispose();
+        friendPenguin.dispose();
     }
 
     private TiledMap loadMap(String mapPath) {
@@ -201,7 +210,8 @@ public class Multiplayer implements Screen {
                 try {
                     id = data.getString("id");
                     Gdx.app.log("SocketIO", "New Player Connect: " + id);
-                    friendlyPlayers.put(id, new Penguin(friendPenguin));
+
+                    boolean p2 = true;
                 }catch(JSONException e){
                     Gdx.app.log("SocketIO", "Error getting New PlayerID");
                 }
