@@ -92,7 +92,7 @@ public class Multiplayer implements Screen {
             JSONObject data = new JSONObject();
             try{
                 data.put("x",player.getX());
-                data.put("y",player.getX());
+                data.put("y",player.getY());
                 socket.emit("playerMoved",data);
             }catch (JSONException e){
                 Gdx.app.log("Socket.io","Error sending update data");
@@ -116,6 +116,7 @@ public class Multiplayer implements Screen {
         }
        if(friendlyPlayers !=null){ for(Map.Entry<String,Penguin>entry: friendlyPlayers.entrySet()){
             entry.getValue().draw(stage.getBatch());
+
         }}
 
        for(HashMap.Entry<String, Penguin> entry : friendlyPlayers.entrySet()){
@@ -128,10 +129,8 @@ public class Multiplayer implements Screen {
         camera.update();
         mapRenderer.setView(camera);
 
-
         debugRenderer.render(world, camera.combined);
         stage.draw();
-
 
     }
 
@@ -254,7 +253,6 @@ public class Multiplayer implements Screen {
                 JSONObject data = (JSONObject) args[0];
                 try {
                   String playerId = data.getString("id");
-
 
                   Double x = data.getDouble("x");
                   Double y = data.getDouble("y");

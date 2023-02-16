@@ -58,7 +58,7 @@ public class MainMenu implements Screen {
 
     @Override
     public void dispose() {
-
+    dispose();
     }
 
     private Table menuTable(final ClientLauncher game) {
