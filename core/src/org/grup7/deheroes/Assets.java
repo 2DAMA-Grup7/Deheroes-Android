@@ -16,7 +16,7 @@ public class Assets {
     }
 
     public static class Skin {
-        public static String uiSkin = "skin/uiskin.json";
+        public static String uiSkin = "ui/dark-hdpi/Holo-dark-hdpi.json";
     }
 
     public static class Heroes {
