@@ -22,6 +22,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import org.grup7.deheroes.Vars;
@@ -32,6 +33,7 @@ import org.grup7.deheroes.actors.heroes.Penguin;
 import org.grup7.deheroes.actors.heroes.Witch;
 import org.grup7.deheroes.actors.mobs.Mob;
 import org.grup7.deheroes.actors.spells.Spell;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -59,8 +61,9 @@ public class Multiplayer implements Screen {
     Texture playerPenguin;
     Texture friendPenguin;
     HashMap<String, Penguin> friendlyPlayers;
-    private boolean p2 ;
 
+    private final float UPDATE_TIME = 1/60f;
+    float timer;
 
     public Multiplayer(String map) {
         playerPenguin = new Texture("sprites/heroes/penguin.png");
@@ -71,7 +74,10 @@ public class Multiplayer implements Screen {
         this.stage = new Stage(new StretchViewport(Vars.gameWidth, Vars.gameHeight, camera));
 
         this.mapRenderer = new OrthogonalTiledMapRenderer(loadMap(map));
-        this.p2 = false;
+
+        friendlyPlayers = new HashMap<String, Penguin>();
+
+
     }
 
     @Override
@@ -80,12 +86,27 @@ public class Multiplayer implements Screen {
         setSocket();
     }
 
+    public void updateServer(float dt){
+        timer += dt;
+        if(timer>= UPDATE_TIME && player != null && player.hasMoved()){
+            JSONObject data = new JSONObject();
+            try{
+                data.put("x",player.getX());
+                data.put("y",player.getX());
+                socket.emit("playerMoved",data);
+            }catch (JSONException e){
+                Gdx.app.log("Socket.io","Error sending update data");
+            }
+        }
+    }
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         handleInput(Gdx.graphics.getDeltaTime());
+        updateServer(Gdx.graphics.getDeltaTime());
         mapRenderer.render();
+
         stage.getBatch().begin();
 
         if (player != null){
@@ -97,9 +118,9 @@ public class Multiplayer implements Screen {
             entry.getValue().draw(stage.getBatch());
         }}
 
-       if (p2=true){
-           new Penguin(friendPenguin).draw(stage.getBatch());
-       }
+       for(HashMap.Entry<String, Penguin> entry : friendlyPlayers.entrySet()){
+           entry.getValue().draw(stage.getBatch());}
+
         stage.getBatch().end();
 
 
@@ -188,7 +209,7 @@ public class Multiplayer implements Screen {
             public void call(Object... args) {
                 Gdx.app.log("SocketIO", "Connected");
                 player = new Penguin(playerPenguin);
-                player.setPosition(300,300);
+
 
             }
         }).on("socketID", new Emitter.Listener() {
@@ -208,15 +229,15 @@ public class Multiplayer implements Screen {
             public void call(Object... args) {
                 JSONObject data = (JSONObject) args[0];
                 try {
-                    id = data.getString("id");
+                    String playerId = data.getString("id");
                     Gdx.app.log("SocketIO", "New Player Connect: " + id);
+                    friendlyPlayers.put(playerId, new Penguin(friendPenguin));
 
-                    boolean p2 = true;
                 }catch(JSONException e){
                     Gdx.app.log("SocketIO", "Error getting New PlayerID");
                 }
             }
-        });/*.on("playerDisconnected", new Emitter.Listener() {
+        }).on("playerDisconnected", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 JSONObject data = (JSONObject) args[0];
@@ -227,13 +248,30 @@ public class Multiplayer implements Screen {
                     Gdx.app.log("SocketIO", "Error getting disconnected PlayerID");
                 }
             }
+        }).on("playerMoved", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                JSONObject data = (JSONObject) args[0];
+                try {
+                  String playerId = data.getString("id");
+
+
+                  Double x = data.getDouble("x");
+                  Double y = data.getDouble("y");
+                  if(friendlyPlayers.get(playerId) !=null){
+                      friendlyPlayers.get(playerId).setPosition(x.floatValue(),y.floatValue());
+                  }
+                }catch(JSONException e){
+                    Gdx.app.log("SocketIO", "Error getting disconnected PlayerID");
+                }
+            }
         }).on("getPlayers", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 JSONArray objects = (JSONArray) args[0];
                 try {
                     for(int i = 0; i < objects.length(); i++){
-                        Starship coopPlayer = new Starship(friendlyShip);
+                        Penguin coopPlayer = new Penguin(friendPenguin);
                         Vector2 position = new Vector2();
                         position.x = ((Double) objects.getJSONObject(i).getDouble("x")).floatValue();
                         position.y = ((Double) objects.getJSONObject(i).getDouble("y")).floatValue();
@@ -241,13 +279,11 @@ public class Multiplayer implements Screen {
 
                         friendlyPlayers.put(objects.getJSONObject(i).getString("id"), coopPlayer);
                     }
-                } catch(JSONException e){
-
-                }
+                } catch(JSONException e){}
             }
         });
     }
-*/
+
     }
-}
+
 
