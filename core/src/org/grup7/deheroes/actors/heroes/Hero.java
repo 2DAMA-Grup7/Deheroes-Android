@@ -46,17 +46,13 @@ public class Hero extends MyActor {
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(getX() + getWidth() / 2, getY() + getHeight() / 2);
         bodyDef.fixedRotation = true;
-
         PolygonShape polygonShape = new PolygonShape();
         polygonShape.setAsBox(getWidth() / 4, getHeight() / 4);
-
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = polygonShape;
         fixtureDef.density = 2;
-
         Body body = world.createBody(bodyDef);
         body.createFixture(fixtureDef).setUserData(this);
-
         polygonShape.dispose();
         this.body = body;
     }
@@ -84,8 +80,7 @@ public class Hero extends MyActor {
         tick += delta;
         // Update player velocity
         body.setLinearVelocity(velocity.x * 60, velocity.y * 60);
-        setX(body.getPosition().x);
-        setY(body.getPosition().y);
+        setPosition(body.getPosition());
         // Set Health Bar
         healthBar.setX_Y(getX() - getWidth() / 2, getY() + 30 - getHeight() / 2);
         healthBar.setHealth(getHp());
@@ -118,10 +113,6 @@ public class Hero extends MyActor {
 
     public TextureRegion[] getWalkUp() {
         return walkUp;
-    }
-
-    public Vector2 getPosition() {
-        return new Vector2(getX(), getY());
     }
 
     public float getHp() {

@@ -4,44 +4,34 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
+import org.grup7.deheroes.Assets;
+
 public class HealthBar extends Actor {
     private final Texture emptyBar;
     private final Texture fullBar;
     private final float maxHealth;
     private float currentHealth;
-    private float y, x;
 
     public HealthBar(float maxHealth) {
         this.maxHealth = maxHealth;
         this.currentHealth = maxHealth;
-        emptyBar = new Texture("ui/hp-bar-empty.png");
-        fullBar = new Texture("ui/hp-bar-full.png");
+        this.emptyBar = new Texture(Assets.UI.hpBarEmpty);
+        this.fullBar = new Texture(Assets.UI.hpBarFull);
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        batch.draw(emptyBar, x, y);
-        batch.draw(fullBar, x, y, fullBar.getWidth() * currentHealth / maxHealth, fullBar.getHeight());
+        batch.draw(emptyBar, getX(), getY());
+        batch.draw(fullBar, getX(), getY(), fullBar.getWidth() * currentHealth / maxHealth, fullBar.getHeight());
     }
-
 
     public void setHealth(float health) {
         currentHealth = health;
     }
 
-    @Override
-    public float getY() {
-        return y;
-    }
-
     public void setX_Y(float x, float y) {
-        this.y = y;
-        this.x = x;
-    }
-
-    @Override
-    public float getX() {
-        return x;
+        setY(y);
+        setX(x);
     }
 
     public void dispose() {

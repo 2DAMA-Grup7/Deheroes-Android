@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -20,7 +19,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import org.grup7.deheroes.Vars;
@@ -34,6 +33,7 @@ import org.grup7.deheroes.actors.mobs.PurpleFlameBoss;
 import org.grup7.deheroes.actors.spells.IceBall;
 import org.grup7.deheroes.actors.spells.Spell;
 
+import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class SinglePlayer implements Screen {
@@ -47,38 +47,20 @@ public class SinglePlayer implements Screen {
     private final Stage stage;
     private final Hero player;
     private final World world;
+    private long lastSpellSpawn;
+    private long lastMobSpawn;
 
-    public SinglePlayer(Batch prevBatch, String map) {
+    public SinglePlayer(String map) {
         this.world = new World(new Vector2(0, 0), true);
         this.debugRenderer = new Box2DDebugRenderer();
         this.camera = new OrthographicCamera(Vars.gameWidth, Vars.gameHeight);
-        this.stage = new Stage(new StretchViewport(Vars.gameWidth, Vars.gameHeight, camera), prevBatch);
+        this.stage = new Stage(new StretchViewport(Vars.gameWidth, Vars.gameHeight, camera));
         this.player = new Witch(world);
+        this.lastSpellSpawn = TimeUtils.nanoTime();
         this.mapRenderer = new OrthogonalTiledMapRenderer(loadMap(map));
         world.setContactListener(new WorldContactListener(player));
         stage.addActor(player);
-        Mob mobBoss = new PurpleFlameBoss(world, player.getPosition());
-        allMobs.add(mobBoss);
-        stage.addActor(mobBoss);
-        // Create Basic Enemies
-
-        Timer.schedule(new Timer.Task() {
-            @Override
-            public void run() {
-                Mob mob = new PurpleFlame(world);
-                allMobs.add(mob);
-                stage.addActor(mob);
-            }
-        }, 0, 2);
-
-        Timer.schedule(new Timer.Task() {
-            @Override
-            public void run() {
-                Spell spell = new IceBall(world, player.getPosition(), new Vector2(allMobs.getFirst().getX(), allMobs.getFirst().getY()));
-                allSpells.add(spell);
-                stage.addActor(spell);
-            }
-        }, 0, 1);
+        mobsCreation();
     }
 
     @Override
@@ -88,11 +70,9 @@ public class SinglePlayer implements Screen {
     @Override
     public void render(float delta) {
         actorQueue.forEach(stage::addActor);
-        removeActorQueue.forEach(MyActor::dispose);
-        removeActorQueue.clear();
-        player.act(delta);
-        allMobs.forEach(mob -> mob.act(delta, player));
-        allSpells.forEach(spell -> spell.act(delta));
+        actorQueue.clear();
+        actorAct(delta);
+        //System.out.println("PlayerX: " + player.getX() + " PlayerY: " + player.getY());
         world.step(delta, 6, 2);
         camera.position.set(player.getX(), player.getY(), 0);
         camera.update();
@@ -102,7 +82,6 @@ public class SinglePlayer implements Screen {
         mapRenderer.render();
         debugRenderer.render(world, camera.combined);
         stage.draw();
-        actorQueue.clear();
     }
 
     @Override
@@ -124,6 +103,46 @@ public class SinglePlayer implements Screen {
 
     @Override
     public void dispose() {
+    }
+
+    private void actorAct(float delta) {
+        player.act(delta);
+        allMobs.forEach(mob -> {
+            if (mob.isAlive()) {
+                mob.act(delta, player);
+            } else {
+                if (TimeUtils.nanoTime() - lastMobSpawn > 2000000000) {
+                    mob.awake(new Vector2(new Random().nextInt(300), new Random().nextInt(300)));
+                    lastMobSpawn = TimeUtils.nanoTime();
+                }
+            }
+        });
+        allSpells.forEach(spell -> {
+            if (spell.isAlive()) {
+                spell.act(delta);
+            } else {
+                if (TimeUtils.nanoTime() - lastSpellSpawn > 1000000000) {
+                    spell.awake(player.getPosition());
+                    spell.setDestination(allMobs.getFirst().getPosition());
+                    lastSpellSpawn = TimeUtils.nanoTime();
+                }
+            }
+        });
+    }
+
+    private void mobsCreation() {
+        Mob mobBoss = new PurpleFlameBoss(world, player.getPosition());
+        allMobs.add(mobBoss);
+        stage.addActor(mobBoss);
+        // Create 100 spells & mobs
+        for (int i = 0; i < 30; i++) {
+            IceBall iceBall = new IceBall(world);
+            allSpells.add(iceBall);
+            stage.addActor(iceBall);
+            Mob mob = new PurpleFlame(world);
+            allMobs.add(mob);
+            stage.addActor(mob);
+        }
     }
 
     private TiledMap loadMap(String mapPath) {

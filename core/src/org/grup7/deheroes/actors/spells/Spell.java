@@ -1,7 +1,5 @@
 package org.grup7.deheroes.actors.spells;
 
-import static org.grup7.deheroes.screens.SinglePlayer.allSpells;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -26,6 +24,7 @@ public class Spell extends MyActor {
         this.rows = 1;
         this.cols = 5;
         this.world = world;
+        this.alive = false;
         spritesSetup(texturePath);
         setBounds(startX, startY, width, height);
         collisionSetup(world);
@@ -59,6 +58,10 @@ public class Spell extends MyActor {
         currentAnimation = new Animation<>(0F, animation);
     }
 
+    public void setDestination(Vector2 destination) {
+        this.velocity = destination.sub(getPosition());
+    }
+
     public void draw(Batch batch, float parentAlpha) {
         currentAnimation = new Animation<>(0.1F, animation);
         currentAnimation.setPlayMode(Animation.PlayMode.LOOP);
@@ -67,12 +70,5 @@ public class Spell extends MyActor {
 
     public Body getBody() {
         return body;
-    }
-
-    @Override
-    public void dispose() {
-        allSpells.remove(this);
-        world.destroyBody(getBody());
-        super.dispose();
     }
 }

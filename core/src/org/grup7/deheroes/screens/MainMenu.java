@@ -19,20 +19,16 @@ public class MainMenu implements Screen {
     public MainMenu(final ClientLauncher game) {
         stage = new Stage();
         Skin skin = new Skin(Gdx.files.internal(Assets.Skin.uiSkin));
-
         TextButton startButton = new TextButton("Start", skin);
         startButton.setPosition(Gdx.graphics.getWidth() / 2F - startButton.getWidth() / 2, Gdx.graphics.getHeight() / 2F);
-
         TextButton exitButton = new TextButton("Exit", skin);
         exitButton.setPosition(Gdx.graphics.getWidth() / 2F - exitButton.getWidth() / 2, Gdx.graphics.getHeight() / 2F - exitButton.getHeight());
-
         startButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SinglePlayer(stage.getBatch(), Assets.Maps.landOfDeath));
+                game.setScreen(new SinglePlayer(Assets.Maps.landOfDeath));
             }
         });
-
         exitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

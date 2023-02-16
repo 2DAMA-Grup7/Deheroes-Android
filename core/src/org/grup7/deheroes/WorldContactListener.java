@@ -2,7 +2,6 @@ package org.grup7.deheroes;
 
 import static org.grup7.deheroes.screens.SinglePlayer.allMobs;
 import static org.grup7.deheroes.screens.SinglePlayer.allSpells;
-import static org.grup7.deheroes.screens.SinglePlayer.removeActorQueue;
 
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
@@ -32,15 +31,15 @@ public class WorldContactListener implements ContactListener {
         if (fa == null || fb == null) return;
         if (fa.getUserData() == null || fb.getUserData() == null) return;
 
-        if (isMobContact(fa, fb)) {
-            player.setHp(player.getHp() - 2);
-        }
+        System.out.println(fa.getUserData());
+        System.out.println(fb.getUserData());
+
         if (isSpellContact(fa, fb) || isSpellContact2(fa, fb)) {
             allSpells.forEach(spell -> {
-                if (spell.getBody().equals(fb.getBody())) removeActorQueue.add(spell);
+                if (spell.getBody().equals(fb.getBody())) spell.sleep();
             });
             allMobs.forEach(mob -> {
-                if (mob.getBody().equals(fa.getBody())) mob.setHp(mob.getHp() - 60);
+                if (mob.getBody().equals(fa.getBody())) mob.setHP(mob.getHP() - 60);
             });
         }
     }
@@ -64,6 +63,13 @@ public class WorldContactListener implements ContactListener {
 
     @Override
     public void preSolve(Contact cnt, Manifold manifold) {
+        Fixture fa = cnt.getFixtureA();
+        Fixture fb = cnt.getFixtureB();
+        if (fa == null || fb == null) return;
+        if (fa.getUserData() == null || fb.getUserData() == null) return;
+        if (isMobContact(fa, fb)) {
+            player.setHp(player.getHp() - 0.3F);
+        }
     }
 
     @Override

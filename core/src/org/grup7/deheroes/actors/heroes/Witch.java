@@ -6,7 +6,6 @@ import org.grup7.deheroes.Assets;
 import org.grup7.deheroes.actors.Actions;
 
 public class Witch extends Hero implements Actions {
-
     public Witch(World world) {
         super(
                 world,
@@ -15,12 +14,13 @@ public class Witch extends Hero implements Actions {
                 32,
                 32,
                 100,
-                90,
+                100,
                 Assets.Heroes.witch);
     }
 
     @Override
     public void act(float delta) {
         super.act(delta);
+
     }
 }

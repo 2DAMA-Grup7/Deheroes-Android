@@ -8,7 +8,6 @@ public class ClientLauncher extends Game {
     @Override
     public void create() {
         // Start main menu
-        //setScreen(new Box2DCollisionExample());
         setScreen(new MainMenu(this));
     }
 }

@@ -18,16 +18,13 @@ public class PurpleFlameBoss extends Mob implements Actions {
     public PurpleFlameBoss(World world, Vector2 playerPosition) {
         super(
                 world,
-                500,
-                500,
                 64,
                 64,
                 40,
                 500,
-                2,
                 Assets.Mobs.purpleFlameBoss
         );
-        this.healthBar = new HealthBar(getHp());
+        this.healthBar = new HealthBar(getHP());
         this.explosion = new Explosion(world, playerPosition);
         actorQueue.add(healthBar);
         actorQueue.add(explosion);
@@ -37,7 +34,7 @@ public class PurpleFlameBoss extends Mob implements Actions {
     public void act(float delta, Hero hero) {
         super.act(delta, hero);
         trackActor(this, delta, hero.getPosition(), 40);
-        healthBar.setHealth(getHp());
+        healthBar.setHealth(getHP());
         healthBar.setX_Y(getX() + 15 - getWidth() / 2, getY() + 60 - getHeight() / 2);
         explosion.act(delta);
     }

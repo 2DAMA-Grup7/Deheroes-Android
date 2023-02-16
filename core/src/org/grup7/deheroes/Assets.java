@@ -3,6 +3,7 @@ package org.grup7.deheroes;
 public class Assets {
 
     public static class Fonts {
+
     }
 
     public static class Maps {
@@ -14,6 +15,12 @@ public class Assets {
 
     public static class Sounds {
     }
+
+    public static class UI {
+        public static String hpBarEmpty = "ui/hp-bar-empty.png";
+        public static String hpBarFull = "ui/hp-bar-full.png";
+    }
+
 
     public static class Skin {
         public static String uiSkin = "skin/uiskin.json";

@@ -1,8 +1,5 @@
 package org.grup7.deheroes.actors.mobs;
 
-import static org.grup7.deheroes.screens.SinglePlayer.allMobs;
-import static org.grup7.deheroes.screens.SinglePlayer.removeActorQueue;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -15,29 +12,33 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
+import org.grup7.deheroes.Vars;
 import org.grup7.deheroes.actors.MyActor;
 import org.grup7.deheroes.actors.heroes.Hero;
 
 public class Mob extends MyActor {
-    private float hp;
+    private final float maxHP;
+    private float HP;
     private TextureRegion[] animation;
 
-    public Mob(World world, float startX, float startY, float width, float height, float speed, float hp, float density, String texturePath) {
+    public Mob(World world, float width, float height, float speed, float hp, String texturePath) {
         this.velocity = new Vector2(0, 0);
         this.tick = 0f;
         this.rows = 1;
         this.cols = 6;
         this.speed = speed;
-        this.hp = hp;
+        this.HP = hp;
+        this.maxHP = hp;
         this.world = world;
+        this.alive = false;
         spritesSetup(texturePath);
-        setBounds(startX, startY, width, height);
+        setBounds(Vars.deadPointX, Vars.deadPointY, width, height);
         collisionSetup(world);
     }
 
     public void act(float delta, Hero hero) {
-        if (getHp() < 0) {
-            removeActorQueue.add(this);
+        if (getHP() < 0) {
+            sleep();
         } else {
             // Update time
             tick += delta;
@@ -62,6 +63,7 @@ public class Mob extends MyActor {
         Body body = world.createBody(bodyDef);
         body.createFixture(fixtureDef).setUserData(this);
         polygonShape.dispose();
+        body.setActive(false);
         this.body = body;
     }
 
@@ -78,22 +80,32 @@ public class Mob extends MyActor {
         batch.draw(currentAnimation.getKeyFrame(tick), body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2, getWidth(), getHeight());
     }
 
+    @Override
+    public void awake(Vector2 spawnPoint) {
+        super.awake(spawnPoint);
+        body.setActive(true);
+        setHP(maxHP);
+    }
+
+    @Override
+    public void sleep() {
+        super.sleep();
+        body.setActive(false);
+    }
+
     public Body getBody() {
         return body;
     }
 
-    public float getHp() {
-        return hp;
+    public float getHP() {
+        return HP;
     }
 
-    public void setHp(float hp) {
-        this.hp = hp;
+    public void setHP(float HP) {
+        this.HP = HP;
     }
 
-    @Override
-    public void dispose() {
-        allMobs.remove(this);
-        world.destroyBody(getBody());
-        super.dispose();
+    public float getMaxHP() {
+        return maxHP;
     }
 }

@@ -5,6 +5,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
+import org.grup7.deheroes.Vars;
+
 public class MyActor extends Actor {
     protected int rows, cols;
     protected Vector2 velocity;
@@ -12,6 +14,35 @@ public class MyActor extends Actor {
     protected float tick;
     protected Body body;
     protected World world;
+    protected boolean alive;
+
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
+    }
+
+    public void awake(Vector2 spawnPoint) {
+        body.setTransform(spawnPoint, 0);
+        setAlive(true);
+    }
+
+    public void sleep() {
+        body.setTransform(new Vector2(Vars.deadPointX, Vars.deadPointY), 0);
+        setAlive(false);
+    }
+
+    public Vector2 getPosition() {
+        return new Vector2(getX(), getY());
+    }
+
+    public void setPosition(Vector2 position) {
+        setX(position.x);
+        setY(position.y);
+    }
 
     public World getWorld() {
         return world;
@@ -82,6 +113,7 @@ public class MyActor extends Actor {
     }
 
     public void dispose() {
+        world.destroyBody(getBody());
         this.remove();
     }
 }
