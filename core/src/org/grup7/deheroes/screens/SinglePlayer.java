@@ -24,7 +24,6 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import org.grup7.deheroes.Vars;
 import org.grup7.deheroes.WorldContactListener;
-import org.grup7.deheroes.actors.MyActor;
 import org.grup7.deheroes.actors.heroes.Hero;
 import org.grup7.deheroes.actors.heroes.Witch;
 import org.grup7.deheroes.actors.mobs.Mob;
@@ -38,7 +37,6 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class SinglePlayer implements Screen {
     public static ConcurrentLinkedDeque<Actor> actorQueue = new ConcurrentLinkedDeque<>();
-    public static ConcurrentLinkedDeque<MyActor> removeActorQueue = new ConcurrentLinkedDeque<>();
     public static ConcurrentLinkedDeque<Mob> allMobs = new ConcurrentLinkedDeque<>();
     public static ConcurrentLinkedDeque<Spell> allSpells = new ConcurrentLinkedDeque<>();
     private final Box2DDebugRenderer debugRenderer;
@@ -105,8 +103,22 @@ public class SinglePlayer implements Screen {
     public void dispose() {
     }
 
+    private Vector2 closerMob() {
+        Vector2 closerMob = new Vector2(0, 0);
+        Float smallerDistance = Float.MAX_VALUE;
+        for (Mob mob : allMobs) {
+            if (mob.getDistanceHero() < smallerDistance) {
+                smallerDistance = mob.getDistanceHero();
+                closerMob = mob.getPosition();
+            }
+        }
+        return closerMob;
+    }
+
     private void actorAct(float delta) {
+        // Player
         player.act(delta);
+        // Mobs
         allMobs.forEach(mob -> {
             if (mob.isAlive()) {
                 mob.act(delta, player);
@@ -117,13 +129,14 @@ public class SinglePlayer implements Screen {
                 }
             }
         });
+        // Spells
         allSpells.forEach(spell -> {
             if (spell.isAlive()) {
                 spell.act(delta);
             } else {
                 if (TimeUtils.nanoTime() - lastSpellSpawn > 1000000000) {
                     spell.awake(player.getPosition());
-                    spell.setDestination(allMobs.getFirst().getPosition());
+                    spell.setDestination(closerMob(), player.getPosition());
                     lastSpellSpawn = TimeUtils.nanoTime();
                 }
             }
@@ -136,9 +149,11 @@ public class SinglePlayer implements Screen {
         stage.addActor(mobBoss);
         // Create 100 spells & mobs
         for (int i = 0; i < 30; i++) {
+            // spells
             IceBall iceBall = new IceBall(world);
             allSpells.add(iceBall);
             stage.addActor(iceBall);
+            // mobs
             Mob mob = new PurpleFlame(world);
             allMobs.add(mob);
             stage.addActor(mob);

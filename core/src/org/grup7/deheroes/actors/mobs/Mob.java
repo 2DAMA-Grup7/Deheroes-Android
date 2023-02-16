@@ -20,6 +20,7 @@ public class Mob extends MyActor {
     private final float maxHP;
     private float HP;
     private TextureRegion[] animation;
+    private float distanceHero;
 
     public Mob(World world, float width, float height, float speed, float hp, String texturePath) {
         this.velocity = new Vector2(0, 0);
@@ -31,6 +32,7 @@ public class Mob extends MyActor {
         this.maxHP = hp;
         this.world = world;
         this.alive = false;
+        this.distanceHero = Float.MAX_VALUE;
         spritesSetup(texturePath);
         setBounds(Vars.deadPointX, Vars.deadPointY, width, height);
         collisionSetup(world);
@@ -46,6 +48,8 @@ public class Mob extends MyActor {
             body.setLinearVelocity(velocity.x * speed, velocity.y * speed);
             setX(body.getPosition().x);
             setY(body.getPosition().y);
+            // Update distance between the hero and the mob
+            distanceHero = hero.getPosition().dst(getPosition());
         }
     }
 
@@ -84,6 +88,7 @@ public class Mob extends MyActor {
     public void awake(Vector2 spawnPoint) {
         super.awake(spawnPoint);
         body.setActive(true);
+        distanceHero = Float.MAX_VALUE;
         setHP(maxHP);
     }
 
@@ -91,6 +96,10 @@ public class Mob extends MyActor {
     public void sleep() {
         super.sleep();
         body.setActive(false);
+    }
+
+    public Float getDistanceHero() {
+        return distanceHero;
     }
 
     public Body getBody() {

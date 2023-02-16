@@ -14,7 +14,7 @@ public class Witch extends Hero implements Actions {
                 32,
                 32,
                 100,
-                100,
+                80,
                 Assets.Heroes.witch);
     }
 

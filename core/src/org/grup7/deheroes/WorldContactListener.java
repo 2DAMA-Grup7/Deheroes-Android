@@ -10,10 +10,9 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
 import org.grup7.deheroes.actors.heroes.Hero;
-import org.grup7.deheroes.actors.heroes.Witch;
-import org.grup7.deheroes.actors.mobs.PurpleFlame;
-import org.grup7.deheroes.actors.mobs.PurpleFlameBoss;
-import org.grup7.deheroes.actors.spells.IceBall;
+import org.grup7.deheroes.actors.mobs.Mob;
+import org.grup7.deheroes.actors.spells.Explosion;
+import org.grup7.deheroes.actors.spells.Spell;
 
 
 public class WorldContactListener implements ContactListener {
@@ -31,33 +30,40 @@ public class WorldContactListener implements ContactListener {
         if (fa == null || fb == null) return;
         if (fa.getUserData() == null || fb.getUserData() == null) return;
 
-        System.out.println(fa.getUserData());
-        System.out.println(fb.getUserData());
-
-        if (isSpellContact(fa, fb) || isSpellContact2(fa, fb)) {
+        //System.out.println(fa.getUserData());System.out.println(fb.getUserData());
+        if (isSpellContactMob(fa, fb)) {
             allSpells.forEach(spell -> {
-                if (spell.getBody().equals(fb.getBody())) spell.sleep();
+                if (spell.getBody().equals(fa.getBody())) spell.setHP(0);
             });
             allMobs.forEach(mob -> {
-                if (mob.getBody().equals(fa.getBody())) mob.setHP(mob.getHP() - 60);
+                if (mob.getBody().equals(fb.getBody())) mob.setHP(mob.getHP() - 30);
             });
         }
+
     }
 
     @Override
     public void endContact(Contact cnt) {
+        Fixture fa = cnt.getFixtureA();
+        Fixture fb = cnt.getFixtureB();
+        if (fa == null || fb == null) return;
+        if (fa.getUserData() == null || fb.getUserData() == null) return;
+
+        if (isExplosionContactHero(fa, fb)) {
+            player.setHp(player.getHp() - 20);
+        }
     }
 
-    private boolean isMobContact(Fixture a, Fixture b) {
-        return ((a.getUserData() instanceof Witch && b.getUserData() instanceof PurpleFlame) || (a.getUserData() instanceof PurpleFlame && b.getUserData() instanceof Witch));
+    private boolean isMobContactHero(Fixture a, Fixture b) {
+        return (a.getUserData() instanceof Hero && b.getUserData() instanceof Mob);
     }
 
-    private boolean isSpellContact(Fixture a, Fixture b) {
-        return ((a.getUserData() instanceof PurpleFlame && b.getUserData() instanceof IceBall) || (a.getUserData() instanceof IceBall && b.getUserData() instanceof PurpleFlame));
+    private boolean isSpellContactMob(Fixture a, Fixture b) {
+        return (a.getUserData() instanceof Spell && b.getUserData() instanceof Mob);
     }
 
-    private boolean isSpellContact2(Fixture a, Fixture b) {
-        return ((a.getUserData() instanceof PurpleFlameBoss && b.getUserData() instanceof IceBall) || (a.getUserData() instanceof IceBall && b.getUserData() instanceof PurpleFlameBoss));
+    private boolean isExplosionContactHero(Fixture a, Fixture b) {
+        return (a.getUserData() instanceof Hero && b.getUserData() instanceof Explosion);
     }
 
 
@@ -67,7 +73,8 @@ public class WorldContactListener implements ContactListener {
         Fixture fb = cnt.getFixtureB();
         if (fa == null || fb == null) return;
         if (fa.getUserData() == null || fb.getUserData() == null) return;
-        if (isMobContact(fa, fb)) {
+
+        if (isMobContactHero(fa, fb)) {
             player.setHp(player.getHp() - 0.3F);
         }
     }

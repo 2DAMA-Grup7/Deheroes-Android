@@ -17,6 +17,8 @@ import org.grup7.deheroes.actors.MyActor;
 public class Spell extends MyActor {
     protected Animation<TextureRegion> currentAnimation;
     protected TextureRegion[] animation;
+    protected Vector2 mobTargeted;
+    protected int HP;
 
     public Spell(World world, float startX, float startY, float width, float height, String texturePath) {
         this.velocity = new Vector2(0, 0);
@@ -25,14 +27,19 @@ public class Spell extends MyActor {
         this.cols = 5;
         this.world = world;
         this.alive = false;
+        this.HP = 1;
         spritesSetup(texturePath);
         setBounds(startX, startY, width, height);
         collisionSetup(world);
     }
 
     public void act(float delta) {
-        // Update time
-        tick += delta;
+        if (HP == 0) {
+            sleep();
+        } else {
+            // Update time
+            tick += delta;
+        }
     }
 
     public void collisionSetup(World world) {
@@ -58,8 +65,8 @@ public class Spell extends MyActor {
         currentAnimation = new Animation<>(0F, animation);
     }
 
-    public void setDestination(Vector2 destination) {
-        this.velocity = destination.sub(getPosition());
+    public void setDestination(Vector2 destination, Vector2 heroPosition) {
+        this.velocity = destination.sub(heroPosition);
     }
 
     public void draw(Batch batch, float parentAlpha) {
@@ -68,7 +75,29 @@ public class Spell extends MyActor {
         batch.draw(currentAnimation.getKeyFrame(tick), body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2, getWidth(), getHeight());
     }
 
+    @Override
+    public void awake(Vector2 spawnPoint) {
+        super.awake(spawnPoint);
+        setHP(1);
+    }
+
+    public int getHP() {
+        return HP;
+    }
+
+    public void setHP(int HP) {
+        this.HP = HP;
+    }
+
     public Body getBody() {
         return body;
+    }
+
+    public Vector2 getMobTargeted() {
+        return mobTargeted;
+    }
+
+    public void setMobTargeted(Vector2 mobTargeted) {
+        this.mobTargeted = mobTargeted;
     }
 }

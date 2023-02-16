@@ -31,7 +31,7 @@ public class MyActor extends Actor {
     }
 
     public void sleep() {
-        body.setTransform(new Vector2(Vars.deadPointX, Vars.deadPointY), 0);
+        body.setTransform(Vars.deadPoint, 0);
         setAlive(false);
     }
 
