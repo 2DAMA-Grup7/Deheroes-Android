@@ -6,7 +6,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -20,26 +19,17 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import org.grup7.deheroes.Vars;
-import org.grup7.deheroes.WorldContactListener;
-import org.grup7.deheroes.actors.MyActor;
-import org.grup7.deheroes.actors.heroes.Hero;
 import org.grup7.deheroes.actors.heroes.Penguin;
-import org.grup7.deheroes.actors.heroes.Witch;
-import org.grup7.deheroes.actors.mobs.Mob;
-import org.grup7.deheroes.actors.spells.Spell;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentLinkedDeque;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
