@@ -23,10 +23,9 @@ io.on('connection', function(socket){
 		socket.broadcast.emit('playerDisconnected', { id: socket.id });
 				players.splice(i, 1);
 
-		}
-	});
+		})
 	players.push(new player(socket.id, 0, 0));
-});
+	});
 
 /*io.on("connection", (socket) => {
   socket.on("disconnect", () => {
