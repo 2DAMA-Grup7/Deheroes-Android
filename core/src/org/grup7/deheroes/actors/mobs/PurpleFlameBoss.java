@@ -5,11 +5,11 @@ import static org.grup7.deheroes.screens.SinglePlayer.actorQueue;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
-import org.grup7.deheroes.Assets;
 import org.grup7.deheroes.actors.Actions;
 import org.grup7.deheroes.actors.heroes.Hero;
 import org.grup7.deheroes.actors.spells.Explosion;
 import org.grup7.deheroes.ui.HealthBar;
+import org.grup7.deheroes.utils.Assets;
 
 public class PurpleFlameBoss extends Mob implements Actions {
     private final HealthBar healthBar;

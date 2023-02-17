@@ -23,7 +23,6 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import org.grup7.deheroes.Vars;
-import org.grup7.deheroes.WorldContactListener;
 import org.grup7.deheroes.actors.heroes.Hero;
 import org.grup7.deheroes.actors.heroes.Witch;
 import org.grup7.deheroes.actors.mobs.Mob;
@@ -31,6 +30,7 @@ import org.grup7.deheroes.actors.mobs.PurpleFlame;
 import org.grup7.deheroes.actors.mobs.PurpleFlameBoss;
 import org.grup7.deheroes.actors.spells.IceBall;
 import org.grup7.deheroes.actors.spells.Spell;
+import org.grup7.deheroes.utils.WorldContactListener;
 
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -147,7 +147,7 @@ public class SinglePlayer implements Screen {
         Mob mobBoss = new PurpleFlameBoss(world, player.getPosition());
         allMobs.add(mobBoss);
         stage.addActor(mobBoss);
-        // Create 100 spells & mobs
+        // Create x spells & mobs
         for (int i = 0; i < 30; i++) {
             // spells
             IceBall iceBall = new IceBall(world);

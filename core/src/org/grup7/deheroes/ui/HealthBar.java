@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-import org.grup7.deheroes.Assets;
+import org.grup7.deheroes.utils.Assets;
 
 public class HealthBar extends Actor {
     private final Texture emptyBar;

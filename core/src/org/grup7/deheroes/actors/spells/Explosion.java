@@ -6,9 +6,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Timer;
 
-import org.grup7.deheroes.Assets;
 import org.grup7.deheroes.actors.Actions;
 import org.grup7.deheroes.actors.heroes.Hero;
+import org.grup7.deheroes.utils.Assets;
 
 public class Explosion extends Spell implements Actions {
     private boolean flag;

@@ -6,11 +6,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-import org.grup7.deheroes.Assets;
 import org.grup7.deheroes.ClientLauncher;
+import org.grup7.deheroes.utils.Assets;
 
 public class MainMenu implements Screen {
 
@@ -18,25 +20,7 @@ public class MainMenu implements Screen {
 
     public MainMenu(final ClientLauncher game) {
         stage = new Stage();
-        Skin skin = new Skin(Gdx.files.internal(Assets.Skin.uiSkin));
-        TextButton startButton = new TextButton("Start", skin);
-        startButton.setPosition(Gdx.graphics.getWidth() / 2F - startButton.getWidth() / 2, Gdx.graphics.getHeight() / 2F);
-        TextButton exitButton = new TextButton("Exit", skin);
-        exitButton.setPosition(Gdx.graphics.getWidth() / 2F - exitButton.getWidth() / 2, Gdx.graphics.getHeight() / 2F - exitButton.getHeight());
-        startButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SinglePlayer(Assets.Maps.landOfDeath));
-            }
-        });
-        exitButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.exit();
-            }
-        });
-        stage.addActor(startButton);
-        stage.addActor(exitButton);
+        stage.addActor(menuTable(game));
     }
 
     @Override
@@ -49,7 +33,7 @@ public class MainMenu implements Screen {
 
     @Override
     public void resize(int width, int height) {
-
+        stage.getViewport().update(width, height, true);
     }
 
     @Override
@@ -74,5 +58,46 @@ public class MainMenu implements Screen {
     @Override
     public void dispose() {
 
+    }
+
+    private Table menuTable(final ClientLauncher game) {
+        Skin skin = new Skin(Gdx.files.internal(Assets.Skin.uiSkin));
+
+        final Table table = new Table();
+        table.setFillParent(true);
+
+        Window window = new Window("Menu", skin);
+        TextButton starButton = new TextButton("Start", skin);
+        TextButton onlineButton = new TextButton("Online", skin);
+        TextButton exitButton = new TextButton("Exit", skin);
+
+        window.add(starButton).center();
+        window.row();
+        window.add(onlineButton).center();
+        window.row();
+
+        window.add(exitButton).center();
+        table.add(window);
+
+        starButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new SinglePlayer(Assets.Maps.landOfDeath));
+            }
+        });
+
+        onlineButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new Multiplayer(Assets.Maps.landOfDeath));
+            }
+        });
+        exitButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.exit();
+            }
+        });
+        return table;
     }
 }

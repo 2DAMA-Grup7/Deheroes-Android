@@ -1,4 +1,4 @@
-package org.grup7.deheroes;
+package org.grup7.deheroes.utils;
 
 import static org.grup7.deheroes.screens.SinglePlayer.allMobs;
 import static org.grup7.deheroes.screens.SinglePlayer.allSpells;

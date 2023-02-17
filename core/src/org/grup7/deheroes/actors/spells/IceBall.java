@@ -2,9 +2,9 @@ package org.grup7.deheroes.actors.spells;
 
 import com.badlogic.gdx.physics.box2d.World;
 
-import org.grup7.deheroes.Assets;
 import org.grup7.deheroes.Vars;
 import org.grup7.deheroes.actors.Actions;
+import org.grup7.deheroes.utils.Assets;
 
 public class IceBall extends Spell implements Actions {
     public IceBall(World world) {

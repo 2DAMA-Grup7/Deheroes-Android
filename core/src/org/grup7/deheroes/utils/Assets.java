@@ -1,4 +1,4 @@
-package org.grup7.deheroes;
+package org.grup7.deheroes.utils;
 
 public class Assets {
 

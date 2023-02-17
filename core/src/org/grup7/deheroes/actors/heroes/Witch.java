@@ -2,8 +2,8 @@ package org.grup7.deheroes.actors.heroes;
 
 import com.badlogic.gdx.physics.box2d.World;
 
-import org.grup7.deheroes.Assets;
 import org.grup7.deheroes.actors.Actions;
+import org.grup7.deheroes.utils.Assets;
 
 public class Witch extends Hero implements Actions {
     public Witch(World world) {
