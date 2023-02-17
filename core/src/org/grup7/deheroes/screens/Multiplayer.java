@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -21,7 +22,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import org.grup7.deheroes.Vars;
@@ -31,9 +32,6 @@ import org.grup7.deheroes.actors.heroes.Hero;
 import org.grup7.deheroes.actors.heroes.Penguin;
 import org.grup7.deheroes.actors.heroes.Witch;
 import org.grup7.deheroes.actors.mobs.Mob;
-import org.grup7.deheroes.actors.mobs.PurpleFlame;
-import org.grup7.deheroes.actors.mobs.PurpleFlameBoss;
-import org.grup7.deheroes.actors.spells.IceBall;
 import org.grup7.deheroes.actors.spells.Spell;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,11 +48,6 @@ import io.socket.emitter.Emitter;
 
 public class Multiplayer implements Screen {
 
-    public static ConcurrentLinkedDeque<Mob> allMobs = new ConcurrentLinkedDeque<>();
-    public static ConcurrentLinkedDeque<Spell> allSpells = new ConcurrentLinkedDeque<>();
-    public static ConcurrentLinkedDeque<Actor> actorQueue = new ConcurrentLinkedDeque<>();
-    public static ConcurrentLinkedDeque<MyActor> removeActorQueue = new ConcurrentLinkedDeque<>();
-
 
     private final Box2DDebugRenderer debugRenderer;
     private final TiledMapRenderer mapRenderer;
@@ -63,12 +56,11 @@ public class Multiplayer implements Screen {
 
     private final World world;
     private Socket socket;
-    private final Hero player;
     String id;
-    Penguin playerPlayer;
+    Penguin player;
     Texture playerPenguin;
     Texture friendPenguin;
-    HashMap<String, Witch> friendlyPlayers;
+    HashMap<String, Penguin> friendlyPlayers;
 
     private final float UPDATE_TIME = 1/60f;
     float timer;
@@ -80,34 +72,10 @@ public class Multiplayer implements Screen {
         this.debugRenderer = new Box2DDebugRenderer();
         this.camera = new OrthographicCamera(Vars.gameWidth, Vars.gameHeight);
         this.stage = new Stage(new StretchViewport(Vars.gameWidth, Vars.gameHeight, camera));
-        this.player = new Witch(world);
+
         this.mapRenderer = new OrthogonalTiledMapRenderer(loadMap(map));
-        world.setContactListener(new WorldContactListener(player));
 
-        Mob mobBoss = new PurpleFlameBoss(world, player.getPosition());
-        allMobs.add(mobBoss);
-        stage.addActor(mobBoss);
-
-
-        friendlyPlayers = new HashMap<String, Witch>();
-
-        Timer.schedule(new Timer.Task() {
-            @Override
-            public void run() {
-                Mob mob = new PurpleFlame(world);
-                allMobs.add(mob);
-                stage.addActor(mob);
-            }
-        }, 0, 2);
-
-        Timer.schedule(new Timer.Task() {
-            @Override
-            public void run() {
-                Spell spell = new IceBall(world, player.getPosition(), new Vector2(allMobs.getFirst().getX(), allMobs.getFirst().getY()));
-                allSpells.add(spell);
-                stage.addActor(spell);
-            }
-        }, 0, 1);
+        friendlyPlayers = new HashMap<String, Penguin>();
 
 
     }
@@ -120,11 +88,11 @@ public class Multiplayer implements Screen {
 
     public void updateServer(float dt){
         timer += dt;
-        if(timer>= UPDATE_TIME && playerPlayer != null && playerPlayer.hasMoved()){
+        if(timer>= UPDATE_TIME && player != null && player.hasMoved()){
             JSONObject data = new JSONObject();
             try{
-                data.put("x", playerPlayer.getX());
-                data.put("y", playerPlayer.getY());
+                data.put("x",player.getX());
+                data.put("y",player.getX());
                 socket.emit("playerMoved",data);
             }catch (JSONException e){
                 Gdx.app.log("Socket.io","Error sending update data");
@@ -135,27 +103,23 @@ public class Multiplayer implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+        handleInput(Gdx.graphics.getDeltaTime());
         updateServer(Gdx.graphics.getDeltaTime());
-        actorQueue.forEach(stage::addActor);
-        removeActorQueue.forEach(MyActor::dispose);
-        removeActorQueue.clear();
         mapRenderer.render();
 
         stage.getBatch().begin();
 
         if (player != null){
-            stage.addActor(player);
+            player.draw(stage.getBatch());
             camera.position.set(player.getX(), player.getY(), 0);
 
         }
-       if(friendlyPlayers !=null){ for(Map.Entry<String,Witch>entry: friendlyPlayers.entrySet()){
-
-
+       if(friendlyPlayers !=null){ for(Map.Entry<String,Penguin>entry: friendlyPlayers.entrySet()){
+            entry.getValue().draw(stage.getBatch());
         }}
 
-       for(HashMap.Entry<String, Witch> entry : friendlyPlayers.entrySet())
-           stage.addActor(entry.getValue());
+       for(HashMap.Entry<String, Penguin> entry : friendlyPlayers.entrySet()){
+           entry.getValue().draw(stage.getBatch());}
 
         stage.getBatch().end();
 
@@ -164,8 +128,10 @@ public class Multiplayer implements Screen {
         camera.update();
         mapRenderer.setView(camera);
 
+
         debugRenderer.render(world, camera.combined);
         stage.draw();
+
 
     }
 
@@ -221,11 +187,11 @@ public class Multiplayer implements Screen {
         return map;
     }
     public void handleInput(float dt){
-        if(playerPlayer != null) {
+        if(player != null) {
             if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-                playerPlayer.setPosition(playerPlayer.getX() + (-200 * dt), playerPlayer.getY());
+                player.setPosition(player.getX() + (-200 * dt), player.getY());
             } else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
-                playerPlayer.setPosition(playerPlayer.getX() + (+200 * dt), playerPlayer.getY());
+                player.setPosition(player.getX() + (+200 * dt), player.getY());
             }
         }
     }
@@ -242,7 +208,7 @@ public class Multiplayer implements Screen {
             @Override
             public void call(Object... args) {
                 Gdx.app.log("SocketIO", "Connected");
-                playerPlayer = new Penguin(playerPenguin);
+                player = new Penguin(playerPenguin);
 
 
             }
@@ -265,8 +231,7 @@ public class Multiplayer implements Screen {
                 try {
                     String playerId = data.getString("id");
                     Gdx.app.log("SocketIO", "New Player Connect: " + id);
-                    friendlyPlayers.put(playerId, new Witch(world));
-
+                    friendlyPlayers.put(playerId, new Penguin(friendPenguin));
 
                 }catch(JSONException e){
                     Gdx.app.log("SocketIO", "Error getting New PlayerID");
@@ -290,6 +255,7 @@ public class Multiplayer implements Screen {
                 try {
                   String playerId = data.getString("id");
 
+
                   Double x = data.getDouble("x");
                   Double y = data.getDouble("y");
                   if(friendlyPlayers.get(playerId) !=null){
@@ -305,7 +271,7 @@ public class Multiplayer implements Screen {
                 JSONArray objects = (JSONArray) args[0];
                 try {
                     for(int i = 0; i < objects.length(); i++){
-                        Witch coopPlayer = new Witch(world);
+                        Penguin coopPlayer = new Penguin(friendPenguin);
                         Vector2 position = new Vector2();
                         position.x = ((Double) objects.getJSONObject(i).getDouble("x")).floatValue();
                         position.y = ((Double) objects.getJSONObject(i).getDouble("y")).floatValue();
