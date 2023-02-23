@@ -22,6 +22,7 @@ import org.grup7.deheroes.ui.HealthBar;
 public class Hero extends MyActor {
     private final HealthBar healthBar;
     private float hp;
+    public String id;
     private Animation<TextureRegion> currentAnimation;
     private TextureRegion[] walkDown, walkLeft, walkRight, walkUp;
 

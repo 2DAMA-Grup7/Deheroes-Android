@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import org.grup7.deheroes.Assets;
 import org.grup7.deheroes.ClientLauncher;
+import org.grup7.deheroes.screens.multiplayer.Host;
 
 public class MainMenu implements Screen {
 
@@ -23,8 +24,11 @@ public class MainMenu implements Screen {
         TextButton startButton = new TextButton("Start", skin);
         startButton.setPosition(Gdx.graphics.getWidth() / 2F - startButton.getWidth() / 2, Gdx.graphics.getHeight() / 2F);
 
+        TextButton onlineButton = new TextButton("Online", skin);
+        onlineButton.setPosition(Gdx.graphics.getWidth() / 2F - onlineButton.getWidth() / 2, Gdx.graphics.getHeight()/2F-onlineButton.getHeight());
+
         TextButton exitButton = new TextButton("Exit", skin);
-        exitButton.setPosition(Gdx.graphics.getWidth() / 2F - exitButton.getWidth() / 2, Gdx.graphics.getHeight() / 2F - exitButton.getHeight());
+        exitButton.setPosition(Gdx.graphics.getWidth() / 2F - exitButton.getWidth() / 2, Gdx.graphics.getHeight() / 2F - exitButton.getHeight()*2);
 
         startButton.addListener(new ClickListener() {
             @Override
@@ -33,6 +37,14 @@ public class MainMenu implements Screen {
             }
         });
 
+        onlineButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new Host(stage.getBatch(), Assets.Maps.landOfDeath));
+            }
+        });
+
+
         exitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -40,8 +52,10 @@ public class MainMenu implements Screen {
             }
         });
         stage.addActor(startButton);
+        stage.addActor(onlineButton);
         stage.addActor(exitButton);
     }
+
 
     @Override
     public void render(float delta) {
