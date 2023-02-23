@@ -36,12 +36,14 @@ public class PurpleFlameBoss extends Mob implements Actions {
         trackActor(this, delta, hero.getPosition(), 40);
         healthBar.setHealth(getHP());
         healthBar.setX_Y(getX() + 15 - getWidth() / 2, getY() + 60 - getHeight() / 2);
-        explosion.act(delta, hero);
+        if (getDistanceHero() < 300) explosion.act(delta, hero);
+
     }
 
     @Override
     public void dispose() {
         super.dispose();
         this.healthBar.dispose();
+        this.explosion.dispose();
     }
 }

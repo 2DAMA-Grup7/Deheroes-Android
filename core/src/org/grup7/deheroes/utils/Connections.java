@@ -47,9 +47,7 @@ public class Connections {
     }
 
     public void setSocket() {
-        socket.on(Socket.EVENT_CONNECT, args -> {
-                Gdx.app.log("SocketIO", "Connected");
-                })
+        socket.on(Socket.EVENT_CONNECT, args -> Gdx.app.log("SocketIO", "Connected"))
                 .on("newPlayer", args -> {
                     remotePlayer = new Witch(world);
                     stage.addActor(remotePlayer);
