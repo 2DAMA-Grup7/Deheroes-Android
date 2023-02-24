@@ -1,19 +1,25 @@
 package org.grup7.deheroes.utils;
 
 public class Assets {
-
-    public static class Fonts {
-
-    }
-
     public static class Maps {
         public static String landOfDeath = "maps/land-of-death.tmx";
     }
 
     public static class Music {
+        public static String landOfDeath = "music/land-of-death.mp3";
+        public static String menu = "music/menu.wav";
     }
 
     public static class Sounds {
+        public static String gameOver = "sounds/game-over.mp3";
+        public static String heroDie = "sounds/hero-die.wav";
+        public static String purpleFlameDie = "sounds/purple-flame-die.wav";
+        public static String purpleFlameBossDie = "sounds/purple-flame-boss-die.wav";
+        public static String heroHit = "sounds/hero-hit.wav";
+        public static String purpleFlameHit = "sounds/purple-flame-hit.wav";
+        public static String purpleFlameBossHit = "sounds/purple-flame-boss-hit.wav";
+        public static String iceBallHit = "sounds/ice-spell-hit.mp3";
+        public static String explosionHit = "sounds/explosion-hit.wav";
     }
 
     public static class UI {

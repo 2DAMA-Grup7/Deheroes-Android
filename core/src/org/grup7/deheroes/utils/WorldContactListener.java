@@ -3,6 +3,7 @@ package org.grup7.deheroes.utils;
 import static org.grup7.deheroes.screens.SinglePlayer.allMobs;
 import static org.grup7.deheroes.screens.SinglePlayer.allSpells;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -30,13 +31,20 @@ public class WorldContactListener implements ContactListener {
         if (fa == null || fb == null) return;
         if (fa.getUserData() == null || fb.getUserData() == null) return;
 
+        if (isMobContactHero(fa, fb))
+            Gdx.audio.newSound(Gdx.files.internal(Assets.Sounds.heroHit)).play();
+
+
         //System.out.println(fa.getUserData());System.out.println(fb.getUserData());
         if (isSpellContactMob(fa, fb)) {
             allSpells.forEach(spell -> {
                 if (spell.getBody().equals(fa.getBody())) spell.setHP(0);
             });
             allMobs.forEach(mob -> {
-                if (mob.getBody().equals(fb.getBody())) mob.setHP(mob.getHP() - 30);
+                if (mob.getBody().equals(fb.getBody())) {
+                    mob.setHP(mob.getHP() - 30);
+                    mob.getHitSound().play();
+                }
             });
         }
 
@@ -74,9 +82,8 @@ public class WorldContactListener implements ContactListener {
         if (fa == null || fb == null) return;
         if (fa.getUserData() == null || fb.getUserData() == null) return;
 
-        if (isMobContactHero(fa, fb)) {
-            player.setHp(player.getHp() - 0.3F);
-        }
+        if (isMobContactHero(fa, fb)) player.setHp(player.getHp() - 0.3F);
+
     }
 
     @Override

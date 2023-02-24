@@ -15,6 +15,9 @@ public class PurpleFlame extends Mob implements Actions {
                 32,
                 60,
                 50,
+                1,
+                Assets.Sounds.purpleFlameHit,
+                Assets.Sounds.purpleFlameDie,
                 Assets.Mobs.purpleFlame
         );
     }

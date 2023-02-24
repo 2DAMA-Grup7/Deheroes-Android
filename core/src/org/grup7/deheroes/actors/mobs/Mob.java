@@ -1,6 +1,9 @@
 package org.grup7.deheroes.actors.mobs;
 
+import static org.grup7.deheroes.screens.SinglePlayer.score;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -17,18 +20,24 @@ import org.grup7.deheroes.actors.MyActor;
 import org.grup7.deheroes.actors.heroes.Hero;
 
 public class Mob extends MyActor {
+    private final int points;
     private final float maxHP;
+    private final Sound dieSound;
+    private final Sound hitSound;
     private float HP;
     private TextureRegion[] animation;
     private float distanceHero;
 
-    public Mob(World world, float width, float height, float speed, float hp, String texturePath) {
+    public Mob(World world, float width, float height, float speed, float hp, int points, String hitSoundPath, String dieSoundPath, String texturePath) {
         this.velocity = new Vector2(0, 0);
         this.tick = 0f;
         this.rows = 1;
         this.cols = 6;
+        this.dieSound = Gdx.audio.newSound(Gdx.files.internal(dieSoundPath));
+        this.hitSound = Gdx.audio.newSound(Gdx.files.internal(hitSoundPath));
         this.speed = speed;
         this.HP = hp;
+        this.points = points;
         this.maxHP = hp;
         this.world = world;
         this.alive = false;
@@ -41,6 +50,8 @@ public class Mob extends MyActor {
     public void act(float delta, Hero hero) {
         if (getHP() < 0) {
             sleep();
+            dieSound.play();
+            score += points;
         } else {
             // Update time
             tick += delta;
@@ -100,6 +111,10 @@ public class Mob extends MyActor {
 
     public Float getDistanceHero() {
         return distanceHero;
+    }
+
+    public Sound getHitSound() {
+        return hitSound;
     }
 
     public Body getBody() {

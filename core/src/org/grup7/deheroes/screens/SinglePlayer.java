@@ -1,6 +1,7 @@
 package org.grup7.deheroes.screens;
 
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -30,6 +31,8 @@ import org.grup7.deheroes.actors.mobs.PurpleFlame;
 import org.grup7.deheroes.actors.mobs.PurpleFlameBoss;
 import org.grup7.deheroes.actors.spells.IceBall;
 import org.grup7.deheroes.actors.spells.Spell;
+import org.grup7.deheroes.ui.Hud;
+import org.grup7.deheroes.utils.Assets;
 import org.grup7.deheroes.utils.WorldContactListener;
 
 import java.util.Random;
@@ -39,21 +42,28 @@ public class SinglePlayer implements Screen {
     public static ConcurrentLinkedDeque<Actor> actorQueue = new ConcurrentLinkedDeque<>();
     public static ConcurrentLinkedDeque<Mob> allMobs = new ConcurrentLinkedDeque<>();
     public static ConcurrentLinkedDeque<Spell> allSpells = new ConcurrentLinkedDeque<>();
+    public static int score = 0;
+
     private final Box2DDebugRenderer debugRenderer;
     private final TiledMapRenderer mapRenderer;
     private final OrthographicCamera camera;
+    private final Hud hud;
     private final Stage stage;
     private final Hero player;
     private final World world;
+    private final Game game;
+
     private long lastSpellSpawn;
     private long lastMobSpawn;
 
-    public SinglePlayer(String map) {
+    public SinglePlayer(Game game, String map) {
+        this.game = game;
         this.world = new World(new Vector2(0, 0), true);
         this.debugRenderer = new Box2DDebugRenderer();
         this.camera = new OrthographicCamera(Vars.gameWidth, Vars.gameHeight);
         this.stage = new Stage(new StretchViewport(Vars.gameWidth, Vars.gameHeight, camera));
         this.player = new Witch(world);
+        this.hud = new Hud();
         this.lastSpellSpawn = TimeUtils.nanoTime();
         this.mapRenderer = new OrthogonalTiledMapRenderer(loadMap(map));
         world.setContactListener(new WorldContactListener(player));
@@ -67,19 +77,28 @@ public class SinglePlayer implements Screen {
 
     @Override
     public void render(float delta) {
-        actorQueue.forEach(stage::addActor);
-        actorQueue.clear();
-        actorAct(delta);
-        //System.out.println("PlayerX: " + player.getX() + " PlayerY: " + player.getY());
-        world.step(delta, 6, 2);
-        camera.position.set(player.getX(), player.getY(), 0);
-        camera.update();
-        mapRenderer.setView(camera);
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        mapRenderer.render();
-        debugRenderer.render(world, camera.combined);
-        stage.draw();
+        if (player.getHp() < 0) {
+            Gdx.audio.newSound(Gdx.files.internal(Assets.Sounds.gameOver)).play();
+            dispose();
+            game.setScreen(new GameOver(game));
+        } else {
+            actorQueue.forEach(stage::addActor);
+            actorQueue.clear();
+            actorAct(delta);
+            //System.out.println("PlayerX: " + player.getX() + " PlayerY: " + player.getY());
+            world.step(delta, 6, 2);
+            camera.position.set(player.getX(), player.getY(), 0);
+            camera.update();
+            mapRenderer.setView(camera);
+            Gdx.gl.glClearColor(0, 0, 0, 1);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+            mapRenderer.render();
+            debugRenderer.render(world, camera.combined);
+            hud.updateScoreLabel(score);
+            stage.getBatch().setProjectionMatrix(hud.getStage().getCamera().combined);
+            hud.getStage().draw();
+            stage.draw();
+        }
     }
 
     @Override
@@ -101,6 +120,10 @@ public class SinglePlayer implements Screen {
 
     @Override
     public void dispose() {
+        allMobs.clear();
+        allSpells.clear();
+        actorQueue.clear();
+        score = 0;
     }
 
     private Vector2 closerMob() {

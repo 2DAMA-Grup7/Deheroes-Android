@@ -1,7 +1,10 @@
 package org.grup7.deheroes.screens;
 
+
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -11,16 +14,19 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-import org.grup7.deheroes.ClientLauncher;
 import org.grup7.deheroes.utils.Assets;
 
 public class MainMenu implements Screen {
-
+    private final Game game;
     private final Stage stage;
 
-    public MainMenu(final ClientLauncher game) {
+    public MainMenu(Game game) {
+        this.game = game;
+        Music music = Gdx.audio.newMusic(Gdx.files.internal(Assets.Music.menu));
+        music.setLooping(true);
+        music.play();
         stage = new Stage();
-        stage.addActor(menuTable(game));
+        stage.addActor(menuTable());
     }
 
     @Override
@@ -38,12 +44,10 @@ public class MainMenu implements Screen {
 
     @Override
     public void pause() {
-
     }
 
     @Override
     public void resume() {
-
     }
 
     @Override
@@ -60,32 +64,26 @@ public class MainMenu implements Screen {
 
     }
 
-    private Table menuTable(final ClientLauncher game) {
+    private Table menuTable() {
         Skin skin = new Skin(Gdx.files.internal(Assets.Skin.uiSkin));
-
-        final Table table = new Table();
-        table.setFillParent(true);
-
-        Window window = new Window("Menu", skin);
-        TextButton starButton = new TextButton("Start", skin);
+        TextButton startButton = new TextButton("Start", skin);
         TextButton onlineButton = new TextButton("Online", skin);
         TextButton exitButton = new TextButton("Exit", skin);
-
-        window.add(starButton).center();
+        Window window = new Window("Menu", skin);
+        window.add(startButton).center();
         window.row();
         window.add(onlineButton).center();
         window.row();
-
         window.add(exitButton).center();
+        Table table = new Table();
+        table.setFillParent(true);
         table.add(window);
-
-        starButton.addListener(new ClickListener() {
+        startButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SinglePlayer(Assets.Maps.landOfDeath));
+                game.setScreen(new SinglePlayer(game, Assets.Maps.landOfDeath));
             }
         });
-
         onlineButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

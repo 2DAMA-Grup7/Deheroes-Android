@@ -22,6 +22,9 @@ public class PurpleFlameBoss extends Mob implements Actions {
                 64,
                 40,
                 500,
+                50,
+                Assets.Sounds.purpleFlameBossHit,
+                Assets.Sounds.purpleFlameBossDie,
                 Assets.Mobs.purpleFlameBoss
         );
         this.healthBar = new HealthBar(getHP());
