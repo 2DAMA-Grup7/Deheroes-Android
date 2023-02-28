@@ -8,14 +8,15 @@ import org.grup7.deheroes.utils.Assets;
 
 public class PurpleFlame extends Mob implements Actions {
 
-    public PurpleFlame(World world) {
+    public PurpleFlame(World world, int id) {
         super(
                 world,
                 32,
                 32,
                 60,
                 50,
-                Assets.Mobs.purpleFlame
+                Assets.Mobs.purpleFlame,
+                id
         );
     }
 

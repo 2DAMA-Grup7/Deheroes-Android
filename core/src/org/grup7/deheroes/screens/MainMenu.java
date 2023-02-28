@@ -10,8 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-
 import org.grup7.deheroes.ClientLauncher;
+import org.grup7.deheroes.screens.Multiplayer.Host;
 import org.grup7.deheroes.utils.Assets;
 
 public class MainMenu implements Screen {
@@ -89,7 +89,7 @@ public class MainMenu implements Screen {
         onlineButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new Multiplayer(Assets.Maps.landOfDeath));
+                game.setScreen(new Host(Assets.Maps.landOfDeath));
             }
         });
         exitButton.addListener(new ClickListener() {

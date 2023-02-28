@@ -21,8 +21,9 @@ public class Mob extends MyActor {
     private float HP;
     private TextureRegion[] animation;
     private float distanceHero;
+    private Hero hero;
 
-    public Mob(World world, float width, float height, float speed, float hp, String texturePath) {
+    public Mob(World world, float width, float height, float speed, float hp, String texturePath, int id) {
         this.velocity = new Vector2(0, 0);
         this.tick = 0f;
         this.rows = 1;
@@ -39,6 +40,7 @@ public class Mob extends MyActor {
     }
 
     public void act(float delta, Hero hero) {
+
         if (getHP() < 0) {
             sleep();
         } else {

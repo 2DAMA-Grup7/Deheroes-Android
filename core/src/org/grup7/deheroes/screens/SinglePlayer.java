@@ -144,7 +144,7 @@ public class SinglePlayer implements Screen {
     }
 
     private void mobsCreation() {
-        Mob mobBoss = new PurpleFlameBoss(world, player.getPosition());
+        Mob mobBoss = new PurpleFlameBoss(world, player.getPosition(), 30);
         allMobs.add(mobBoss);
         stage.addActor(mobBoss);
         // Create x spells & mobs
@@ -154,7 +154,7 @@ public class SinglePlayer implements Screen {
             allSpells.add(iceBall);
             stage.addActor(iceBall);
             // mobs
-            Mob mob = new PurpleFlame(world);
+            Mob mob = new PurpleFlame(world, i);
             allMobs.add(mob);
             stage.addActor(mob);
         }

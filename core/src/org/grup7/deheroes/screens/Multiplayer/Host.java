@@ -1,10 +1,10 @@
-package org.grup7.deheroes.screens;
-
+package org.grup7.deheroes.screens.Multiplayer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -20,59 +20,73 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import org.grup7.deheroes.Vars;
+import org.grup7.deheroes.actors.MyActor;
+import org.grup7.deheroes.actors.heroes.Hero;
 import org.grup7.deheroes.actors.heroes.Witch;
 import org.grup7.deheroes.actors.mobs.Mob;
 import org.grup7.deheroes.actors.mobs.PurpleFlame;
 import org.grup7.deheroes.actors.mobs.PurpleFlameBoss;
 import org.grup7.deheroes.actors.spells.IceBall;
 import org.grup7.deheroes.actors.spells.Spell;
-import org.grup7.deheroes.utils.Connections;
 import org.grup7.deheroes.utils.WorldContactListener;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-public class Multiplayer extends Connections implements Screen {
-    protected static ConcurrentLinkedDeque<Actor> actorQueue = new ConcurrentLinkedDeque<>();
-    protected static ConcurrentLinkedDeque<Mob> allMobs = new ConcurrentLinkedDeque<>();
-    protected static ConcurrentLinkedDeque<Spell> allSpells = new ConcurrentLinkedDeque<>();
-    protected final Box2DDebugRenderer debugRenderer;
-    protected final TiledMapRenderer mapRenderer;
-    protected final OrthographicCamera camera;
-    protected long lastSpellSpawn;
-    protected long lastMobSpawn;
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
-    public Multiplayer(String map) {
+public class Host implements Screen {
+
+    public static ConcurrentLinkedDeque<Actor> actorQueue = new ConcurrentLinkedDeque<>();
+    public static ArrayList<Mob> allMobs = new ArrayList<>();
+    public static ConcurrentLinkedDeque<Spell> allSpells = new ConcurrentLinkedDeque<>();
+    private final Box2DDebugRenderer debugRenderer;
+    private final TiledMapRenderer mapRenderer;
+    private final OrthographicCamera camera;
+    private final Stage stage;
+    private final Hero player;
+    private final World world;
+    private long lastSpellSpawn;
+    private long lastMobSpawn;
+    private Socket socket;
+
+
+    public Host(String map) {
         this.world = new World(new Vector2(0, 0), true);
         this.debugRenderer = new Box2DDebugRenderer();
         this.camera = new OrthographicCamera(Vars.gameWidth, Vars.gameHeight);
         this.stage = new Stage(new StretchViewport(Vars.gameWidth, Vars.gameHeight, camera));
+        this.player = new Witch(world);
         this.lastSpellSpawn = TimeUtils.nanoTime();
         this.mapRenderer = new OrthogonalTiledMapRenderer(loadMap(map));
-        this.localPlayer = new Witch(world);
-        stage.addActor(localPlayer);
-        world.setContactListener(new WorldContactListener(localPlayer));
+        world.setContactListener(new WorldContactListener(player));
+        stage.addActor(player);
         mobsCreation();
     }
 
     @Override
     public void show() {
         connectSocket();
-        setSocket();
     }
 
     @Override
     public void render(float delta) {
-        updateServer(delta);
         actorQueue.forEach(stage::addActor);
         actorQueue.clear();
         actorAct(delta);
         //System.out.println("PlayerX: " + player.getX() + " PlayerY: " + player.getY());
         world.step(delta, 6, 2);
-        camera.position.set(localPlayer.getX(), localPlayer.getY(), 0);
+        camera.position.set(player.getX(), player.getY(), 0);
         camera.update();
         mapRenderer.setView(camera);
         Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -80,6 +94,8 @@ public class Multiplayer extends Connections implements Screen {
         mapRenderer.render();
         debugRenderer.render(world, camera.combined);
         stage.draw();
+
+        //setMobs();
     }
 
     @Override
@@ -117,11 +133,11 @@ public class Multiplayer extends Connections implements Screen {
 
     private void actorAct(float delta) {
         // Player
-        localPlayer.act(delta);
+        player.act(delta);
         // Mobs
         allMobs.forEach(mob -> {
             if (mob.isAlive()) {
-                mob.act(delta, localPlayer);
+                mob.act(delta, player);
             } else {
                 if (TimeUtils.nanoTime() - lastMobSpawn > 2000000000) {
                     mob.awake(new Vector2(new Random().nextInt(300), new Random().nextInt(300)));
@@ -135,8 +151,8 @@ public class Multiplayer extends Connections implements Screen {
                 spell.act(delta);
             } else {
                 if (TimeUtils.nanoTime() - lastSpellSpawn > 1000000000) {
-                    spell.awake(localPlayer.getPosition());
-                    spell.setDestination(closerMob(), localPlayer.getPosition());
+                    spell.awake(player.getPosition());
+                    spell.setDestination(closerMob(), player.getPosition());
                     lastSpellSpawn = TimeUtils.nanoTime();
                 }
             }
@@ -144,7 +160,7 @@ public class Multiplayer extends Connections implements Screen {
     }
 
     private void mobsCreation() {
-        Mob mobBoss = new PurpleFlameBoss(world, localPlayer.getPosition());
+        Mob mobBoss = new PurpleFlameBoss(world, player.getPosition(), 30);
         allMobs.add(mobBoss);
         stage.addActor(mobBoss);
         // Create x spells & mobs
@@ -154,7 +170,7 @@ public class Multiplayer extends Connections implements Screen {
             allSpells.add(iceBall);
             stage.addActor(iceBall);
             // mobs
-            Mob mob = new PurpleFlame(world);
+            Mob mob = new PurpleFlame(world, i);
             allMobs.add(mob);
             stage.addActor(mob);
         }
@@ -188,5 +204,31 @@ public class Multiplayer extends Connections implements Screen {
         }
         return map;
     }
-}
 
+    //Conectem amb el servidor
+    public void connectSocket(){
+        try {
+            socket = IO.socket("http://localhost:3000");
+            socket.connect();
+            System.out.println("I'm in");
+        } catch(Exception e){
+            System.out.println(e);
+        }
+    }
+
+    public void setMobs(){
+        socket.on(Socket.EVENT_CONNECT, args -> {
+            Gdx.app.log("setMobs", "Enviem mobs");
+            JSONArray mobs = new JSONArray();
+            allMobs.forEach(mob -> {
+                mobs.put(mob.getBody().getPosition());
+            });
+            socket.emit("sendMobs", mobs);
+            try {
+                System.out.println(mobs.get(1).toString());
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+}

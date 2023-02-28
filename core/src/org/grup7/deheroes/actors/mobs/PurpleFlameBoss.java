@@ -15,14 +15,15 @@ public class PurpleFlameBoss extends Mob implements Actions {
     private final HealthBar healthBar;
     private final Explosion explosion;
 
-    public PurpleFlameBoss(World world, Vector2 playerPosition) {
+    public PurpleFlameBoss(World world, Vector2 playerPosition, int id) {
         super(
                 world,
                 64,
                 64,
                 40,
                 500,
-                Assets.Mobs.purpleFlameBoss
+                Assets.Mobs.purpleFlameBoss,
+                id
         );
         this.healthBar = new HealthBar(getHP());
         this.explosion = new Explosion(world, playerPosition);
