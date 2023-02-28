@@ -64,8 +64,8 @@ public class GameOver implements Screen {
 
     private Table menuTable() {
         Skin skin = new Skin(Gdx.files.internal(Assets.Skin.uiSkin));
-        TextButton restartButton = new TextButton("Start New Game", skin);
-        TextButton returnButton = new TextButton("Return Menu", skin);
+        TextButton restartButton = new TextButton("New Game", skin);
+        TextButton returnButton = new TextButton("Menu", skin);
         TextButton exitButton = new TextButton("Exit", skin);
         Window window = new Window("GAME OVER", skin);
         window.add(restartButton).center();

@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.ChainShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
@@ -96,8 +97,8 @@ public class SinglePlayer implements Screen {
             debugRenderer.render(world, camera.combined);
             hud.updateScoreLabel(score);
             stage.getBatch().setProjectionMatrix(hud.getStage().getCamera().combined);
-            hud.getStage().draw();
             stage.draw();
+            hud.getStage().draw();
         }
     }
 
@@ -187,6 +188,31 @@ public class SinglePlayer implements Screen {
         // Load the Tiled map
         TiledMap map = new TmxMapLoader().load(mapPath);
         TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("trees");
+
+
+        // Define the boundaries of the world using a BodyDef
+        BodyDef groundBodyDef = new BodyDef();
+        groundBodyDef.position.set(0, 0);
+        Body groundBody = world.createBody(groundBodyDef);
+
+        // Define the shape of the boundaries using a ChainShape
+        ChainShape groundBox = new ChainShape();
+        groundBox.createChain(new Vector2[]{
+                new Vector2(0, 0),
+                new Vector2(Vars.gameWidth, 0),
+                new Vector2(Vars.gameWidth, Vars.gameHeight),
+                new Vector2(0, Vars.gameHeight),
+                new Vector2(0, 0)
+        });
+
+        // Attach the shape to the body using a FixtureDef
+        FixtureDef def = new FixtureDef();
+        def.shape = groundBox;
+        def.density = 0f;
+        def.friction = 0.3f;
+        def.restitution = 0.4f;
+        groundBody.createFixture(def);
+
         for (int x = 0; x < collisionLayer.getWidth(); x++) {
             for (int y = 0; y < collisionLayer.getHeight(); y++) {
                 TiledMapTileLayer.Cell cell = collisionLayer.getCell(x, y);
@@ -209,6 +235,8 @@ public class SinglePlayer implements Screen {
                 }
             }
         }
+
+
         return map;
     }
 }

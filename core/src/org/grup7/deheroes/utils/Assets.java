@@ -19,7 +19,7 @@ public class Assets {
         public static String purpleFlameHit = "sounds/purple-flame-hit.wav";
         public static String purpleFlameBossHit = "sounds/purple-flame-boss-hit.wav";
         public static String iceBallHit = "sounds/ice-spell-hit.mp3";
-        public static String explosionHit = "sounds/explosion-hit.wav";
+        public static String explosionHit = "sounds/explosion-hit.mp3";
     }
 
     public static class UI {

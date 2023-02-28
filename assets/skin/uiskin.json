@@ -1,265 +1,444 @@
 {
-  Color: {
-    green: {
-      g: 1,
-      a: 1
+  BitmapFont: {
+    default-font: {
+      file: ../fonts/Roboto-hdpi.fnt
     },
-    light_grey: { r: 0.8, g: 0.8, b: 0.8, a: 1 },
-    white: { r: 1, g: 1, b: 1, a: 1 },
-    red: {
-      r: 1,
-      a: 1
-    },
-    grey: { r: 0.7, g: 0.7, b: 0.7, a: 1 },
-    Flamingo: { r: 1, g: 0.2, b: 1, a: 1 },
-    black: {
-      a: 1
+    thin-font: {
+      file: ../fonts/Roboto-Thin-hdpi.fnt
     }
   },
-  BitmapFont: {
-    font-button: {
-      file: ../fonts/font-button.fnt
+  Color: {
+    green: {
+      a: 1,
+      b: 0,
+      g: 1,
+      r: 0
     },
-    font-label: {
-      file: ../fonts/font-label.fnt
+    white: {
+      a: 1,
+      b: 1,
+      g: 1,
+      r: 1
     },
-    font-title: {
-      file: ../fonts/font-title.fnt
+    red: {
+      a: 1,
+      b: 0,
+      g: 0,
+      r: 1
+    },
+    black: {
+      a: 1,
+      b: 0,
+      g: 0,
+      r: 0
+    },
+    text-dark: {
+      a: 1,
+      b: 1,
+      g: 1,
+      r: 1
+    },
+    text-light: {
+      a: 1,
+      b: 0,
+      g: 0,
+      r: 0
+    },
+    text-light-dark: {
+      a: 1,
+      b: 0,
+      g: 0,
+      r: 0
     }
   },
   TintedDrawable: {
     dialogDim: {
-      name: white,
-      color: { a: 1, b: 0.2, g: 0.2, r: 0.2 }
-    }
-  },
-  ProgressBarStyle: {
-    default-horizontal: {
-      background: loading-bar,
-      knob: loading-bar-knob,
-      knobBefore: loading-bar-fill
-    }
-    default-vertical: {
-      background: loading-bar,
-      knob: loading-bar-knob,
-      knobBefore: loading-bar-fill
-    }
-  },
-  TextButtonStyle: {
-    default: {
-      font: font-button,
-      fontColor: { a: 1, b: 1, g: 1, r: 1 },
-      downFontColor: { a: 1, b: 1, g: 0.2, r: 1 },
-      disabledFontColor: { a: 1, b: 0.8, g: 0.8, r: 0.8 },
-      up: button,
-      down: button-down
-    },
-    round: {
-      font: font-title,
-      fontColor: { a: 1, b: 1, g: 1, r: 1 },
-      downFontColor: { a: 1, b: 1, g: 0.2, r: 1 },
-      up: round-button,
-      down: round-button-down
-    },
-    toggle: {
-      font: font-button,
-      fontColor: { a: 1, b: 1, g: 1, r: 1 },
-      downFontColor: { a: 1, b: 1, g: 0.2, r: 1 },
-      up: toggle-button-off,
-      down: toggle-button-down,
-      checked: toggle-button
-    },
-    radio: {
-      font: font-label,
-      fontColor: { a: 1, b: 1, g: 1, r: 1 },
-      downFontColor: { a: 1, b: 1, g: 0.2, r: 1 },
-      up: radio-button-off,
-      down: radio-button,
-      checked: radio-button
-    }
-  },
-  ImageButtonStyle: {
-    default: {
-      up: button,
-      down: button-down
-    }
-  },
-  SplitPaneStyle: {
-    default-vertical: {
-      handle: vertical-splitpane
-    },
-    default-horizontal: {
-      handle: horizontal-splitplane
-    }
-  },
-  TouchpadStyle: {
-    default: {
-      background: touchpad,
-      knob: touchpad-knob
-    }
-  },
-  ButtonStyle: {
-    default: {
-      up: button,
-      down: button-down
-    },
-    music: {
-      up: music-off,
-      down: music-down,
-      checked: music
-    },
-    left: {
-      up: left-button,
-      down: left-button-down
-    },
-    sound: {
-      up: sound-off,
-      down: sound-down,
-      checked: sound
-    },
-    toggle: {
-      up: toggle-button-off,
-      down: toggle-button-down,
-      checked: toggle-button
-    },
-    right: {
-      up: right-button,
-      down: right-button-down
-    }
-  },
-  WindowStyle: {
-    default: {
-      background: window,
-      titleFont: font-title,
-      titleFontColor: { a: 1, b: 1, g: 1, r: 1 }
-    },
-    dialog: {
-      background: window,
-      titleFont: font-title,
-      titleFontColor: { a: 1, b: 1, g: 1, r: 1 },
-      stageBackground: list
-    }
-  },
-  TextFieldStyle: {
-    default: {
-      font: font-label,
-      fontColor: {
-        a: 1
-      },
-      background: textfield,
-      cursor: cursor,
-      selection: text-selection,
-      messageFont: font-label
-    }
-  },
-  ScrollPaneStyle: {
-    default: {
-      background: panel1,
-      hScroll: horizontal-scrollbar,
-      hScrollKnob: horizontal-scrollbar-knob,
-      vScroll: vertical-scrollbar,
-      vScrollKnob: vertical-scrollbar-knob
-    },
-    android: {
-      background: panel1,
-      hScroll: android-horizontal-scrollbar,
-      hScrollKnob: android-horizontal-scrollbar-knob,
-      vScroll: android-vertical-scrollbar,
-      vScrollKnob: android-vertical-scrollbar-knob
-    }
-  },
-  LabelStyle: {
-    optional: {
-      font: font-label,
-      fontColor: { a: 1, b: 0.8, g: 0.8, r: 0.8 }
-    },
-    default: {
-      font: font-label,
-      fontColor: { a: 1, b: 1, g: 1, r: 1 }
-    },
-    error: {
-      font: font-label,
-      fontColor: {
-        a: 1,
-        r: 1
+      name: white_pixel,
+      color: {
+        r: 0,
+        g: 0,
+        b: 0,
+        a: 0.45
       }
-    },
-    title-plain: {
-      font: font-title,
-      fontColor: { a: 1, b: 1, g: 1, r: 1 }
-    },
-    subtitle: {
-      font: font-label,
-      fontColor: {
-        a: 1
-      },
-      background: label
-    },
-    title: {
-      font: font-title,
-      fontColor: { a: 1, b: 1, g: 1, r: 1 },
-      background: panel2
     }
   },
   ListStyle: {
     default: {
-      font: font-label,
-      fontColorSelected: { a: 1, b: 1, g: 0.2, r: 1 },
-      fontColorUnselected: { a: 1, b: 1, g: 1, r: 1 },
-      selection: list-selection
+      fontColorUnselected: text-dark,
+      selection: text_selected,
+      fontColorSelected: text-dark,
+      font: default-font
     },
-    dimmed: {
-      font: font-label,
-      fontColorSelected: { a: 1, b: 1, g: 0.2, r: 1 },
-      fontColorUnselected: { a: 1, b: 1, g: 1, r: 1 },
-      selection: list-selection,
-      background: list
+    opaque: {
+      fontColorUnselected: text-dark,
+      selection: text_selected_opaque,
+      fontColorSelected: text-dark,
+      font: default-font
+    },
+    default-thin: {
+      fontColorUnselected: text-dark,
+      selection: text_selected,
+      fontColorSelected: text-dark,
+      font: thin-font
+    },
+    opaque-thin: {
+      fontColorUnselected: text-dark,
+      selection: text_selected_opaque,
+      fontColorSelected: text-dark,
+      font: thin-font
     }
   },
-  CheckBoxStyle: {
+  ScrollPaneStyle: {
     default: {
-      checkboxOn: check-on,
-      checkboxOff: check-off,
-      font: font-label,
-      fontColor: { a: 1, b: 1, g: 1, r: 1 },
-      downFontColor: { a: 1, b: 1, g: 0.2, r: 1 }
+      vScroll: scroll_vertical,
+      hScrollKnob: scroll_horizontal_knob,
+      background: scroll,
+      hScroll: scroll_horizontal,
+      vScrollKnob: scroll_vertical_knob,
+      corner: scroll_corner
     },
-    switch: {
-      checkboxOn: switch,
-      checkboxOff: switch-off,
-      font: font-label,
-      fontColor: { a: 1, b: 1, g: 1, r: 1 },
-      downFontColor: { a: 1, b: 1, g: 0.2, r: 1 }
+    opaque: {
+      vScroll: scroll_vertical,
+      hScrollKnob: scroll_horizontal_knob,
+      background: scroll_opaque,
+      hScroll: scroll_horizontal,
+      vScrollKnob: scroll_vertical_knob,
+      corner: scroll_corner
     }
   },
-  TreeStyle: {
+  ButtonStyle: {
     default: {
-      plus: plus,
-      minus: minus,
-      selection: list-selection,
-      background: list
+      up: btn_default_normal,
+      down: btn_default_pressed,
+      over: btn_default_focused,
+      disabled: btn_default_disabled
+    },
+    toggle: {
+      up: btn_toggle_off_normal,
+      down: btn_toggle_on_pressed,
+      over: btn_toggle_off_focused,
+      checked: btn_toggle_on_normal,
+      checkedOver: btn_toggle_on_focused,
+      disabled: btn_toggle_off_disabled
     }
   },
-  SliderStyle: {
-    default-vertical: {
-      background: slider-bar,
-      knob: slider-bar-knob,
-      knobBefore: slider-bar-fill
+  TextButtonStyle: {
+    default: {
+      up: btn_default_normal,
+      down: btn_default_pressed,
+      over: btn_default_focused,
+      disabled: btn_default_disabled,
+      font: default-font,
+      fontColor: text-dark,
+      downFontColor: text-dark,
+      overFontColor: text-dark,
+      disabledFontColor: text-dark
     },
-    default-horizontal: {
-      background: slider-bar,
-      knob: slider-bar-knob,
-      knobBefore: slider-bar-fill
+    toggle: {
+      up: btn_toggle_off_normal,
+      down: btn_toggle_on_pressed,
+      over: btn_toggle_off_focused,
+      checked: btn_toggle_on_normal,
+      checkedOver: btn_toggle_on_focused,
+      disabled: btn_toggle_off_disabled,
+      font: default-font,
+      fontColor: text-dark,
+      downFontColor: text-dark,
+      overFontColor: text-dark,
+      checkedFontColor: text-dark,
+      checkedOverFontColor: text-dark,
+      disabledFontColor: text-dark
+    },
+    default-thin: {
+      up: btn_default_normal,
+      down: btn_default_pressed,
+      over: btn_default_focused,
+      disabled: btn_default_disabled,
+      font: thin-font,
+      fontColor: text-dark,
+      downFontColor: text-dark,
+      overFontColor: text-dark,
+      disabledFontColor: text-dark
+    },
+    toggle-thin: {
+      up: btn_toggle_off_normal,
+      down: btn_toggle_on_pressed,
+      over: btn_toggle_off_focused,
+      checked: btn_toggle_on_normal,
+      checkedOver: btn_toggle_on_focused,
+      disabled: btn_toggle_off_disabled,
+      font: thin-font,
+      fontColor: text-dark,
+      downFontColor: text-dark,
+      overFontColor: text-dark,
+      checkedFontColor: text-dark,
+      checkedOverFontColor: text-dark,
+      disabledFontColor: text-dark
+    }
+  },
+  ImageButtonStyle: {
+    default: {
+      up: btn_default_normal,
+      down: btn_default_pressed,
+      over: btn_default_focused,
+      disabled: btn_default_disabled,
+      imageUp: icon-blitz,
+      imageDown: icon-blitz,
+      imageOver: icon-blitz,
+      imageDisabled: icon-blitz
+    },
+    toggle: {
+      up: btn_toggle_off_normal,
+      down: btn_toggle_on_pressed,
+      over: btn_toggle_off_focused,
+      checked: btn_toggle_on_normal,
+      checkedOver: btn_toggle_on_focused,
+      disabled: btn_toggle_off_disabled,
+      imageUp: icon-blitz,
+      imageDown: icon-blitz,
+      imageOver: icon-blitz,
+      imageChecked: icon-blitz_pressed,
+      imageCheckedOver: icon-blitz_pressed,
+      imageDisabled: icon-blitz
     }
   },
   SelectBoxStyle: {
     default: {
-      font: font-button,
-      fontColor: { a: 1, b: 1, g: 1, r: 1 },
-      background: select-box,
-      scrollStyle: default,
+      background: spinner_default,
+      backgroundOver: spinner_focused,
+      backgroundOpen: spinner_pressed,
       listStyle: default,
-      backgroundOpen: select-box-down
+      scrollStyle: opaque,
+      font: default-font,
+      fontColor: text-dark
+    },
+    default-thin: {
+      background: spinner_default,
+      backgroundOver: spinner_focused,
+      backgroundOpen: spinner_pressed,
+      listStyle: default-thin,
+      scrollStyle: opaque,
+      font: thin-font,
+      fontColor: text-dark
+    }
+  },
+  SplitPaneStyle: {
+    default-vertical: {
+      handle: splitpane_vertical
+    },
+    default-horizontal: {
+      handle: splitpane_horizontal
+    }
+  },
+  WindowStyle: {
+    default: {
+      titleFont: default-font,
+      background: window,
+      titleFontColor: text-dark
+    },
+    dialog: {
+      titleFont: default-font,
+      background: window,
+      titleFontColor: text-dark,
+      stageBackground: dialogDim
+    },
+    default-thin: {
+      titleFont: thin-font,
+      background: window,
+      titleFontColor: text-dark
+    },
+    dialog-thin: {
+      titleFont: thin-font,
+      background: window,
+      titleFontColor: text-dark,
+      stageBackground: dialogDim
+    }
+  },
+  SliderStyle: {
+    default-horizontal: {
+      background: scrubber_track,
+      knob: scrubber_control_normal
+    },
+    default-vertical: {
+      background: scrubber_vertical_track,
+      knob: scrubber_control_normal
+    },
+    left-horizontal: {
+      background: scrubber_track,
+      knob: scrubber_control_normal,
+      knobBefore: scrubber_primary,
+      knobAfter: scrubber_secondary
+    },
+    right-horizontal: {
+      background: scrubber_track,
+      knob: scrubber_control_normal,
+      knobBefore: scrubber_secondary,
+      knobAfter: scrubber_primary
+    },
+    up-vertical: {
+      background: scrubber_vertical_track,
+      knob: scrubber_control_normal,
+      knobBefore: scrubber_vertical_primary,
+      knobAfter: scrubber_vertical_secondary
+    },
+    down-vertical: {
+      background: scrubber_vertical_track,
+      knob: scrubber_control_normal,
+      knobBefore: scrubber_vertical_secondary,
+      knobAfter: scrubber_vertical_primary
+    }
+  },
+  LabelStyle: {
+    default: {
+      font: default-font,
+      fontColor: text-dark,
+      background: text
+    },
+    default-thin: {
+      font: thin-font,
+      fontColor: text-dark,
+      background: text
+    },
+    default-opaque: {
+      font: default-font,
+      fontColor: text-dark,
+      background: text_opaque
+    },
+    default-thin-opaque: {
+      font: thin-font,
+      fontColor: text-dark,
+      background: text_opaque
+    }
+  },
+  TextFieldStyle: {
+    default: {
+      selection: textfield_selection,
+      background: textfield_default,
+      focusedBackground: textfield_focused,
+      disabledBackground: textfield_disabled,
+      font: default-font,
+      fontColor: text-dark,
+      focusedFontColor: text-dark,
+      disabledFontColor: text-dark,
+      cursor: textfield_cursor,
+      messageFont: default-font,
+      messageFontColor: text-dark
+    },
+    default-thin: {
+      selection: textfield_selection,
+      background: textfield_default,
+      focusedBackground: textfield_focused,
+      disabledBackground: textfield_disabled,
+      font: thin-font,
+      fontColor: text-dark,
+      focusedFontColor: text-dark,
+      disabledFontColor: text-dark,
+      cursor: textfield_cursor,
+      messageFont: default-font,
+      messageFontColor: text-dark
+    }
+  },
+  CheckBoxStyle: {
+    default: {
+      up: text,
+      down: btn_default_pressed,
+      over: btn_default_focused,
+      checked: text,
+      checkedOver: btn_default_focused,
+      disabled: btn_default_disabled,
+      font: default-font,
+      fontColor: text-dark,
+      downFontColor: text-dark,
+      overFontColor: text-dark,
+      checkedFontColor: text-dark,
+      checkedOverFontColor: text-dark,
+      disabledFontColor: text-dark,
+      checkboxOn: btn_check_on,
+      checkboxOff: btn_check_off,
+      checkboxOver: btn_check_on_focused
+    },
+    default-thin: {
+      up: text,
+      down: btn_default_pressed,
+      over: btn_default_focused,
+      checked: text,
+      checkedOver: btn_default_focused,
+      disabled: btn_default_disabled,
+      font: thin-font,
+      fontColor: text-dark,
+      downFontColor: text-dark,
+      overFontColor: text-dark,
+      checkedFontColor: text-dark,
+      checkedOverFontColor: text-dark,
+      disabledFontColor: text-dark,
+      checkboxOn: btn_check_on,
+      checkboxOff: btn_check_off,
+      checkboxOver: btn_check_on_focused
+    },
+    default-radio: {
+      up: text,
+      down: btn_default_pressed,
+      over: btn_default_focused,
+      checked: text,
+      checkedOver: btn_default_focused,
+      disabled: btn_default_disabled,
+      font: default-font,
+      fontColor: text-dark,
+      downFontColor: text-dark,
+      overFontColor: text-dark,
+      checkedFontColor: text-dark,
+      checkedOverFontColor: text-dark,
+      disabledFontColor: text-dark,
+      checkboxOn: btn_radio_on,
+      checkboxOff: btn_radio_off,
+      checkboxOver: btn_radio_on_focused
+    },
+    default-thin-radio: {
+      up: text,
+      down: btn_default_pressed,
+      over: btn_default_focused,
+      checked: text,
+      checkedOver: btn_default_focused,
+      disabled: btn_default_disabled,
+      font: thin-font,
+      fontColor: text-dark,
+      downFontColor: text-dark,
+      overFontColor: text-dark,
+      checkedFontColor: text-dark,
+      checkedOverFontColor: text-dark,
+      disabledFontColor: text-dark,
+      checkboxOn: btn_radio_on,
+      checkboxOff: btn_radio_off,
+      checkboxOver: btn_radio_on_focused
+    }
+  },
+  ListStyle: {
+    default: {
+      fontColorUnselected: text-dark,
+      selection: text_selected,
+      fontColorSelected: text-dark,
+      font: default-font
+    },
+    default-thin: {
+      fontColorUnselected: text-dark,
+      selection: text_selected,
+      fontColorSelected: text-dark,
+      font: thin-font
+    }
+  },
+  TouchpadStyle: {
+    default: {
+      background: text,
+      knob: scrubber_control_normal
+    }
+  },
+  TreeStyle: {
+    default: {
+      minus: tree_minus,
+      plus: tree_plus,
+      over: text_focused,
+      selection: text_selected,
+      background: text_opaque
     }
   }
 }

@@ -1,5 +1,6 @@
 package org.grup7.deheroes.actors.spells;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
@@ -31,6 +32,7 @@ public class Explosion extends Spell implements Actions {
         if (isFinished() && flag) {
             flag = false;
             body.setActive(true);
+            Gdx.audio.newSound(Gdx.files.internal(Assets.Sounds.explosionHit)).play(0.2F);
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {

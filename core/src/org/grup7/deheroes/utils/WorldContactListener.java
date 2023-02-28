@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 
 import org.grup7.deheroes.actors.heroes.Hero;
 import org.grup7.deheroes.actors.mobs.Mob;
+import org.grup7.deheroes.actors.mobs.PurpleFlameBoss;
 import org.grup7.deheroes.actors.spells.Explosion;
 import org.grup7.deheroes.actors.spells.Spell;
 
@@ -34,7 +35,6 @@ public class WorldContactListener implements ContactListener {
         if (isMobContactHero(fa, fb))
             Gdx.audio.newSound(Gdx.files.internal(Assets.Sounds.heroHit)).play();
 
-
         //System.out.println(fa.getUserData());System.out.println(fb.getUserData());
         if (isSpellContactMob(fa, fb)) {
             allSpells.forEach(spell -> {
@@ -43,7 +43,8 @@ public class WorldContactListener implements ContactListener {
             allMobs.forEach(mob -> {
                 if (mob.getBody().equals(fb.getBody())) {
                     mob.setHP(mob.getHP() - 30);
-                    mob.getHitSound().play();
+                    if (mob instanceof PurpleFlameBoss) mob.getHitSound().play(0.05F);
+                    else mob.getHitSound().play(0.5F);
                 }
             });
         }
