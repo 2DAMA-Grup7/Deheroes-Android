@@ -56,7 +56,6 @@ public class SinglePlayer implements Screen {
     protected final World world;
     protected final Game game;
 
-    protected long lastSpellSpawn;
     protected long lastMobSpawn;
 
     public SinglePlayer(Game game, String map) {
@@ -67,7 +66,6 @@ public class SinglePlayer implements Screen {
         this.stage = new Stage(new StretchViewport(Vars.gameWidth, Vars.gameHeight, camera));
         this.players = new ArrayList<>();
         this.hud = new Hud();
-        this.lastSpellSpawn = TimeUtils.nanoTime();
         this.mapRenderer = new OrthogonalTiledMapRenderer(loadMap(map));
         Hero player = new Witch(world);
         players.add(player);
@@ -144,9 +142,23 @@ public class SinglePlayer implements Screen {
         return closerMob;
     }
 
-    private void actorAct(float delta) {
+    protected void actorAct(float delta) {
         // Player
-        players.forEach(player -> player.act(delta));
+        players.forEach(player -> {
+            player.act(delta);
+            // Spells
+            allSpells.forEach(spell -> {
+                if (spell.isAlive()) {
+                    spell.act(delta);
+                } else {
+                    if (TimeUtils.nanoTime() - player.getLastSpellSpawn() > 1000000000) {
+                        spell.awake(player.getPosition());
+                        spell.setDestination(closerMob(), player.getPosition());
+                        player.setLastSpellSpawn(TimeUtils.nanoTime());
+                    }
+                }
+            });
+        });
         // Mobs
         allMobs.forEach(mob -> {
             if (mob.isAlive()) {
@@ -155,18 +167,6 @@ public class SinglePlayer implements Screen {
                 if (TimeUtils.nanoTime() - lastMobSpawn > 2000000000) {
                     mob.awake(new Vector2(new Random().nextInt(300), new Random().nextInt(300)));
                     lastMobSpawn = TimeUtils.nanoTime();
-                }
-            }
-        });
-        // Spells
-        allSpells.forEach(spell -> {
-            if (spell.isAlive()) {
-                spell.act(delta);
-            } else {
-                if (TimeUtils.nanoTime() - lastSpellSpawn > 1000000000) {
-                    spell.awake(players.get(0).getPosition());
-                    spell.setDestination(closerMob(), players.get(0).getPosition());
-                    lastSpellSpawn = TimeUtils.nanoTime();
                 }
             }
         });

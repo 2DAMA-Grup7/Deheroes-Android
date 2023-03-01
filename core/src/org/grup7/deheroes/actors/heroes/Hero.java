@@ -14,12 +14,14 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.utils.TimeUtils;
 
 import org.grup7.deheroes.actors.MyActor;
 import org.grup7.deheroes.ui.HealthBar;
 
 public class Hero extends MyActor {
     private final HealthBar healthBar;
+    private long lastSpellSpawn;
     private float hp;
     private Animation<TextureRegion> currentAnimation;
     private TextureRegion[] walkDown, walkLeft, walkRight, walkUp;
@@ -32,6 +34,7 @@ public class Hero extends MyActor {
         this.tick = 0f;
         this.rows = 4;
         this.cols = 5;
+        this.lastSpellSpawn = TimeUtils.nanoTime();
         spritesSetup(texturePath);
         setBounds(startX, startY, width, height);
         setTouchable(Touchable.enabled);
@@ -111,6 +114,14 @@ public class Hero extends MyActor {
 
     public TextureRegion[] getWalkUp() {
         return walkUp;
+    }
+
+    public long getLastSpellSpawn() {
+        return lastSpellSpawn;
+    }
+
+    public void setLastSpellSpawn(long lastSpellSpawn) {
+        this.lastSpellSpawn = lastSpellSpawn;
     }
 
     public float getHp() {
