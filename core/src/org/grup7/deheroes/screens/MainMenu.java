@@ -19,10 +19,11 @@ import org.grup7.deheroes.utils.Assets;
 public class MainMenu implements Screen {
     private final Game game;
     private final Stage stage;
+    private final Music music;
 
     public MainMenu(Game game) {
         this.game = game;
-        Music music = Gdx.audio.newMusic(Gdx.files.internal(Assets.Music.menu));
+        music = Gdx.audio.newMusic(Gdx.files.internal(Assets.Music.menu));
         music.setLooping(true);
         music.play();
         stage = new Stage();
@@ -61,7 +62,7 @@ public class MainMenu implements Screen {
 
     @Override
     public void dispose() {
-
+        music.stop();
     }
 
     private Table menuTable() {
@@ -82,12 +83,14 @@ public class MainMenu implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new SinglePlayer(game, Assets.Maps.landOfDeath));
+                dispose();
             }
         });
         onlineButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new Multiplayer(Assets.Maps.landOfDeath));
+                game.setScreen(new Multiplayer(game, Assets.Maps.landOfDeath));
+                dispose();
             }
         });
         exitButton.addListener(new ClickListener() {

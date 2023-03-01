@@ -18,10 +18,11 @@ import org.grup7.deheroes.utils.Assets;
 public class GameOver implements Screen {
     private final Game game;
     private final Stage stage;
+    private final Music music;
 
     public GameOver(Game game) {
         this.game = game;
-        Music music = Gdx.audio.newMusic(Gdx.files.internal(Assets.Music.menu));
+        music = Gdx.audio.newMusic(Gdx.files.internal(Assets.Music.menu));
         music.setLooping(true);
         music.play();
         stage = new Stage();
@@ -60,6 +61,7 @@ public class GameOver implements Screen {
 
     @Override
     public void dispose() {
+        music.stop();
     }
 
     private Table menuTable() {
@@ -80,12 +82,14 @@ public class GameOver implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new SinglePlayer(game, Assets.Maps.landOfDeath));
+                dispose();
             }
         });
         returnButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new MainMenu(game));
+                dispose();
             }
         });
         exitButton.addListener(new ClickListener() {

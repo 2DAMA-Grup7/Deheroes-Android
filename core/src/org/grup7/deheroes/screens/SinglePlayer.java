@@ -32,10 +32,12 @@ import org.grup7.deheroes.actors.mobs.PurpleFlame;
 import org.grup7.deheroes.actors.mobs.PurpleFlameBoss;
 import org.grup7.deheroes.actors.spells.IceBall;
 import org.grup7.deheroes.actors.spells.Spell;
+import org.grup7.deheroes.input.InputHandler;
 import org.grup7.deheroes.ui.Hud;
 import org.grup7.deheroes.utils.Assets;
 import org.grup7.deheroes.utils.WorldContactListener;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -45,17 +47,17 @@ public class SinglePlayer implements Screen {
     public static ConcurrentLinkedDeque<Spell> allSpells = new ConcurrentLinkedDeque<>();
     public static int score = 0;
 
-    private final Box2DDebugRenderer debugRenderer;
-    private final TiledMapRenderer mapRenderer;
-    private final OrthographicCamera camera;
-    private final Hud hud;
-    private final Stage stage;
-    private final Hero player;
-    private final World world;
-    private final Game game;
+    protected final Box2DDebugRenderer debugRenderer;
+    protected final TiledMapRenderer mapRenderer;
+    protected final OrthographicCamera camera;
+    protected final Hud hud;
+    protected final Stage stage;
+    protected final ArrayList<Hero> players;
+    protected final World world;
+    protected final Game game;
 
-    private long lastSpellSpawn;
-    private long lastMobSpawn;
+    protected long lastSpellSpawn;
+    protected long lastMobSpawn;
 
     public SinglePlayer(Game game, String map) {
         this.game = game;
@@ -63,12 +65,15 @@ public class SinglePlayer implements Screen {
         this.debugRenderer = new Box2DDebugRenderer();
         this.camera = new OrthographicCamera(Vars.gameWidth, Vars.gameHeight);
         this.stage = new Stage(new StretchViewport(Vars.gameWidth, Vars.gameHeight, camera));
-        this.player = new Witch(world);
+        this.players = new ArrayList<>();
         this.hud = new Hud();
         this.lastSpellSpawn = TimeUtils.nanoTime();
         this.mapRenderer = new OrthogonalTiledMapRenderer(loadMap(map));
+        Hero player = new Witch(world);
+        players.add(player);
         world.setContactListener(new WorldContactListener(player));
         stage.addActor(player);
+        Gdx.input.setInputProcessor(new InputHandler(player));
         mobsCreation();
     }
 
@@ -78,7 +83,7 @@ public class SinglePlayer implements Screen {
 
     @Override
     public void render(float delta) {
-        if (player.getHp() < 0) {
+        if (players.get(0).getHp() < 0) {
             Gdx.audio.newSound(Gdx.files.internal(Assets.Sounds.gameOver)).play();
             dispose();
             game.setScreen(new GameOver(game));
@@ -88,7 +93,7 @@ public class SinglePlayer implements Screen {
             actorAct(delta);
             //System.out.println("PlayerX: " + player.getX() + " PlayerY: " + player.getY());
             world.step(delta, 6, 2);
-            camera.position.set(player.getX(), player.getY(), 0);
+            camera.position.set(players.get(0).getX(), players.get(0).getY(), 0);
             camera.update();
             mapRenderer.setView(camera);
             Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -141,11 +146,11 @@ public class SinglePlayer implements Screen {
 
     private void actorAct(float delta) {
         // Player
-        player.act(delta);
+        players.forEach(player -> player.act(delta));
         // Mobs
         allMobs.forEach(mob -> {
             if (mob.isAlive()) {
-                mob.act(delta, player);
+                mob.act(delta, players.get(0));
             } else {
                 if (TimeUtils.nanoTime() - lastMobSpawn > 2000000000) {
                     mob.awake(new Vector2(new Random().nextInt(300), new Random().nextInt(300)));
@@ -159,8 +164,8 @@ public class SinglePlayer implements Screen {
                 spell.act(delta);
             } else {
                 if (TimeUtils.nanoTime() - lastSpellSpawn > 1000000000) {
-                    spell.awake(player.getPosition());
-                    spell.setDestination(closerMob(), player.getPosition());
+                    spell.awake(players.get(0).getPosition());
+                    spell.setDestination(closerMob(), players.get(0).getPosition());
                     lastSpellSpawn = TimeUtils.nanoTime();
                 }
             }
@@ -168,7 +173,7 @@ public class SinglePlayer implements Screen {
     }
 
     private void mobsCreation() {
-        Mob mobBoss = new PurpleFlameBoss(world, player.getPosition());
+        Mob mobBoss = new PurpleFlameBoss(world, players.get(0).getPosition());
         allMobs.add(mobBoss);
         stage.addActor(mobBoss);
         // Create x spells & mobs
@@ -188,13 +193,10 @@ public class SinglePlayer implements Screen {
         // Load the Tiled map
         TiledMap map = new TmxMapLoader().load(mapPath);
         TiledMapTileLayer collisionLayer = (TiledMapTileLayer) map.getLayers().get("trees");
-
-
         // Define the boundaries of the world using a BodyDef
         BodyDef groundBodyDef = new BodyDef();
         groundBodyDef.position.set(0, 0);
         Body groundBody = world.createBody(groundBodyDef);
-
         // Define the shape of the boundaries using a ChainShape
         ChainShape groundBox = new ChainShape();
         groundBox.createChain(new Vector2[]{
@@ -204,7 +206,6 @@ public class SinglePlayer implements Screen {
                 new Vector2(0, Vars.gameHeight),
                 new Vector2(0, 0)
         });
-
         // Attach the shape to the body using a FixtureDef
         FixtureDef def = new FixtureDef();
         def.shape = groundBox;
@@ -212,7 +213,7 @@ public class SinglePlayer implements Screen {
         def.friction = 0.3f;
         def.restitution = 0.4f;
         groundBody.createFixture(def);
-
+        // Set map collisions
         for (int x = 0; x < collisionLayer.getWidth(); x++) {
             for (int y = 0; y < collisionLayer.getHeight(); y++) {
                 TiledMapTileLayer.Cell cell = collisionLayer.getCell(x, y);
@@ -235,8 +236,6 @@ public class SinglePlayer implements Screen {
                 }
             }
         }
-
-
         return map;
     }
 }

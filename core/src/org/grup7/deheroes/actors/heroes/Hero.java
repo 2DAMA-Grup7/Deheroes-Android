@@ -16,7 +16,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 
 import org.grup7.deheroes.actors.MyActor;
-import org.grup7.deheroes.input.InputHandler;
 import org.grup7.deheroes.ui.HealthBar;
 
 public class Hero extends MyActor {
@@ -37,7 +36,6 @@ public class Hero extends MyActor {
         setBounds(startX, startY, width, height);
         setTouchable(Touchable.enabled);
         collisionSetup(world);
-        Gdx.input.setInputProcessor(new InputHandler(this));
         actorQueue.add(healthBar);
     }
 
