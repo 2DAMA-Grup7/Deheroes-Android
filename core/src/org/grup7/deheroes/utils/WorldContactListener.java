@@ -58,7 +58,7 @@ public class WorldContactListener implements ContactListener {
         if (fa == null || fb == null) return;
         if (fa.getUserData() == null || fb.getUserData() == null) return;
 
-        if (isExplosionContactHero(fa, fb)) {
+        if (isExplosionContactHero(fa, fb) && player.getBody().equals(fa.getBody())) {
             player.setHp(player.getHp() - 20);
         }
     }
@@ -83,7 +83,10 @@ public class WorldContactListener implements ContactListener {
         if (fa == null || fb == null) return;
         if (fa.getUserData() == null || fb.getUserData() == null) return;
 
-        if (isMobContactHero(fa, fb)) player.setHp(player.getHp() - 0.3F);
+        if (isMobContactHero(fa, fb) && player.getBody().equals(fa.getBody())) {
+            player.setHp(player.getHp() - 0.3F);
+        }
+
 
     }
 

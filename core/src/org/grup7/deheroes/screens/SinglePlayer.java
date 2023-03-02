@@ -26,6 +26,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import org.grup7.deheroes.Vars;
 import org.grup7.deheroes.actors.heroes.Hero;
+import org.grup7.deheroes.actors.heroes.Rogue;
 import org.grup7.deheroes.actors.heroes.Witch;
 import org.grup7.deheroes.actors.mobs.Mob;
 import org.grup7.deheroes.actors.mobs.PurpleFlame;
@@ -36,8 +37,6 @@ import org.grup7.deheroes.input.InputHandler;
 import org.grup7.deheroes.ui.Hud;
 import org.grup7.deheroes.utils.Assets;
 import org.grup7.deheroes.utils.WorldContactListener;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -69,7 +68,7 @@ public class SinglePlayer implements Screen {
         this.players = new ArrayList<>();
         this.hud = new Hud();
         this.mapRenderer = new OrthogonalTiledMapRenderer(loadMap(map));
-        Hero player = new Witch(world);
+        Hero player = new Rogue(world);
         players.add(player);
         world.setContactListener(new WorldContactListener(player));
         stage.addActor(player);
@@ -160,18 +159,20 @@ public class SinglePlayer implements Screen {
         // Player
         players.forEach(player -> {
             player.act(delta);
-            // Spells
-            allSpells.forEach(spell -> {
-                if (spell.isAlive()) {
-                    spell.act(delta);
-                } else {
-                    if (TimeUtils.nanoTime() - player.getLastSpellSpawn() > 1000000000) {
-                        spell.awake(player.getPosition());
-                        spell.setDestination(closerMob(), player.getPosition());
-                        player.setLastSpellSpawn(TimeUtils.nanoTime());
+            if (player instanceof Witch) {
+                // Spells
+                allSpells.forEach(spell -> {
+                    if (spell.isAlive()) {
+                        spell.act(delta);
+                    } else {
+                        if (TimeUtils.nanoTime() - player.getLastSpellSpawn() > 1000000000) {
+                            spell.awake(player.getPosition());
+                            spell.setDestination(closerMob(), player.getPosition());
+                            player.setLastSpellSpawn(TimeUtils.nanoTime());
+                        }
                     }
-                }
-            });
+                });
+            }
         });
         // Mobs
         allMobs.forEach(mob -> {

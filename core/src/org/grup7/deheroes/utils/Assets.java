@@ -34,6 +34,7 @@ public class Assets {
 
     public static class Heroes {
         public static String witch = "sprites/heroes/witch.png";
+        public static String rogue = "sprites/heroes/rogue.png";
     }
 
     public static class Mobs {
