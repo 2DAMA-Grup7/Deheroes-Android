@@ -132,7 +132,7 @@ public class SinglePlayer implements Screen {
 
     private Vector2 closerMob() {
         Vector2 closerMob = new Vector2(0, 0);
-        Float smallerDistance = Float.MAX_VALUE;
+        float smallerDistance = Float.MAX_VALUE;
         for (Mob mob : allMobs) {
             if (mob.getDistanceHero() < smallerDistance) {
                 smallerDistance = mob.getDistanceHero();
@@ -140,6 +140,18 @@ public class SinglePlayer implements Screen {
             }
         }
         return closerMob;
+    }
+
+    private Hero closerPlayer(Vector2 distanceMob) {
+        Hero closerPlayer = null;
+        float smallerDistance = Float.MAX_VALUE;
+        for (Hero player : players) {
+            if (player.getPosition().dst(distanceMob) < smallerDistance) {
+                smallerDistance = player.getPosition().dst(distanceMob);
+                closerPlayer = player;
+            }
+        }
+        return closerPlayer;
     }
 
     protected void actorAct(float delta) {
@@ -162,7 +174,7 @@ public class SinglePlayer implements Screen {
         // Mobs
         allMobs.forEach(mob -> {
             if (mob.isAlive()) {
-                mob.act(delta, players.get(0));
+                mob.act(delta, closerPlayer(mob.getPosition()));
             } else {
                 if (TimeUtils.nanoTime() - lastMobSpawn > 2000000000) {
                     mob.awake(new Vector2(new Random().nextInt(300), new Random().nextInt(300)));
