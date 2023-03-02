@@ -9,4 +9,5 @@ public class Vars {
     public static final int deadPointY = 3000;
     public static final Vector2 deadPoint = new Vector2(deadPointX, deadPointY);
     public static final String serverURL = "http://alumnes.inspedralbes.cat:6369";
+    public static final String localURL = "http://localhost:6369";
 }
