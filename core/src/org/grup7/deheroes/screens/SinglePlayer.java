@@ -26,7 +26,6 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import org.grup7.deheroes.Vars;
 import org.grup7.deheroes.actors.heroes.Hero;
-import org.grup7.deheroes.actors.heroes.Rogue;
 import org.grup7.deheroes.actors.heroes.Witch;
 import org.grup7.deheroes.actors.mobs.Mob;
 import org.grup7.deheroes.actors.mobs.PurpleFlame;
@@ -68,7 +67,7 @@ public class SinglePlayer implements Screen {
         this.players = new ArrayList<>();
         this.hud = new Hud();
         this.mapRenderer = new OrthogonalTiledMapRenderer(loadMap(map));
-        Hero player = new Rogue(world);
+        Hero player = new Witch(world);
         players.add(player);
         world.setContactListener(new WorldContactListener(player));
         stage.addActor(player);
