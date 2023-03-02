@@ -180,18 +180,18 @@ public class SinglePlayer implements Screen {
                 mob.act(delta, closerPlayer(mob.getPosition()));
             } else {
                 if (TimeUtils.nanoTime() - lastMobSpawn > 2000000000) {
-                    float tmpx = new Random().nextInt(300);
-                    float tmpy = new Random().nextInt(300);
-                    mob.awake(new Vector2(tmpx, tmpy));
-                    setMob(tmpx, tmpy);
-
+                    float randomX = new Random().nextInt(300);
+                    float randomY = new Random().nextInt(300);
+                    mob.awake(new Vector2(randomX, randomY));
+                    multiplayerSetMob(randomX, randomY);
                     lastMobSpawn = TimeUtils.nanoTime();
                 }
             }
         });
     }
 
-    protected void setMob(float tmpx, float tmpy){}
+    protected void multiplayerSetMob(float randomX, float randomY) {
+    }
 
     private void mobsCreation() {
         Mob mobBoss = new PurpleFlameBoss(world, players.get(0).getPosition());
