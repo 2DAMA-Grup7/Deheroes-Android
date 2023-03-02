@@ -20,6 +20,7 @@ import org.grup7.deheroes.actors.MyActor;
 import org.grup7.deheroes.ui.HealthBar;
 
 public class Hero extends MyActor {
+    private int id;
     private final HealthBar healthBar;
     private long lastSpellSpawn;
     private float hp;
@@ -111,7 +112,6 @@ public class Hero extends MyActor {
     public TextureRegion[] getWalkRight() {
         return walkRight;
     }
-
     public TextureRegion[] getWalkUp() {
         return walkUp;
     }
@@ -130,6 +130,14 @@ public class Hero extends MyActor {
 
     public void setHp(float hp) {
         this.hp = hp;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void moveUp() {

@@ -36,6 +36,8 @@ import org.grup7.deheroes.input.InputHandler;
 import org.grup7.deheroes.ui.Hud;
 import org.grup7.deheroes.utils.Assets;
 import org.grup7.deheroes.utils.WorldContactListener;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -177,12 +179,18 @@ public class SinglePlayer implements Screen {
                 mob.act(delta, closerPlayer(mob.getPosition()));
             } else {
                 if (TimeUtils.nanoTime() - lastMobSpawn > 2000000000) {
-                    mob.awake(new Vector2(new Random().nextInt(300), new Random().nextInt(300)));
+                    float tmpx = new Random().nextInt(300);
+                    float tmpy = new Random().nextInt(300);
+                    mob.awake(new Vector2(tmpx, tmpy));
+                    setMob(tmpx, tmpy);
+
                     lastMobSpawn = TimeUtils.nanoTime();
                 }
             }
         });
     }
+
+    protected void setMob(float tmpx, float tmpy){}
 
     private void mobsCreation() {
         Mob mobBoss = new PurpleFlameBoss(world, players.get(0).getPosition());
