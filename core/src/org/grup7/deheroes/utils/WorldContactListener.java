@@ -1,7 +1,6 @@
 package org.grup7.deheroes.utils;
 
 import static org.grup7.deheroes.screens.SinglePlayer.allMobs;
-import static org.grup7.deheroes.screens.SinglePlayer.allSpells;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -37,7 +36,7 @@ public class WorldContactListener implements ContactListener {
 
         //System.out.println(fa.getUserData());System.out.println(fb.getUserData());
         if (isSpellContactMob(fa, fb)) {
-            allSpells.forEach(spell -> {
+            player.getAllSpells().forEach(spell -> {
                 if (spell.getBody().equals(fa.getBody())) spell.setHP(0);
             });
             allMobs.forEach(mob -> {

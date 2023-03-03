@@ -17,12 +17,17 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.TimeUtils;
 
 import org.grup7.deheroes.actors.MyActor;
+import org.grup7.deheroes.actors.spells.IceBall;
 import org.grup7.deheroes.ui.HealthBar;
+
+import java.util.ArrayList;
 
 public class Hero extends MyActor {
     private int id;
     private final HealthBar healthBar;
     private long lastSpellSpawn;
+    private final ArrayList<IceBall> allSpells;
+    private boolean direction;
     private float hp;
     private Animation<TextureRegion> currentAnimation;
     private TextureRegion[] walkDown, walkLeft, walkRight, walkUp;
@@ -36,6 +41,7 @@ public class Hero extends MyActor {
         this.rows = 4;
         this.cols = 5;
         this.lastSpellSpawn = TimeUtils.nanoTime();
+        this.allSpells = new ArrayList<>();
         spritesSetup(texturePath);
         setBounds(startX, startY, width, height);
         setTouchable(Touchable.enabled);
@@ -112,6 +118,7 @@ public class Hero extends MyActor {
     public TextureRegion[] getWalkRight() {
         return walkRight;
     }
+
     public TextureRegion[] getWalkUp() {
         return walkUp;
     }
@@ -140,6 +147,14 @@ public class Hero extends MyActor {
         this.id = id;
     }
 
+    public boolean isDirection() {
+        return direction;
+    }
+
+    public ArrayList<IceBall> getAllSpells() {
+        return allSpells;
+    }
+
     public void moveUp() {
         velocity.y = speed * Gdx.graphics.getDeltaTime();
         setAnimation(walkUp);
@@ -148,6 +163,7 @@ public class Hero extends MyActor {
     public void moveRight() {
         velocity.x = speed * Gdx.graphics.getDeltaTime();
         setAnimation(walkRight);
+        direction = true;
     }
 
     public void moveDown() {
@@ -158,6 +174,7 @@ public class Hero extends MyActor {
     public void moveLeft() {
         velocity.x = -speed * Gdx.graphics.getDeltaTime();
         setAnimation(walkLeft);
+        direction = false;
     }
 
     public void stopX() {
@@ -168,5 +185,11 @@ public class Hero extends MyActor {
     public void stopY() {
         velocity.y = 0;
         currentAnimation.setPlayMode(Animation.PlayMode.NORMAL);
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        allSpells.clear();
     }
 }

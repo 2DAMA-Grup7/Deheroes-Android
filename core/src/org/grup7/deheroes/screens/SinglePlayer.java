@@ -26,12 +26,10 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import org.grup7.deheroes.Vars;
 import org.grup7.deheroes.actors.heroes.Hero;
-import org.grup7.deheroes.actors.heroes.Witch;
+import org.grup7.deheroes.actors.heroes.Rogue;
 import org.grup7.deheroes.actors.mobs.Mob;
 import org.grup7.deheroes.actors.mobs.PurpleFlame;
 import org.grup7.deheroes.actors.mobs.PurpleFlameBoss;
-import org.grup7.deheroes.actors.spells.IceBall;
-import org.grup7.deheroes.actors.spells.Spell;
 import org.grup7.deheroes.input.InputHandler;
 import org.grup7.deheroes.ui.Hud;
 import org.grup7.deheroes.utils.Assets;
@@ -44,7 +42,6 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 public class SinglePlayer implements Screen {
     public static ConcurrentLinkedDeque<Actor> actorQueue = new ConcurrentLinkedDeque<>();
     public static ConcurrentLinkedDeque<Mob> allMobs = new ConcurrentLinkedDeque<>();
-    public static ConcurrentLinkedDeque<Spell> allSpells = new ConcurrentLinkedDeque<>();
     public static int score = 0;
 
     protected final Box2DDebugRenderer debugRenderer;
@@ -67,7 +64,7 @@ public class SinglePlayer implements Screen {
         this.players = new ArrayList<>();
         this.hud = new Hud();
         this.mapRenderer = new OrthogonalTiledMapRenderer(loadMap(map));
-        Hero player = new Witch(world);
+        Hero player = new Rogue(world);
         players.add(player);
         world.setContactListener(new WorldContactListener(player));
         stage.addActor(player);
@@ -125,21 +122,8 @@ public class SinglePlayer implements Screen {
     @Override
     public void dispose() {
         allMobs.clear();
-        allSpells.clear();
         actorQueue.clear();
         score = 0;
-    }
-
-    private Vector2 closerMob() {
-        Vector2 closerMob = new Vector2(0, 0);
-        float smallerDistance = Float.MAX_VALUE;
-        for (Mob mob : allMobs) {
-            if (mob.getDistanceHero() < smallerDistance) {
-                smallerDistance = mob.getDistanceHero();
-                closerMob = mob.getPosition();
-            }
-        }
-        return closerMob;
     }
 
     private Hero closerPlayer(Vector2 distanceMob) {
@@ -156,23 +140,7 @@ public class SinglePlayer implements Screen {
 
     protected void actorAct(float delta) {
         // Player
-        players.forEach(player -> {
-            player.act(delta);
-            if (player instanceof Witch) {
-                // Spells
-                allSpells.forEach(spell -> {
-                    if (spell.isAlive()) {
-                        spell.act(delta);
-                    } else {
-                        if (TimeUtils.nanoTime() - player.getLastSpellSpawn() > 1000000000) {
-                            spell.awake(player.getPosition());
-                            spell.setDestination(closerMob(), player.getPosition());
-                            player.setLastSpellSpawn(TimeUtils.nanoTime());
-                        }
-                    }
-                });
-            }
-        });
+        players.forEach(player -> player.act(delta));
         // Mobs
         allMobs.forEach(mob -> {
             if (mob.isAlive()) {
@@ -196,13 +164,8 @@ public class SinglePlayer implements Screen {
         Mob mobBoss = new PurpleFlameBoss(world, players.get(0).getPosition());
         allMobs.add(mobBoss);
         stage.addActor(mobBoss);
-        // Create x spells & mobs
+        // Create x mobs
         for (int i = 0; i < 30; i++) {
-            // spells
-            IceBall iceBall = new IceBall(world);
-            allSpells.add(iceBall);
-            stage.addActor(iceBall);
-            // mobs
             Mob mob = new PurpleFlame(world);
             allMobs.add(mob);
             stage.addActor(mob);
