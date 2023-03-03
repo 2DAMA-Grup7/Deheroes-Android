@@ -1,57 +1,32 @@
 package org.grup7.deheroes.screens;
 
-
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Align;
 
 import org.grup7.deheroes.utils.Assets;
 
-import java.net.URISyntaxException;
-import java.util.Set;
-
-import io.socket.client.IO;
-
-public class MainMenu implements Screen {
+public class Login implements Screen {
     private final Game game;
     private final Stage stage;
     private final Music music;
-    private String nickname;
 
-    private final Table SetNickTable;
-    private final Table setMenuTable;
-    private TextField nickInput;
-
-
-    protected Skin skin = new Skin(Gdx.files.internal(Assets.Skin.uiSkin));
-
-    public MainMenu(Game game) {
+    public Login(Game game) {
         this.game = game;
         music = Gdx.audio.newMusic(Gdx.files.internal(Assets.Music.menu));
         music.setLooping(true);
         music.play();
         stage = new Stage();
-
-
-        SetNickTable = LoginTable();
-        setMenuTable = menuTable();
-
-        stage.addActor(setMenuTable);
-        stage.addActor(SetNickTable);
+        stage.addActor(menuTable());
     }
 
     @Override
@@ -90,6 +65,7 @@ public class MainMenu implements Screen {
     }
 
     private Table menuTable() {
+        Skin skin = new Skin(Gdx.files.internal(Assets.Skin.uiSkin));
         TextButton startButton = new TextButton("Start", skin);
         TextButton onlineButton = new TextButton("Online", skin);
         TextButton exitButton = new TextButton("Exit", skin);
@@ -124,39 +100,6 @@ public class MainMenu implements Screen {
         });
         return table;
     }
-
-
-    private Table LoginTable(){
-        final Table table = new Table();
-        table.setFillParent(true);
-
-        Window window = new Window("Login", skin);
-        window.getTitleLabel().setAlignment(Align.center);
-
-        TextButton join_button = new TextButton("Join", skin);
-        nickInput = new TextField("", skin);
-
-        window.add(new Label("Enter Your Nickname", skin));
-        window.row();
-        window.add(nickInput);
-        window.row();
-        window.add(join_button);
-
-
-        table.add(window);
-        join_button.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                nickname = nickInput.getText();
-                if(!nickname.isEmpty()){
-                    SetNickTable.setVisible(false);
-                    setMenuTable.setVisible(true);
-                }
-            }
-        });
-        return table;
-    }
-
 
 
 }
