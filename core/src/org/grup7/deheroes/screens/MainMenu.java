@@ -52,6 +52,9 @@ public class MainMenu implements Screen {
 
         stage.addActor(setMenuTable);
         stage.addActor(SetNickTable);
+
+        SetNickTable.setVisible(false);
+        setMenuTable.setVisible(true);
     }
 
     @Override
@@ -112,8 +115,10 @@ public class MainMenu implements Screen {
         onlineButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new Multiplayer(game, Assets.Maps.landOfDeath));
-                dispose();
+                setMenuTable.setVisible(false);
+                SetNickTable.setVisible(true);
+                /*game.setScreen(new Multiplayer(game, Assets.Maps.landOfDeath));
+                dispose();*/
             }
         });
         exitButton.addListener(new ClickListener() {
@@ -141,6 +146,9 @@ public class MainMenu implements Screen {
         window.add(nickInput);
         window.row();
         window.add(join_button);
+        window.row();
+        TextButton backButton = new TextButton("Back", skin);
+
 
 
         table.add(window);
@@ -150,10 +158,19 @@ public class MainMenu implements Screen {
                 nickname = nickInput.getText();
                 if(!nickname.isEmpty()){
                     SetNickTable.setVisible(false);
-                    setMenuTable.setVisible(true);
+                    game.setScreen(new Multiplayer(game, Assets.Maps.landOfDeath));
+                    dispose();
                 }
             }
         });
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                SetNickTable.setVisible(false);
+                setMenuTable.setVisible(true);
+            }
+        });
+
         return table;
     }
 
