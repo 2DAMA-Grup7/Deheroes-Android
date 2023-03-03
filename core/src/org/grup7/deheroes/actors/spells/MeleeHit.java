@@ -1,5 +1,7 @@
 package org.grup7.deheroes.actors.spells;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.Timer;
@@ -18,8 +20,8 @@ public class MeleeHit extends Spell implements Actions {
                 world,
                 Vars.deadPointX,
                 Vars.deadPointY,
-                128,
-                32,
+                64,
+                64,
                 Assets.Spells.meleeAttack
         );
         this.lastSpawn = TimeUtils.nanoTime();
@@ -48,6 +50,13 @@ public class MeleeHit extends Spell implements Actions {
             }
             setPosition(body.getPosition());
         }
+    }
+
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        currentAnimation = new Animation<>(0.15F, animation);
+        currentAnimation.setPlayMode(Animation.PlayMode.LOOP);
+        batch.draw(currentAnimation.getKeyFrame(tick), body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2, getWidth(), getHeight());
     }
 
 

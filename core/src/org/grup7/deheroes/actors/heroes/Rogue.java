@@ -24,7 +24,6 @@ public class Rogue extends Hero implements Actions {
         this.hit = new MeleeHit(world);
         actorQueue.add(hit);
     }
-
     @Override
     public void act(float delta) {
         super.act(delta);
@@ -36,5 +35,4 @@ public class Rogue extends Hero implements Actions {
         super.dispose();
         hit.dispose();
     }
-
 }
