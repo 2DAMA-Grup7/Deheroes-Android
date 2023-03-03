@@ -7,7 +7,6 @@ import org.grup7.deheroes.actors.Actions;
 import org.grup7.deheroes.utils.Assets;
 
 public class MeleeHit extends Spell implements Actions {
-
     public MeleeHit(World world, Vector2 playerPosition) {
         super(
                 world,
@@ -15,11 +14,18 @@ public class MeleeHit extends Spell implements Actions {
                 playerPosition.y - 16,
                 64,
                 64,
-                Assets.Spells.explosion
+                Assets.Spells.meleeAttack
         );
     }
 
     public void act(float delta) {
         super.act(delta);
+        if (isFinished()) {
+            dispose();
+        }
+    }
+
+    public boolean isFinished() {
+        return currentAnimation.isAnimationFinished(tick);
     }
 }

@@ -44,6 +44,7 @@ public class Assets {
 
     public static class Spells {
         public static String iceBall = "sprites/spells/ice-ball.png";
+        public static String meleeAttack = "sprites/spells/melee-attack.png";
         public static String explosion = "sprites/spells/explosion.png";
     }
 }

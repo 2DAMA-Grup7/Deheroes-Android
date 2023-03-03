@@ -40,7 +40,6 @@ public class PurpleFlameBoss extends Mob implements Actions {
         healthBar.setHealth(getHP());
         healthBar.setX_Y(getX() + 15 - getWidth() / 2, getY() + 60 - getHeight() / 2);
         if (getDistanceHero() < 300) explosion.act(delta, hero);
-
     }
 
     @Override

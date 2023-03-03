@@ -13,14 +13,13 @@ public class Witch extends Hero implements Actions {
                 300,
                 32,
                 32,
-                100,
-                80,
+                70,
+                70,
                 Assets.Heroes.witch);
     }
 
     @Override
     public void act(float delta) {
         super.act(delta);
-
     }
 }
