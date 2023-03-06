@@ -115,10 +115,10 @@ public class MainMenu implements Screen {
         onlineButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                setMenuTable.setVisible(false);
-                SetNickTable.setVisible(true);
-                /*game.setScreen(new Multiplayer(game, Assets.Maps.landOfDeath));
-                dispose();*/
+                //setMenuTable.setVisible(false);
+                //SetNickTable.setVisible(true);
+                game.setScreen(new Multiplayer(game, Assets.Maps.landOfDeath));
+                dispose();
             }
         });
         exitButton.addListener(new ClickListener() {

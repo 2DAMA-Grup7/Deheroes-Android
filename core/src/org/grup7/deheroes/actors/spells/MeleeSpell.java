@@ -11,11 +11,11 @@ import org.grup7.deheroes.actors.Actions;
 import org.grup7.deheroes.actors.heroes.Hero;
 import org.grup7.deheroes.utils.Assets;
 
-public class MeleeHit extends Spell implements Actions {
+public class MeleeSpell extends Spell implements Actions {
     private long lastSpawn;
     private boolean flag;
 
-    public MeleeHit(World world) {
+    public MeleeSpell(World world) {
         super(
                 world,
                 Vars.deadPointX,
@@ -40,7 +40,7 @@ public class MeleeHit extends Spell implements Actions {
                     sleep();
                     flag = false;
                 }
-            }, 0.4F);
+            }, 0.6F);
         }
         if (flag) {
             if (player.isDirection()) {

@@ -3,6 +3,7 @@ package org.grup7.deheroes.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.math.Vector2;
 
 import org.grup7.deheroes.Vars;
 import org.grup7.deheroes.actors.heroes.Hero;
@@ -12,6 +13,7 @@ import org.json.JSONObject;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 public class Multiplayer extends SinglePlayer implements Screen {
     private final Hero onlinePlayer;
@@ -33,6 +35,11 @@ public class Multiplayer extends SinglePlayer implements Screen {
     @Override
     protected void actorAct(float delta) {
         super.actorAct(delta);
+    }
+
+    @Override
+    protected void multiplayerMovement(Vector2 velocity){
+
     }
 
     @Override
@@ -63,19 +70,18 @@ public class Multiplayer extends SinglePlayer implements Screen {
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
-            socket.emit("connectionP1", data);
+            socket.emit("connection", data);
             Gdx.app.log("SocketIO", "Connected");
         }).on("getP2", args -> {
-            JSONObject data = new JSONObject(args[0]);
+            JSONObject data = (JSONObject) args[0];
+            System.out.println("Connect2");
             try {
-                System.out.println(data.getInt("id"));
+                System.out.println("player connected with id: " + data.getInt("id"));
                 onlinePlayer.setId(data.getInt("id"));
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
-            onlinePlayer.setPosition(300, 300);
-            //stage.addActor(onlinePlayer);
-
+            onlinePlayer.getBody().setTransform(300, 300, 0);
         }).on("playerDisconnected", args -> {
             JSONObject data = (JSONObject) args[0];
             players.forEach(player -> {
@@ -96,6 +102,24 @@ public class Multiplayer extends SinglePlayer implements Screen {
                 Gdx.app.log("SocketIO", "My ID: ");
             } catch (JSONException e) {
                 Gdx.app.log("SocketIO", "Error getting ID");
+            }
+        }).on("playerMoved" , args -> {
+            JSONObject data = (JSONObject) args[0];
+            System.out.println(data.toString());
+            players.forEach(player -> {
+                try {
+                    if(data.getInt("id")== player.getId()){
+                        Vector2 newVelocity = new Vector2((float)data.getDouble("velocityx"), (float) data.getDouble("velocityy"));
+                        player.setVelocity(newVelocity);
+                    }
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }).on("error" , new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                Gdx.app.log("error" , "YOU DENSE MOTHERFUCKER, YOU CRAsHED THE GAMEEEE");
             }
         });
 

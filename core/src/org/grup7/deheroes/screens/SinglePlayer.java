@@ -160,6 +160,8 @@ public class SinglePlayer implements Screen {
     protected void multiplayerSetMob(float randomX, float randomY) {
     }
 
+    protected void multiplayerMovement(Vector2 velocity){}
+
     private void mobsCreation() {
         Mob mobBoss = new PurpleFlameBoss(world, players.get(0).getPosition());
         allMobs.add(mobBoss);

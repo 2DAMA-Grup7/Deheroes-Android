@@ -5,11 +5,11 @@ import static org.grup7.deheroes.screens.SinglePlayer.actorQueue;
 import com.badlogic.gdx.physics.box2d.World;
 
 import org.grup7.deheroes.actors.Actions;
-import org.grup7.deheroes.actors.spells.MeleeHit;
+import org.grup7.deheroes.actors.spells.MeleeSpell;
 import org.grup7.deheroes.utils.Assets;
 
 public class Rogue extends Hero implements Actions {
-    private final MeleeHit hit;
+    private final MeleeSpell hit;
 
     public Rogue(World world) {
         super(
@@ -21,7 +21,7 @@ public class Rogue extends Hero implements Actions {
                 120,
                 80,
                 Assets.Heroes.rogue);
-        this.hit = new MeleeHit(world);
+        this.hit = new MeleeSpell(world);
         actorQueue.add(hit);
     }
     @Override
