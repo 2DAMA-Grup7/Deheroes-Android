@@ -24,6 +24,7 @@ public class Rogue extends Hero implements Actions {
         this.hit = new MeleeSpell(world);
         actorQueue.add(hit);
     }
+
     @Override
     public void act(float delta) {
         super.act(delta);

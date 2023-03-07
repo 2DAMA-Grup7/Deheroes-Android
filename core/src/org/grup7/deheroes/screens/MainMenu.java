@@ -21,23 +21,15 @@ import com.badlogic.gdx.utils.Align;
 
 import org.grup7.deheroes.utils.Assets;
 
-import java.net.URISyntaxException;
-import java.util.Set;
-
-import io.socket.client.IO;
-
 public class MainMenu implements Screen {
     private final Game game;
     private final Stage stage;
     private final Music music;
-    private String nickname;
-
     private final Table SetNickTable;
     private final Table setMenuTable;
-    private TextField nickInput;
-
-
     protected Skin skin = new Skin(Gdx.files.internal(Assets.Skin.uiSkin));
+    private String nickname;
+    private TextField nickInput;
 
     public MainMenu(Game game) {
         this.game = game;
@@ -131,7 +123,7 @@ public class MainMenu implements Screen {
     }
 
 
-    private Table LoginTable(){
+    private Table LoginTable() {
         final Table table = new Table();
         table.setFillParent(true);
 
@@ -150,13 +142,12 @@ public class MainMenu implements Screen {
         TextButton backButton = new TextButton("Back", skin);
 
 
-
         table.add(window);
         join_button.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 nickname = nickInput.getText();
-                if(!nickname.isEmpty()){
+                if (!nickname.isEmpty()) {
                     SetNickTable.setVisible(false);
                     game.setScreen(new Multiplayer(game, Assets.Maps.landOfDeath));
                     dispose();
@@ -173,8 +164,6 @@ public class MainMenu implements Screen {
 
         return table;
     }
-
-
 
 
 }

@@ -1,6 +1,7 @@
 package org.grup7.deheroes.actors.heroes;
 
 import static org.grup7.deheroes.screens.SinglePlayer.actorQueue;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -18,7 +19,6 @@ import com.badlogic.gdx.utils.TimeUtils;
 import org.grup7.deheroes.Vars;
 import org.grup7.deheroes.actors.MyActor;
 import org.grup7.deheroes.actors.spells.IceBall;
-import org.grup7.deheroes.screens.Multiplayer;
 import org.grup7.deheroes.ui.HealthBar;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,10 +29,10 @@ import io.socket.client.IO;
 import io.socket.client.Socket;
 
 public class Hero extends MyActor {
-    private int id;
     private final HealthBar healthBar;
-    private long lastSpellSpawn;
     private final ArrayList<IceBall> allSpells;
+    private int id;
+    private long lastSpellSpawn;
     private boolean direction;
     private float hp;
     private Animation<TextureRegion> currentAnimation;
@@ -48,7 +48,7 @@ public class Hero extends MyActor {
         this.tick = 0f;
         this.rows = 4;
         this.cols = 5;
-        this.id=-1;
+        this.id = -1;
         this.lastSpellSpawn = TimeUtils.nanoTime();
         this.allSpells = new ArrayList<>();
         spritesSetup(texturePath);
@@ -164,18 +164,18 @@ public class Hero extends MyActor {
         return allSpells;
     }
 
-    protected void callMovement(){
-            try {
-                socket = IO.socket(Vars.localURL);
-                socket.connect();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            JSONObject data = new JSONObject();
+    protected void callMovement() {
+        try {
+            socket = IO.socket(Vars.localURL);
+            socket.connect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        JSONObject data = new JSONObject();
         try {
             data.put("id", this.id);
-            data.put("velocityx" , getVelocity().x);
-            data.put("velocityy" , getVelocity().y);
+            data.put("velocityx", getVelocity().x);
+            data.put("velocityy", getVelocity().y);
 
         } catch (JSONException e) {
             throw new RuntimeException(e);
@@ -187,7 +187,7 @@ public class Hero extends MyActor {
         velocity.y = speed * Gdx.graphics.getDeltaTime();
         setAnimation(walkUp);
 
-        if(id!=-1){
+        if (id != -1) {
             callMovement();
         }
     }
@@ -197,7 +197,7 @@ public class Hero extends MyActor {
         setAnimation(walkRight);
         direction = true;
 
-        if(id!=-1){
+        if (id != -1) {
             callMovement();
         }
     }
@@ -206,7 +206,7 @@ public class Hero extends MyActor {
         velocity.y = -speed * Gdx.graphics.getDeltaTime();
         setAnimation(walkDown);
 
-        if(id!=-1){
+        if (id != -1) {
             callMovement();
         }
     }
@@ -216,7 +216,7 @@ public class Hero extends MyActor {
         setAnimation(walkLeft);
         direction = false;
 
-        if(id!=-1){
+        if (id != -1) {
             callMovement();
         }
     }

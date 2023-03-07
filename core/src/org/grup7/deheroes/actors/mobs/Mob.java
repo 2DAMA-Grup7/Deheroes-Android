@@ -67,7 +67,7 @@ public class Mob extends MyActor {
     public void collisionSetup(World world) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(getX() + getWidth() / 2, getY() + +getHeight() / 2);
+        bodyDef.position.set(getX() + getWidth() / 2, getY() + getHeight() / 2);
         bodyDef.fixedRotation = true;
         PolygonShape polygonShape = new PolygonShape();
         polygonShape.setAsBox(getWidth() / 4, getHeight() / 4);

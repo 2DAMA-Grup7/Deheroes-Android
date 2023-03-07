@@ -38,7 +38,7 @@ public class Multiplayer extends SinglePlayer implements Screen {
     }
 
     @Override
-    protected void multiplayerMovement(Vector2 velocity){
+    protected void multiplayerMovement(Vector2 velocity) {
 
     }
 
@@ -103,23 +103,23 @@ public class Multiplayer extends SinglePlayer implements Screen {
             } catch (JSONException e) {
                 Gdx.app.log("SocketIO", "Error getting ID");
             }
-        }).on("playerMoved" , args -> {
+        }).on("playerMoved", args -> {
             JSONObject data = (JSONObject) args[0];
             System.out.println(data.toString());
             players.forEach(player -> {
                 try {
-                    if(data.getInt("id")== player.getId()){
-                        Vector2 newVelocity = new Vector2((float)data.getDouble("velocityx"), (float) data.getDouble("velocityy"));
+                    if (data.getInt("id") == player.getId()) {
+                        Vector2 newVelocity = new Vector2((float) data.getDouble("velocityx"), (float) data.getDouble("velocityy"));
                         player.setVelocity(newVelocity);
                     }
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
             });
-        }).on("error" , new Emitter.Listener() {
+        }).on("error", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                Gdx.app.log("error" , "YOU DENSE MOTHERFUCKER, YOU CRAsHED THE GAMEEEE");
+                Gdx.app.log("error", "YOU DENSE MOTHERFUCKER, YOU CRAsHED THE GAMEEEE");
             }
         });
 
