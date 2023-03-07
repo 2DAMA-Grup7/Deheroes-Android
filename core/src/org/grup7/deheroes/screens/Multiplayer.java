@@ -13,7 +13,6 @@ import org.json.JSONObject;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
 
 public class Multiplayer extends SinglePlayer implements Screen {
     private final Hero onlinePlayer;
@@ -38,11 +37,6 @@ public class Multiplayer extends SinglePlayer implements Screen {
     }
 
     @Override
-    protected void multiplayerMovement(Vector2 velocity) {
-
-    }
-
-    @Override
     protected void multiplayerSetMob(float randomX, float randomY) {
         JSONObject data = new JSONObject();
         try {
@@ -53,7 +47,6 @@ public class Multiplayer extends SinglePlayer implements Screen {
         }
         socket.emit("sendMobs", data);
     }
-
 
     public void show() {
         connectSocket();
@@ -116,13 +109,7 @@ public class Multiplayer extends SinglePlayer implements Screen {
                     throw new RuntimeException(e);
                 }
             });
-        }).on("error", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                Gdx.app.log("error", "YOU DENSE MOTHERFUCKER, YOU CRAsHED THE GAMEEEE");
-            }
-        });
-
+        }).on("error", args -> Gdx.app.log("error", "YOU DENSE MOTHERFUCKER, YOU CRAsHED THE GAMEEEE"));
     }
 
     public void connectSocket() {
