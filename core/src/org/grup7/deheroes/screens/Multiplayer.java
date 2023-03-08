@@ -67,6 +67,7 @@ public class Multiplayer extends SinglePlayer implements Screen {
     @Override
     protected void actorAct(float delta) throws JSONException {
         player.act(delta);
+        System.out.println(mobData);
         if (host) {
             allMobs.forEach(mob -> {
                 if (mob.isAlive()) {
@@ -110,9 +111,9 @@ public class Multiplayer extends SinglePlayer implements Screen {
             allMobs.forEach(mob -> {
                 try {
                     JSONObject object = new JSONObject();
-                    object.put("x", player.getVelocity().x);
-                    object.put("y", player.getVelocity().y);
-                    object.put("health", player.getVelocity().y);
+                    object.put("x", mob.getX());
+                    object.put("y", mob.getY());
+                    object.put("health", mob.getHP());
                     mobs.put(object);
                 } catch (JSONException e) {
                     Gdx.app.log("SOCKET.IO", "Error sending update data");
