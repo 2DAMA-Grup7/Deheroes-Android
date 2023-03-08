@@ -22,18 +22,15 @@ import org.grup7.deheroes.ui.HealthBar;
 
 import java.util.ArrayList;
 
-import io.socket.client.Socket;
-
 public class Hero extends MyActor {
     private final HealthBar healthBar;
     private final ArrayList<IceBall> allSpells;
-    private Vector2 previousPosition;
+    private final Vector2 previousPosition;
     private long lastSpellSpawn;
     private boolean direction;
     private float hp;
     private Animation<TextureRegion> currentAnimation;
     private TextureRegion[] walkDown, walkLeft, walkRight, walkUp;
-    private Socket socket;
 
 
     public Hero(World world, float startX, float startY, float width, float height, float hp, int speed, String texturePath) {
@@ -46,6 +43,7 @@ public class Hero extends MyActor {
         this.cols = 5;
         this.lastSpellSpawn = TimeUtils.nanoTime();
         this.allSpells = new ArrayList<>();
+        this.world = world;
         this.previousPosition = new Vector2(startX, startY);
         spritesSetup(texturePath);
         setBounds(startX, startY, width, height);
@@ -197,6 +195,7 @@ public class Hero extends MyActor {
     @Override
     public void dispose() {
         super.dispose();
+        healthBar.dispose();
         allSpells.clear();
     }
 }

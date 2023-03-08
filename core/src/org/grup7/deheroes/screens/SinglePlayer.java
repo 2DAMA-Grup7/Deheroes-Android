@@ -34,13 +34,14 @@ import org.grup7.deheroes.input.InputHandler;
 import org.grup7.deheroes.ui.Hud;
 import org.grup7.deheroes.utils.Assets;
 import org.grup7.deheroes.utils.WorldContactListener;
+import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class SinglePlayer implements Screen {
-    public static ConcurrentLinkedDeque<Actor> actorQueue = new ConcurrentLinkedDeque<>();
-    public static ConcurrentLinkedDeque<Mob> allMobs = new ConcurrentLinkedDeque<>();
+    public static ArrayList<Actor> actorQueue = new ArrayList<>();
+    public static ArrayList<Mob> allMobs = new ArrayList<>();
     public static int score = 0;
 
     protected final Box2DDebugRenderer debugRenderer;
@@ -83,7 +84,11 @@ public class SinglePlayer implements Screen {
         } else {
             actorQueue.forEach(stage::addActor);
             actorQueue.clear();
-            actorAct(delta);
+            try {
+                actorAct(delta);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
             //System.out.println("PlayerX: " + player.getX() + " PlayerY: " + player.getY());
             world.step(delta, 6, 2);
             camera.position.set(player.getX(), player.getY(), 0);
@@ -124,7 +129,7 @@ public class SinglePlayer implements Screen {
         score = 0;
     }
 
-    protected void actorAct(float delta) {
+    protected void actorAct(float delta) throws JSONException {
         // Player
         player.act(delta);
         // Mobs

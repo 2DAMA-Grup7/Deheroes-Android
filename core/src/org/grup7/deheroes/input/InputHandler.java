@@ -30,7 +30,8 @@ public class InputHandler extends InputAdapter implements InputProcessor {
                 player.moveUp();
                 break;
             case Input.Keys.ESCAPE:
-                Gdx.app.exit();
+                //Gdx.app.exit();
+                System.exit(0);
                 break;
         }
         return true;

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.TimeUtils;
 
 import org.grup7.deheroes.Vars;
 import org.grup7.deheroes.actors.heroes.Hero;
@@ -22,14 +23,18 @@ public class Multiplayer extends SinglePlayer implements Screen {
     private final HashMap<String, Hero> remotePlayers;
     private final ArrayList<String> addPlayerQueue;
     private final HashMap<String, Vector2> updatePosQueue;
-    private String id;
+    private JSONArray mobData;
+    private boolean host;
     private float timer;
     private Socket socket;
 
     public Multiplayer(Game game, String map) {
         super(game, map);
+        host = false;
+        mobData = new JSONArray();
         addPlayerQueue = new ArrayList<>();
         remotePlayers = new HashMap<>();
+
         updatePosQueue = new HashMap<>();
         connectSocket();
         configSocketEvents();
@@ -47,29 +52,41 @@ public class Multiplayer extends SinglePlayer implements Screen {
         updatePosQueue.forEach((key, value) -> {
             Hero player = remotePlayers.get(key);
             player.setVelocity(value);
-            if (value.x == 0) {
-                player.stopX();
-            } else if (value.y == 0) {
-                player.stopY();
-            }
-            if (value.x > 0) {
-                player.setAnimation(player.getWalkRight());
-            } else if (value.x < 0) {
-                player.setAnimation(player.getWalkLeft());
-            }
-            if (value.y > 0) {
-                player.setAnimation(player.getWalkUp());
-            } else if (value.y < 0) {
-                player.setAnimation(player.getWalkDown());
-            }
+            if (value.x == 0) player.stopX();
+            else if (value.y == 0) player.stopY();
+            if (value.x > 0) player.setAnimation(player.getWalkRight());
+            else if (value.x < 0) player.setAnimation(player.getWalkLeft());
+            if (value.y > 0) player.setAnimation(player.getWalkUp());
+            else if (value.y < 0) player.setAnimation(player.getWalkDown());
         });
+
+
         updatePosQueue.clear();
         addPlayerQueue.clear();
     }
 
     @Override
-    protected void actorAct(float delta) {
-        super.actorAct(delta);
+    protected void actorAct(float delta) throws JSONException {
+        player.act(delta);
+        if (host) {
+            allMobs.forEach(mob -> {
+                if (mob.isAlive()) {
+                    mob.act(delta, player);
+                } else {
+                    if (TimeUtils.nanoTime() - lastMobSpawn > 2000000000) {
+                        mob.awake(getMobSpawnPosition());
+                        lastMobSpawn = TimeUtils.nanoTime();
+                    }
+                }
+            });
+        } else {
+            if (mobData.length() != 0) {
+                for (int i = 0; i < allMobs.size(); i++) {
+                    allMobs.get(i).setHP((float) mobData.getJSONObject(i).getDouble("hp"));
+                    allMobs.get(i).getBody().setTransform((float) mobData.getJSONObject(i).getDouble("x"), (float) mobData.getJSONObject(i).getDouble("y"), 0);
+                }
+            }
+        }
         remotePlayers.forEach((key, value) -> value.act(delta));
     }
 
@@ -93,7 +110,7 @@ public class Multiplayer extends SinglePlayer implements Screen {
         }).on("socketID", args -> {
             JSONObject data = (JSONObject) args[0];
             try {
-                id = data.getString("id");
+                String id = data.getString("id");
                 Gdx.app.log("SocketIO", "My ID: " + id);
             } catch (JSONException e) {
                 Gdx.app.log("SocketIO", "Error getting ID");
@@ -110,7 +127,9 @@ public class Multiplayer extends SinglePlayer implements Screen {
         }).on("playerDisconnected", args -> {
             JSONObject data = (JSONObject) args[0];
             try {
-                id = data.getString("id");
+                String id = data.getString("id");
+                Gdx.app.log("SocketIO", "Player Disconnected: " + id);
+                remotePlayers.get(id).dispose();
                 remotePlayers.remove(id);
             } catch (JSONException e) {
                 Gdx.app.log("SocketIO", "Error getting disconnected PlayerID");
@@ -127,6 +146,8 @@ public class Multiplayer extends SinglePlayer implements Screen {
             } catch (JSONException e) {
                 Gdx.app.log("SocketIO", "Error getting disconnected PlayerID");
             }
+        }).on("updateMobs", args -> {
+            mobData = (JSONArray) args[0];
         }).on("getPlayers", args -> {
             JSONArray objects = (JSONArray) args[0];
             try {
@@ -136,12 +157,12 @@ public class Multiplayer extends SinglePlayer implements Screen {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        });
+        }).on("host", args -> host = true);
     }
 
     private void connectSocket() {
         try {
-            socket = IO.socket(Vars.localURL);
+            socket = IO.socket(Vars.socketURL);
             socket.connect();
         } catch (Exception e) {
             e.printStackTrace();
@@ -149,15 +170,11 @@ public class Multiplayer extends SinglePlayer implements Screen {
     }
 
     @Override
-    protected void mobsCreation() {
-    }
-
-    @Override
     public void dispose() {
-        super.dispose();
         socket.close();
+        socket.off();
+        socket.disconnect();
+        super.dispose();
     }
-
-
 }
 
