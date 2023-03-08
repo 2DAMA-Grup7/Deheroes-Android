@@ -34,7 +34,6 @@ public class Multiplayer extends SinglePlayer implements Screen {
         mobData = new JSONArray();
         addPlayerQueue = new ArrayList<>();
         remotePlayers = new HashMap<>();
-
         updatePosQueue = new HashMap<>();
         connectSocket();
         configSocketEvents();
@@ -82,8 +81,14 @@ public class Multiplayer extends SinglePlayer implements Screen {
         } else {
             if (mobData.length() != 0) {
                 for (int i = 0; i < allMobs.size(); i++) {
-                    allMobs.get(i).setHP((float) mobData.getJSONObject(i).getDouble("hp"));
+                    allMobs.get(i).setHP((float) mobData.getJSONObject(i).getDouble("health"));
                     allMobs.get(i).getBody().setTransform((float) mobData.getJSONObject(i).getDouble("x"), (float) mobData.getJSONObject(i).getDouble("y"), 0);
+                    if (allMobs.get(i).getHP() > 0) {
+                        allMobs.get(i).getBody().setActive(true);
+                        allMobs.get(i).act(delta, player);
+                    } else {
+                        allMobs.get(i).getBody().setActive(false);
+                    }
                 }
             }
         }
@@ -101,6 +106,20 @@ public class Multiplayer extends SinglePlayer implements Screen {
             } catch (JSONException e) {
                 Gdx.app.log("SOCKET.IO", "Error sending update data");
             }
+            JSONArray mobs = new JSONArray();
+            allMobs.forEach(mob -> {
+                try {
+                    JSONObject object = new JSONObject();
+                    object.put("x", player.getVelocity().x);
+                    object.put("y", player.getVelocity().y);
+                    object.put("health", player.getVelocity().y);
+                    mobs.put(object);
+                } catch (JSONException e) {
+                    Gdx.app.log("SOCKET.IO", "Error sending update data");
+                }
+            });
+            socket.emit("updateMobs", mobs);
+
         }
     }
 
@@ -146,7 +165,7 @@ public class Multiplayer extends SinglePlayer implements Screen {
             } catch (JSONException e) {
                 Gdx.app.log("SocketIO", "Error getting disconnected PlayerID");
             }
-        }).on("updateMobs", args -> {
+        }).on("getMobs", args -> {
             mobData = (JSONArray) args[0];
         }).on("getPlayers", args -> {
             JSONArray objects = (JSONArray) args[0];
