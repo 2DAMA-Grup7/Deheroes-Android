@@ -25,7 +25,6 @@ import java.util.ArrayList;
 public class Hero extends MyActor {
     private final HealthBar healthBar;
     private final ArrayList<IceBall> allSpells;
-    private final Vector2 previousPosition;
     private long lastSpellSpawn;
     private boolean direction;
     private float hp;
@@ -106,14 +105,7 @@ public class Hero extends MyActor {
         this.currentAnimation.setPlayMode(Animation.PlayMode.LOOP);
     }
 
-    public boolean hasMoved() {
-        if (previousPosition.x != getX() || previousPosition.y != getY()) {
-            previousPosition.x = getX();
-            previousPosition.y = getY();
-            return true;
-        }
-        return false;
-    }
+
 
     public Body getBody() {
         return body;
@@ -184,6 +176,10 @@ public class Hero extends MyActor {
 
     public void stopX() {
         velocity.x = 0;
+        currentAnimation.setPlayMode(Animation.PlayMode.NORMAL);
+    }
+
+    public void stopAnimation() {
         currentAnimation.setPlayMode(Animation.PlayMode.NORMAL);
     }
 
