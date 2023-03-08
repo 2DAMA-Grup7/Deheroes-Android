@@ -82,14 +82,9 @@ public class Multiplayer extends SinglePlayer implements Screen {
         } else {
             if (mobData.length() != 0) {
                 for (int i = 0; i < allMobs.size(); i++) {
+                    allMobs.get(i).getBody().setActive(true);
                     allMobs.get(i).setHP((float) mobData.getJSONObject(i).getDouble("health"));
                     allMobs.get(i).getBody().setTransform((float) mobData.getJSONObject(i).getDouble("x"), (float) mobData.getJSONObject(i).getDouble("y"), 0);
-                    if (allMobs.get(i).getHP() > 0) {
-                        allMobs.get(i).getBody().setActive(true);
-                        allMobs.get(i).act(delta, player);
-                    } else {
-                        allMobs.get(i).getBody().setActive(false);
-                    }
                 }
             }
         }
@@ -107,20 +102,21 @@ public class Multiplayer extends SinglePlayer implements Screen {
             } catch (JSONException e) {
                 Gdx.app.log("SOCKET.IO", "Error sending update data");
             }
-            JSONArray mobs = new JSONArray();
-            allMobs.forEach(mob -> {
-                try {
-                    JSONObject object = new JSONObject();
-                    object.put("x", mob.getX());
-                    object.put("y", mob.getY());
-                    object.put("health", mob.getHP());
-                    mobs.put(object);
-                } catch (JSONException e) {
-                    Gdx.app.log("SOCKET.IO", "Error sending update data");
-                }
-            });
-            socket.emit("updateMobs", mobs);
-
+            if (host) {
+                JSONArray mobs = new JSONArray();
+                allMobs.forEach(mob -> {
+                    try {
+                        JSONObject object = new JSONObject();
+                        object.put("x", mob.getX());
+                        object.put("y", mob.getY());
+                        object.put("health", mob.getHP());
+                        mobs.put(object);
+                    } catch (JSONException e) {
+                        Gdx.app.log("SOCKET.IO", "Error sending update data");
+                    }
+                });
+                socket.emit("updateMobs", mobs);
+            }
         }
     }
 
