@@ -45,10 +45,23 @@ public class Multiplayer extends SinglePlayer implements Screen {
             stage.addActor(newPlayer);
         });
         updatePosQueue.forEach((key, value) -> {
-            if (value.equals(new Vector2(1, 0))) {
-                remotePlayers.get(key).moveLeft();
+            Hero player = remotePlayers.get(key);
+            player.setVelocity(value);
+            if (value.x == 0) {
+                player.stopX();
+            } else if (value.y == 0) {
+                player.stopY();
             }
-            //remotePlayers.get(key).getBody().setTransform(value,0);
+            if (value.x > 0) {
+                player.setAnimation(player.getWalkRight());
+            } else if (value.x < 0) {
+                player.setAnimation(player.getWalkLeft());
+            }
+            if (value.y > 0) {
+                player.setAnimation(player.getWalkUp());
+            } else if (value.y < 0) {
+                player.setAnimation(player.getWalkDown());
+            }
         });
         updatePosQueue.clear();
         addPlayerQueue.clear();
@@ -60,12 +73,21 @@ public class Multiplayer extends SinglePlayer implements Screen {
         remotePlayers.forEach((key, value) -> value.act(delta));
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
+    private void updateServer(float delta) {
+        timer += delta;
+        if (timer >= Vars.UPDATE_TIME && player != null && player.hasMoved()) {
+            JSONObject data = new JSONObject();
+            try {
+                data.put("x", player.getVelocity().x);
+                data.put("y", player.getVelocity().y);
+                socket.emit("playerMoved", data);
+            } catch (JSONException e) {
+                Gdx.app.log("SOCKET.IO", "Error sending update data");
+            }
+        }
     }
 
-    public void configSocketEvents() {
+    private void configSocketEvents() {
         socket.on(Socket.EVENT_CONNECT, args -> {
             Gdx.app.log("SocketIO", "Connected");
         }).on("socketID", args -> {
@@ -117,20 +139,6 @@ public class Multiplayer extends SinglePlayer implements Screen {
         });
     }
 
-    public void updateServer(float delta) {
-        timer += delta;
-        if (timer >= Vars.UPDATE_TIME && player != null && player.hasMoved()) {
-            JSONObject data = new JSONObject();
-            try {
-                data.put("x", player.getVelocity().x);
-                data.put("y", player.getVelocity().y);
-                socket.emit("playerMoved", data);
-            } catch (JSONException e) {
-                Gdx.app.log("SOCKET.IO", "Error sending update data");
-            }
-        }
-    }
-
     private void connectSocket() {
         try {
             socket = IO.socket(Vars.localURL);
@@ -139,6 +147,17 @@ public class Multiplayer extends SinglePlayer implements Screen {
             e.printStackTrace();
         }
     }
+
+    @Override
+    protected void mobsCreation() {
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        socket.close();
+    }
+
 
 }
 

@@ -26,8 +26,8 @@ import io.socket.client.Socket;
 
 public class Hero extends MyActor {
     private final HealthBar healthBar;
-    private Vector2 previousPosition;
     private final ArrayList<IceBall> allSpells;
+    private Vector2 previousPosition;
     private long lastSpellSpawn;
     private boolean direction;
     private float hp;

@@ -123,6 +123,7 @@ public class SinglePlayer implements Screen {
         actorQueue.clear();
         score = 0;
     }
+
     protected void actorAct(float delta) {
         // Player
         player.act(delta);
@@ -143,7 +144,7 @@ public class SinglePlayer implements Screen {
         return new Vector2(new Random().nextInt(300), new Random().nextInt(300));
     }
 
-    private void mobsCreation() {
+    protected void mobsCreation() {
         Mob mobBoss = new PurpleFlameBoss(world, player.getPosition());
         allMobs.add(mobBoss);
         stage.addActor(mobBoss);
