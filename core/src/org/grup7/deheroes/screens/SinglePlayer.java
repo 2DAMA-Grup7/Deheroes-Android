@@ -26,7 +26,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import org.grup7.deheroes.Vars;
 import org.grup7.deheroes.actors.heroes.Hero;
-import org.grup7.deheroes.actors.heroes.Rogue;
+import org.grup7.deheroes.actors.heroes.Witch;
 import org.grup7.deheroes.actors.mobs.Mob;
 import org.grup7.deheroes.actors.mobs.PurpleFlame;
 import org.grup7.deheroes.actors.mobs.PurpleFlameBoss;
@@ -35,7 +35,6 @@ import org.grup7.deheroes.ui.Hud;
 import org.grup7.deheroes.utils.Assets;
 import org.grup7.deheroes.utils.WorldContactListener;
 
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -49,7 +48,7 @@ public class SinglePlayer implements Screen {
     protected final OrthographicCamera camera;
     protected final Hud hud;
     protected final Stage stage;
-    protected final ArrayList<Hero> players;
+    protected final Hero player;
     protected final World world;
     protected final Game game;
 
@@ -61,11 +60,10 @@ public class SinglePlayer implements Screen {
         this.debugRenderer = new Box2DDebugRenderer();
         this.camera = new OrthographicCamera(Vars.gameWidth, Vars.gameHeight);
         this.stage = new Stage(new StretchViewport(Vars.gameWidth, Vars.gameHeight, camera));
-        this.players = new ArrayList<>();
         this.hud = new Hud();
         this.mapRenderer = new OrthogonalTiledMapRenderer(loadMap(map));
-        Hero player = new Rogue(world);
-        players.add(player);
+        Hero player = new Witch(world);
+        this.player = player;
         world.setContactListener(new WorldContactListener(player));
         stage.addActor(player);
         Gdx.input.setInputProcessor(new InputHandler(player));
@@ -78,7 +76,7 @@ public class SinglePlayer implements Screen {
 
     @Override
     public void render(float delta) {
-        if (players.get(0).getHp() < 0) {
+        if (player.getHp() < 0) {
             Gdx.audio.newSound(Gdx.files.internal(Assets.Sounds.gameOver)).play();
             dispose();
             game.setScreen(new GameOver(game));
@@ -88,7 +86,7 @@ public class SinglePlayer implements Screen {
             actorAct(delta);
             //System.out.println("PlayerX: " + player.getX() + " PlayerY: " + player.getY());
             world.step(delta, 6, 2);
-            camera.position.set(players.get(0).getX(), players.get(0).getY(), 0);
+            camera.position.set(player.getX(), player.getY(), 0);
             camera.update();
             mapRenderer.setView(camera);
             Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -125,43 +123,28 @@ public class SinglePlayer implements Screen {
         actorQueue.clear();
         score = 0;
     }
-
-    private Hero closerPlayer(Vector2 distanceMob) {
-        Hero closerPlayer = null;
-        float smallerDistance = Float.MAX_VALUE;
-        for (Hero player : players) {
-            if (player.getPosition().dst(distanceMob) < smallerDistance) {
-                smallerDistance = player.getPosition().dst(distanceMob);
-                closerPlayer = player;
-            }
-        }
-        return closerPlayer;
-    }
-
     protected void actorAct(float delta) {
         // Player
-        players.forEach(player -> player.act(delta));
+        player.act(delta);
         // Mobs
         allMobs.forEach(mob -> {
             if (mob.isAlive()) {
-                mob.act(delta, closerPlayer(mob.getPosition()));
+                mob.act(delta, player);
             } else {
                 if (TimeUtils.nanoTime() - lastMobSpawn > 2000000000) {
-                    float randomX = new Random().nextInt(300);
-                    float randomY = new Random().nextInt(300);
-                    mob.awake(new Vector2(randomX, randomY));
-                    multiplayerSetMob(randomX, randomY);
+                    mob.awake(getMobSpawnPosition());
                     lastMobSpawn = TimeUtils.nanoTime();
                 }
             }
         });
     }
 
-    protected void multiplayerSetMob(float randomX, float randomY) {
+    protected Vector2 getMobSpawnPosition() {
+        return new Vector2(new Random().nextInt(300), new Random().nextInt(300));
     }
 
     private void mobsCreation() {
-        Mob mobBoss = new PurpleFlameBoss(world, players.get(0).getPosition());
+        Mob mobBoss = new PurpleFlameBoss(world, player.getPosition());
         allMobs.add(mobBoss);
         stage.addActor(mobBoss);
         // Create x mobs
