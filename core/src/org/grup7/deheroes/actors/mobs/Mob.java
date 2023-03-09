@@ -1,7 +1,5 @@
 package org.grup7.deheroes.actors.mobs;
 
-import static org.grup7.deheroes.screens.SinglePlayer.score;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
@@ -52,7 +50,7 @@ public class Mob extends MyActor {
         if (getHP() < 0) {
             sleep();
             dieSound.play();
-            score += points;
+            hero.setScore(hero.getScore() + points);
         } else {
             // Update time
             tick += delta;
@@ -79,7 +77,6 @@ public class Mob extends MyActor {
         Body body = world.createBody(bodyDef);
         body.createFixture(fixtureDef).setUserData(this);
         polygonShape.dispose();
-        body.setActive(false);
         this.body = body;
     }
 
@@ -99,7 +96,6 @@ public class Mob extends MyActor {
     @Override
     public void awake(Vector2 spawnPoint) {
         super.awake(spawnPoint);
-        body.setActive(true);
         distanceHero = Float.MAX_VALUE;
         setHP(maxHP);
     }
@@ -107,7 +103,6 @@ public class Mob extends MyActor {
     @Override
     public void sleep() {
         super.sleep();
-        body.setActive(false);
     }
 
     public Float getDistanceHero() {

@@ -25,6 +25,6 @@ public class PurpleFlame extends Mob implements Actions {
     @Override
     public void act(float delta, Hero hero) {
         super.act(delta, hero);
-        trackActor(this, delta, hero.getPosition(), 0);
+        if (hero.isHost()) trackActor(this, delta, hero.getPosition(), 0);
     }
 }

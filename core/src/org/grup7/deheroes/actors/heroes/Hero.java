@@ -30,7 +30,8 @@ public class Hero extends MyActor {
     private float hp;
     private Animation<TextureRegion> currentAnimation;
     private TextureRegion[] walkDown, walkLeft, walkRight, walkUp;
-
+    private Boolean host;
+    private int score;
 
     public Hero(World world, float startX, float startY, float width, float height, float hp, int speed, String texturePath) {
         this.velocity = new Vector2(0, 0);
@@ -40,10 +41,12 @@ public class Hero extends MyActor {
         this.tick = 0f;
         this.rows = 4;
         this.cols = 5;
+        this.score = 0;
         this.lastSpellSpawn = TimeUtils.nanoTime();
         this.allSpells = new ArrayList<>();
         this.world = world;
         this.previousPosition = new Vector2(startX, startY);
+        this.host = true;
         spritesSetup(texturePath);
         setBounds(startX, startY, width, height);
         setTouchable(Touchable.enabled);
@@ -105,8 +108,6 @@ public class Hero extends MyActor {
         this.currentAnimation.setPlayMode(Animation.PlayMode.LOOP);
     }
 
-
-
     public Body getBody() {
         return body;
     }
@@ -143,6 +144,22 @@ public class Hero extends MyActor {
         this.hp = hp;
     }
 
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public Boolean isHost() {
+        return host;
+    }
+
+    public void setHost(Boolean host) {
+        this.host = host;
+    }
+
     public boolean isDirection() {
         return direction;
     }
@@ -150,7 +167,6 @@ public class Hero extends MyActor {
     public ArrayList<IceBall> getAllSpells() {
         return allSpells;
     }
-
 
     public void moveUp() {
         velocity.y = speed * Gdx.graphics.getDeltaTime();
