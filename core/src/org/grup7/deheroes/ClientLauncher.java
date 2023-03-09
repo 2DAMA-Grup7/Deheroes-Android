@@ -2,7 +2,10 @@ package org.grup7.deheroes;
 
 import com.badlogic.gdx.Game;
 
+import org.grup7.deheroes.screens.LoginScreen;
 import org.grup7.deheroes.screens.MainMenu;
+
+import jdk.tools.jmod.Main;
 
 public class ClientLauncher extends Game {
 

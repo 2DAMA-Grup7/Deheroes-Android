@@ -3,6 +3,7 @@ package org.grup7.deheroes.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -34,6 +35,8 @@ import org.grup7.deheroes.input.InputHandler;
 import org.grup7.deheroes.ui.Hud;
 import org.grup7.deheroes.utils.Assets;
 import org.grup7.deheroes.utils.WorldContactListener;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -52,6 +55,7 @@ public class SinglePlayer implements Screen {
     protected final ArrayList<Hero> players;
     protected final World world;
     protected final Game game;
+    int time=0;
 
     protected long lastMobSpawn;
 
@@ -78,10 +82,19 @@ public class SinglePlayer implements Screen {
 
     @Override
     public void render(float delta) {
+        time++;
         if (players.get(0).getHp() < 0) {
+            JSONObject data = new JSONObject();
+            try {
+                data.put("score" , score);
+                data.put("time" , time);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+            connect(data);
             Gdx.audio.newSound(Gdx.files.internal(Assets.Sounds.gameOver)).play();
             dispose();
-            game.setScreen(new GameOver(game));
+            game.setScreen(new GameOver(game, data));
         } else {
             actorQueue.forEach(stage::addActor);
             actorQueue.clear();
@@ -221,5 +234,35 @@ public class SinglePlayer implements Screen {
         }
         return map;
     }
+
+    private void connect(JSONObject data){
+        Net.HttpRequest httpPOST = new Net.HttpRequest(Net.HttpMethods.POST);
+        httpPOST.setUrl(Vars.scoreURL);
+        httpPOST.setHeader("x-access-token" ,  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MDcxYjdmMDU4ZmJkZGEwY2I5Y2Q5MCIsImlhdCI6MTY3ODM5MjkyNywiZXhwIjoxNjc4NDc5MzI3fQ.0Ghkd3zpX-X7xChyNcdHrcTnl3KEd7sN8xvhVsT_kn0");
+        try {
+            httpPOST.setContent("score=" + data.getInt("score") + "&time=" + data.getInt("time"));
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        Gdx.net.sendHttpRequest(httpPOST, new Net.HttpResponseListener() {
+            @Override
+            public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                Gdx.app.log("MSG", httpResponse.getResultAsString());
+            }
+
+            @Override
+            public void failed(Throwable t) {
+                Gdx.app.log("Send", "was NOT successful!");
+            }
+
+            @Override
+            public void cancelled() {
+                Gdx.app.log("Send", "was cancelled!");
+            }
+        });
+    }
+
 }
 

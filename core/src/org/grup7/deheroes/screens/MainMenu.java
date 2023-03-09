@@ -25,11 +25,8 @@ public class MainMenu implements Screen {
     private final Game game;
     private final Stage stage;
     private final Music music;
-    private final Table SetNickTable;
     private final Table setMenuTable;
     protected Skin skin = new Skin(Gdx.files.internal(Assets.Skin.uiSkin));
-    private String nickname;
-    private TextField nickInput;
 
     public MainMenu(Game game) {
         this.game = game;
@@ -38,14 +35,10 @@ public class MainMenu implements Screen {
         music.play();
         stage = new Stage();
 
-
-        SetNickTable = LoginTable();
         setMenuTable = menuTable();
 
         stage.addActor(setMenuTable);
-        stage.addActor(SetNickTable);
 
-        SetNickTable.setVisible(false);
         setMenuTable.setVisible(true);
     }
 
@@ -107,8 +100,6 @@ public class MainMenu implements Screen {
         onlineButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //setMenuTable.setVisible(false);
-                //SetNickTable.setVisible(true);
                 game.setScreen(new Multiplayer(game, Assets.Maps.landOfDeath));
                 dispose();
             }
@@ -121,49 +112,5 @@ public class MainMenu implements Screen {
         });
         return table;
     }
-
-
-    private Table LoginTable() {
-        final Table table = new Table();
-        table.setFillParent(true);
-
-        Window window = new Window("Login", skin);
-        window.getTitleLabel().setAlignment(Align.center);
-
-        TextButton join_button = new TextButton("Join", skin);
-        nickInput = new TextField("", skin);
-
-        window.add(new Label("Enter Your Nickname", skin));
-        window.row();
-        window.add(nickInput);
-        window.row();
-        window.add(join_button);
-        window.row();
-        TextButton backButton = new TextButton("Back", skin);
-
-
-        table.add(window);
-        join_button.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                nickname = nickInput.getText();
-                if (!nickname.isEmpty()) {
-                    SetNickTable.setVisible(false);
-                    game.setScreen(new Multiplayer(game, Assets.Maps.landOfDeath));
-                    dispose();
-                }
-            }
-        });
-        backButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                SetNickTable.setVisible(false);
-                setMenuTable.setVisible(true);
-            }
-        });
-
-        return table;
-    }
-
 
 }

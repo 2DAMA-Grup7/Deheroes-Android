@@ -14,13 +14,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import org.grup7.deheroes.utils.Assets;
+import org.json.JSONObject;
 
 public class GameOver implements Screen {
     private final Game game;
     private final Stage stage;
     private final Music music;
 
-    public GameOver(Game game) {
+    public GameOver(Game game, JSONObject data) {
         this.game = game;
         music = Gdx.audio.newMusic(Gdx.files.internal(Assets.Music.menu));
         music.setLooping(true);
