@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.Align;
 
 import org.grup7.deheroes.Vars;
 import org.grup7.deheroes.utils.Assets;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -73,9 +74,6 @@ public class MainMenu implements Screen {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
-        System.out.println("connecting");
-        connect();
-
     }
 
     @Override
@@ -124,35 +122,5 @@ public class MainMenu implements Screen {
         });
         return table;
     }
-    public void connect() {
-        HttpRequestBuilder requestBuilder = new HttpRequestBuilder();
-        Net.HttpRequest httpRequest =
-                requestBuilder.newRequest()
-                        .method(Net.HttpMethods.GET)
-                        .url(Vars.configURL)
-                        .build();
-        Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
-            @Override
-            public void handleHttpResponse(Net.HttpResponse httpResponse) {
-                JSONObject res;
-                try {
-                    res = new JSONObject(httpRequest.toString());
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-                System.out.println(res);
-            }
 
-            @Override
-            public void failed(Throwable t) {
-
-            }
-
-            @Override
-            public void cancelled() {
-
-            }
-        });
-    }
-
-    }
+}

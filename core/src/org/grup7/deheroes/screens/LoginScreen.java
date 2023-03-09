@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.Json;
 
 import org.grup7.deheroes.Vars;
 import org.grup7.deheroes.utils.Assets;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -152,6 +153,31 @@ public class LoginScreen implements Screen {
                 Gdx.app.log("LOGIN", "was cancelled!");
             }
         });
-        //TODO get JSON CONFIG TODO POST SCORE!!
+
+        Net.HttpRequest httpGET = new Net.HttpRequest(Net.HttpMethods.GET);
+        httpGET.setUrl(Vars.configURL);
+        Gdx.net.sendHttpRequest(httpGET, new Net.HttpResponseListener() {
+            @Override
+            public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                Gdx.app.log("MSG", httpResponse.getResultAsString());
+                JSONArray res;
+                try {
+                    res = new JSONArray(httpResponse.getResultAsString());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                System.out.println(res);
+            }
+
+            @Override
+            public void failed(Throwable t) {
+
+            }
+
+            @Override
+            public void cancelled() {
+
+            }
+        });
     }
 }
