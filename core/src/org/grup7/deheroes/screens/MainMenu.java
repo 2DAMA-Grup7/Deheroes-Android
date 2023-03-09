@@ -3,9 +3,11 @@ package org.grup7.deheroes.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.net.HttpRequestBuilder;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -19,13 +21,15 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
+import org.grup7.deheroes.Vars;
 import org.grup7.deheroes.utils.Assets;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainMenu implements Screen {
     private final Game game;
     private final Stage stage;
     private final Music music;
-    private final Table SetNickTable;
     private final Table setMenuTable;
     protected Skin skin = new Skin(Gdx.files.internal(Assets.Skin.uiSkin));
     private String nickname;
@@ -38,14 +42,10 @@ public class MainMenu implements Screen {
         music.play();
         stage = new Stage();
 
-
-        SetNickTable = LoginTable();
         setMenuTable = menuTable();
 
         stage.addActor(setMenuTable);
-        stage.addActor(SetNickTable);
 
-        SetNickTable.setVisible(false);
         setMenuTable.setVisible(true);
     }
 
@@ -73,6 +73,9 @@ public class MainMenu implements Screen {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
+        System.out.println("connecting");
+        connect();
+
     }
 
     @Override
@@ -121,49 +124,35 @@ public class MainMenu implements Screen {
         });
         return table;
     }
-
-
-    private Table LoginTable() {
-        final Table table = new Table();
-        table.setFillParent(true);
-
-        Window window = new Window("Login", skin);
-        window.getTitleLabel().setAlignment(Align.center);
-
-        TextButton join_button = new TextButton("Join", skin);
-        nickInput = new TextField("", skin);
-
-        window.add(new Label("Enter Your Nickname", skin));
-        window.row();
-        window.add(nickInput);
-        window.row();
-        window.add(join_button);
-        window.row();
-        TextButton backButton = new TextButton("Back", skin);
-
-
-        table.add(window);
-        join_button.addListener(new ChangeListener() {
+    public void connect() {
+        HttpRequestBuilder requestBuilder = new HttpRequestBuilder();
+        Net.HttpRequest httpRequest =
+                requestBuilder.newRequest()
+                        .method(Net.HttpMethods.GET)
+                        .url(Vars.configURL)
+                        .build();
+        Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                nickname = nickInput.getText();
-                if (!nickname.isEmpty()) {
-                    SetNickTable.setVisible(false);
-                    game.setScreen(new Multiplayer(game, Assets.Maps.landOfDeath));
-                    dispose();
+            public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                JSONObject res;
+                try {
+                    res = new JSONObject(httpRequest.toString());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
                 }
+                System.out.println(res);
             }
-        });
-        backButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                SetNickTable.setVisible(false);
-                setMenuTable.setVisible(true);
-            }
-        });
 
-        return table;
+            @Override
+            public void failed(Throwable t) {
+
+            }
+
+            @Override
+            public void cancelled() {
+
+            }
+        });
     }
 
-
-}
+    }
