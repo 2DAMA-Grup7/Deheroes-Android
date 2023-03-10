@@ -59,6 +59,4 @@ public class Witch extends Hero implements Actions {
         }
         return closerMob;
     }
-
-
 }

@@ -39,13 +39,15 @@ public class WorldContactListener implements ContactListener {
             player.getAllSpells().forEach(spell -> {
                 if (spell.getBody().equals(fa.getBody())) spell.setHP(0);
             });
-            allMobs.forEach(mob -> {
-                if (mob.getBody().equals(fb.getBody())) {
-                    mob.setHP(mob.getHP() - 30);
-                    if (mob instanceof PurpleFlameBoss) mob.getHitSound().play(0.05F);
-                    else mob.getHitSound().play(0.5F);
-                }
-            });
+            if (player.isHost()) {
+                allMobs.forEach(mob -> {
+                    if (mob.getBody().equals(fb.getBody())) {
+                        mob.setHP(mob.getHP() - 30);
+                        if (mob instanceof PurpleFlameBoss) mob.getHitSound().play(0.05F);
+                        else mob.getHitSound().play(0.5F);
+                    }
+                });
+            }
         }
 
     }
@@ -85,8 +87,6 @@ public class WorldContactListener implements ContactListener {
         if (isMobContactHero(fa, fb) && player.getBody().equals(fa.getBody())) {
             player.setHp(player.getHp() - 0.3F);
         }
-
-
     }
 
     @Override

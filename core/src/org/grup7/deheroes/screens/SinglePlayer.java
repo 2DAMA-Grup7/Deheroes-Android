@@ -47,8 +47,6 @@ import java.util.Random;
 public class SinglePlayer implements Screen {
     public static ArrayList<Actor> actorQueue = new ArrayList<>();
     public static ArrayList<Mob> allMobs = new ArrayList<>();
-    public static int score = 0;
-
     protected final Box2DDebugRenderer debugRenderer;
     protected final TiledMapRenderer mapRenderer;
     protected final OrthographicCamera camera;
@@ -122,7 +120,7 @@ public class SinglePlayer implements Screen {
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             mapRenderer.render();
             debugRenderer.render(world, camera.combined);
-            hud.updateScoreLabel(score);
+            hud.updateScoreLabel(player.getScore());
             stage.getBatch().setProjectionMatrix(hud.getStage().getCamera().combined);
             stage.draw();
             hud.getStage().draw();
@@ -151,7 +149,6 @@ public class SinglePlayer implements Screen {
     public void dispose() {
         allMobs.clear();
         actorQueue.clear();
-        score = 0;
     }
 
     protected void actorAct(float delta) {
