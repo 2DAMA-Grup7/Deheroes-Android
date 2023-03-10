@@ -17,8 +17,6 @@ public class InputHandler extends InputAdapter implements InputProcessor {
         this.player = player;
     }
 
-    ;
-
     @Override
     public boolean keyDown(int keycode) {
         switch (keycode) {
@@ -95,6 +93,38 @@ public class InputHandler extends InputAdapter implements InputProcessor {
                 break;
         }
         return true;
+    }
+
+
+    public static void playerMovementAndroid(Touchpad touchpad, Hero player){
+        float touchpadX;
+        float touchpadY;
+
+        touchpadX = touchpad.getKnobPercentX();
+        touchpadY = touchpad.getKnobPercentY();
+        System.out.println(touchpadX+"      "+touchpadY);
+        if(touchpadX ==0f && touchpadY == 0f){
+            player.stopX();
+            player.stopY();
+        }else{
+            if(touchpadX>0.45f){
+                player.moveRight();
+            }else if(touchpadX<-0.45f){
+                player.moveLeft();
+            } else {
+                player.stopX();
+                player.stopY();
+            }
+            if(touchpadY>0.45f){
+                player.moveUp();
+            }else if(touchpadY<-0.45f){
+                player.moveDown();
+
+            }else {
+                player.stopX();
+                player.stopY();
+            }
+        }
     }
 
     @Override

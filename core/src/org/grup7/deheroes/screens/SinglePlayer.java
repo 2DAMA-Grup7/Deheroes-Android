@@ -4,6 +4,7 @@ package org.grup7.deheroes.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -75,7 +76,9 @@ public class SinglePlayer implements Screen {
         this.player = player;
         world.setContactListener(new WorldContactListener(player));
         stage.addActor(player);
+        addTouchpad();
         Gdx.input.setInputProcessor(new InputHandler(player));
+
         mobsCreation();
     }
 
@@ -161,7 +164,6 @@ public class SinglePlayer implements Screen {
     Touchpad touchpad; float touchpadX, touchpadY;
 
     public void addTouchpad(){
-
         Skin skin = new Skin();
         Texture joystick = new Texture(Gdx.files.internal("Joystick.png"));
         skin.add("joystick",joystick);
@@ -176,35 +178,6 @@ public class SinglePlayer implements Screen {
         touchpad.setBounds(2, 4, 10, 10);
         stage.addActor(touchpad);
     }
-
-    public void playerMovementAndroid(){
-        touchpadX = touchpad.getKnobPercentX();
-        touchpadY = touchpad.getKnobPercentY();
-        System.out.println(touchpadX+"      "+touchpadY);
-        if(touchpadX ==0f && touchpadY == 0f){
-            player.stopX();
-            player.stopY();
-        }else{
-            if(touchpadX>0.45f){
-                player.moveRight();
-            }else if(touchpadX<-0.45f){
-                player.moveLeft();
-            } else {
-                player.stopX();
-                player.stopY();
-            }
-            if(touchpadY>0.45f){
-                player.moveUp();
-            }else if(touchpadY<-0.45f){
-                player.moveDown();
-
-            }else {
-                player.stopX();
-                player.stopY();
-            }
-        }
-    }
-
 
     protected Vector2 getMobSpawnPosition() {
         return new Vector2(new Random().nextInt(300), new Random().nextInt(300));
@@ -274,7 +247,8 @@ public class SinglePlayer implements Screen {
     private void connect(JSONObject data){
         Net.HttpRequest httpPOST = new Net.HttpRequest(Net.HttpMethods.POST);
         httpPOST.setUrl(Vars.scoreURL);
-        httpPOST.setHeader("x-access-token" ,  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MDcxYjdmMDU4ZmJkZGEwY2I5Y2Q5MCIsImlhdCI6MTY3ODM5MjkyNywiZXhwIjoxNjc4NDc5MzI3fQ.0Ghkd3zpX-X7xChyNcdHrcTnl3KEd7sN8xvhVsT_kn0");
+        Preferences prefs = Gdx.app.getPreferences("accessToken");
+        httpPOST.setHeader("x-access-token" , prefs.getString("token") );
         try {
             httpPOST.setContent("score=" + data.getInt("score") + "&time=" + data.getInt("time"));
         } catch (JSONException e) {

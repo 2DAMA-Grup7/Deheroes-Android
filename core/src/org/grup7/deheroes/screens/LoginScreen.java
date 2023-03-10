@@ -3,6 +3,7 @@ package org.grup7.deheroes.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
@@ -134,10 +135,10 @@ public class LoginScreen implements Screen {
             @Override
             public void handleHttpResponse(Net.HttpResponse httpResponse) {
                 JSONArray res;
-                JSONObject purpleflame = new JSONObject();
-                JSONObject purpleflameBoss = new JSONObject();
-                JSONObject witch = new JSONObject();
-                JSONObject rogue = new JSONObject();
+                JSONObject purpleflame;
+                JSONObject purpleflameBoss;
+                JSONObject witch;
+                JSONObject rogue;
                 try {
                     res = new JSONArray(httpResponse.getResultAsString());
                     System.out.println(res.getJSONObject(0).get("name"));
@@ -192,10 +193,27 @@ public class LoginScreen implements Screen {
         }
 
         Gdx.net.sendHttpRequest(httpPOST, new Net.HttpResponseListener() {
+
             @Override
             public void handleHttpResponse(Net.HttpResponse httpResponse) {
-                Gdx.app.log("MSG", httpResponse.getResultAsString());
-                auth=true;
+                JSONObject res;
+
+                try {
+                    res = new JSONObject(httpResponse.getResultAsString());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                Gdx.app.log("MSG", res.toString());
+
+                try {
+                    if(res.get("accessToken")!=null){
+                        Preferences prefs = Gdx.app.getPreferences("accessToken");
+                        prefs.putString("token", res.getString("accessToken"));
+                        auth=true;
+                    }
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             @Override
