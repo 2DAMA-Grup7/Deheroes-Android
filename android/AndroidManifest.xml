@@ -9,6 +9,7 @@
         android:required="true" />
 
     <application
+        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:appCategory="game"
         android:dataExtractionRules="@xml/data_extraction_rules"

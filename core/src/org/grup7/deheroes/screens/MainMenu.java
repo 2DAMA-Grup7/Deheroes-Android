@@ -40,7 +40,7 @@ public class MainMenu implements Screen {
         stage.addActor(setCharTable);
 
         setMenuTable.setVisible(true);
-        setMenuTable.setVisible(false);
+        setCharTable.setVisible(false);
     }
 
 
