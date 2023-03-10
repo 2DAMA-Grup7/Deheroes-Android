@@ -31,61 +31,10 @@ public class Hud {
         table.row();
         table.add(scoreLabel).center();
         table.row();
-        table.add(touchpad).padTop(100).padLeft(10);
 
         stage.addActor(table);
     }
 
-    Touchpad touchpad;
-    float touchpadX, touchpadY;
-
-
-    /*public void addTouchpad(){
-        Skin skin = new Skin();
-        Texture joystick = new Texture(Gdx.files.internal("Joystick.png"));
-        skin.add("joystick",joystick);
-        Texture joystickknob = new Texture(Gdx.files.internal("SmallHandleFilled.png"));
-        skin.add("knob",joystickknob);
-        Touchpad.TouchpadStyle touchpadStyle = new Touchpad.TouchpadStyle();
-        touchpadStyle.background = skin.getDrawable("joystick");
-        touchpadStyle.knob = skin.getDrawable("knob");
-
-        touchpad = new Touchpad(1, touchpadStyle);
-        touchpad.setBounds(2, 4, 10, 10);
-        stage.addActor(touchpad);
-    }
-
-
-    public static void playerMovementAndroid(Touchpad touchpad, Hero player){
-        float touchpadX;
-        float touchpadY;
-
-        touchpadX = touchpad.getKnobPercentX();
-        touchpadY = touchpad.getKnobPercentY();
-        System.out.println(touchpadX+"      "+touchpadY);
-        if(touchpadX ==0f && touchpadY == 0f){
-            player.stopX();
-            player.stopY();
-        }else{
-            if(touchpadX>0.45f){
-                player.moveRight();
-            }else if(touchpadX<-0.45f){
-                player.moveLeft();
-            } else {
-                player.stopX();
-                player.stopY();
-            }
-            if(touchpadY>0.45f){
-                player.moveUp();
-            }else if(touchpadY<-0.45f){
-                player.moveDown();
-
-            }else {
-                player.stopX();
-                player.stopY();
-            }
-        }
-    }*/
 
     public void updateScoreLabel(int score) {
         scoreLabel.setText(String.format(String.valueOf(score), skin));

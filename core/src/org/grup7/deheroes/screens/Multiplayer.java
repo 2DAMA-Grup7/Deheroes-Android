@@ -27,8 +27,8 @@ public class Multiplayer extends SinglePlayer implements Screen {
     private float timer;
     private Socket socket;
 
-    public Multiplayer(Game game, String map) {
-        super(game, map);
+    public Multiplayer(Game game, String map, boolean Witch) {
+        super(game, map, Witch);
         host = false;
         updateMobsPosition = new HashMap<>();
         addPlayerQueue = new ArrayList<>();

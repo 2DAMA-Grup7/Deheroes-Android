@@ -24,13 +24,12 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import org.grup7.deheroes.Vars;
 import org.grup7.deheroes.actors.heroes.Hero;
+import org.grup7.deheroes.actors.heroes.Rogue;
 import org.grup7.deheroes.actors.heroes.Witch;
 import org.grup7.deheroes.actors.mobs.Mob;
 import org.grup7.deheroes.actors.mobs.PurpleFlame;
@@ -59,25 +58,34 @@ public class SinglePlayer implements Screen {
     protected final World world;
     protected final Game game;
     int time=0;
+    boolean Witch;
 
     protected long lastMobSpawn;
 
 
 
-    public SinglePlayer(Game game, String map) {
+
+    public SinglePlayer(Game game, String map, boolean Witch) {
         this.game = game;
+        this.Witch=Witch;
         this.world = new World(new Vector2(0, 0), true);
         this.debugRenderer = new Box2DDebugRenderer();
         this.camera = new OrthographicCamera(Vars.gameWidth, Vars.gameHeight);
         this.stage = new Stage(new StretchViewport(Vars.gameWidth, Vars.gameHeight, camera));
         this.mapRenderer = new OrthogonalTiledMapRenderer(loadMap(map));
-        Hero player = new Witch(world);
+        Hero player;
+        if(Witch){
+            player = new Witch(world);
+            }
+        else {
+            player = new Rogue(world);
+        }
+
         this.player = player;
         this.hud = new Hud(player);
 
         world.setContactListener(new WorldContactListener(player));
         stage.addActor(player);
-        //addTouchpad();
         Gdx.input.setInputProcessor(new InputHandler(player));
         mobsCreation();
     }
@@ -100,7 +108,7 @@ public class SinglePlayer implements Screen {
 
             Gdx.audio.newSound(Gdx.files.internal(Assets.Sounds.gameOver)).play();
             dispose();
-            game.setScreen(new GameOver(game));
+            game.setScreen(new GameOver(game, Witch));
         } else {
             actorQueue.forEach(stage::addActor);
             actorQueue.clear();
@@ -119,6 +127,7 @@ public class SinglePlayer implements Screen {
             stage.draw();
             hud.getStage().draw();
         }
+
     }
 
     @Override
@@ -160,24 +169,6 @@ public class SinglePlayer implements Screen {
             }
         });
     }
-/*
-    Touchpad touchpad; float touchpadX, touchpadY;
-
-    public void addTouchpad(){
-        Skin skin = new Skin();
-        Texture joystick = new Texture(Gdx.files.internal("Joystick.png"));
-        skin.add("joystick",joystick);
-        Texture joystickknob = new Texture(Gdx.files.internal("SmallHandleFilled.png"));
-        skin.add("knob",joystickknob);
-        skin.setScale(1/32f);
-        Touchpad.TouchpadStyle touchpadStyle = new Touchpad.TouchpadStyle();
-        touchpadStyle.background = skin.getDrawable("joystick");
-        touchpadStyle.knob = skin.getDrawable("knob");
-
-        touchpad = new Touchpad(1, touchpadStyle);
-        touchpad.setBounds(2, 4, 10, 10);
-        stage.addActor(touchpad);
-    }*/
 
     protected Vector2 getMobSpawnPosition() {
         return new Vector2(new Random().nextInt(300), new Random().nextInt(300));
