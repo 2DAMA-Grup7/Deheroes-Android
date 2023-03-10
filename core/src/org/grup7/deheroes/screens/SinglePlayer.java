@@ -89,6 +89,7 @@ public class SinglePlayer implements Screen {
 
     @Override
     public void render(float delta) {
+        time++;
         if (player.getHp() < 0) {
             JSONObject data = new JSONObject();
             try {
