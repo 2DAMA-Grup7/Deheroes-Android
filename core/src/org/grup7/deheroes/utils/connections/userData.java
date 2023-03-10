@@ -17,7 +17,8 @@ public class userData {
 
 
     JSONObject data;
-    public userData(JSONObject data){
+
+    public userData(JSONObject data) {
         this.data = data;
     }
 

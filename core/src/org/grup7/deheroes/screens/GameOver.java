@@ -13,7 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-import org.grup7.deheroes.actors.heroes.Witch;
 import org.grup7.deheroes.utils.Assets;
 
 public class GameOver implements Screen {

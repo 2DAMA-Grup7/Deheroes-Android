@@ -7,18 +7,14 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.net.HttpRequestBuilder;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Json;
 
 import org.grup7.deheroes.Vars;
 import org.grup7.deheroes.utils.Assets;
@@ -27,15 +23,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-
 public class LoginScreen implements Screen {
     private final Game game;
     private final Stage stage;
     private final Music music;
-    private final Table setLoginTable;
     protected Skin skin = new Skin(Gdx.files.internal(Assets.Skin.uiSkin));
-
+    boolean auth = false;
 
     public LoginScreen(Game game) {
         this.game = game;
@@ -43,11 +36,8 @@ public class LoginScreen implements Screen {
         music.setLooping(true);
         music.play();
         stage = new Stage();
-
-        setLoginTable = LoginTable();
-
+        Table setLoginTable = LoginTable();
         stage.addActor(setLoginTable);
-
         setLoginTable.setVisible(true);
     }
 
@@ -62,7 +52,7 @@ public class LoginScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(delta);
         stage.draw();
-        if(auth){
+        if (auth) {
             stage.dispose();
             game.setScreen(new MainMenu(game));
         }
@@ -98,11 +88,7 @@ public class LoginScreen implements Screen {
         TextField inputUser = new TextField("User", skin);
         TextField inputPasswd = new TextField("Password", skin);
         TextButton enterButton = new TextButton("Login", skin);
-
-
         Window window = new Window("Login", skin);
-
-
         window.add(inputUser).center();
         window.row();
         window.add(inputPasswd).center();
@@ -116,8 +102,8 @@ public class LoginScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 JSONObject data = new JSONObject();
                 try {
-                    data.put("username" , inputUser.getText());
-                    data.put("password" , inputPasswd.getText());
+                    data.put("username", inputUser.getText());
+                    data.put("password", inputPasswd.getText());
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
@@ -126,9 +112,8 @@ public class LoginScreen implements Screen {
         });
         return table;
     }
-    boolean auth=false;
 
-    private void connect(JSONObject data){
+    private void connect(JSONObject data) {
         Net.HttpRequest httpGET = new Net.HttpRequest(Net.HttpMethods.GET);
         httpGET.setUrl(Vars.configURL);
         Gdx.net.sendHttpRequest(httpGET, new Net.HttpResponseListener() {
@@ -147,7 +132,6 @@ public class LoginScreen implements Screen {
                     witch = res.getJSONObject(2);
                     rogue = res.getJSONObject(3);
 
-
                     Config.purpleFlame.hp = purpleflame.getInt("hp");
                     Config.purpleFlame.speed = purpleflame.getInt("velocity");
                     Config.purpleFlame.points = purpleflame.getInt("points");
@@ -162,7 +146,6 @@ public class LoginScreen implements Screen {
                     Config.Rogue.hp = rogue.getInt("hp");
                     Config.Rogue.speed = rogue.getInt("velocity");
 
-
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
@@ -170,18 +153,14 @@ public class LoginScreen implements Screen {
                 Gdx.app.log("MSG", res.toString());
             }
 
-
             @Override
             public void failed(Throwable t) {
-
             }
 
             @Override
             public void cancelled() {
-
             }
         });
-
 
         Net.HttpRequest httpPOST = new Net.HttpRequest(Net.HttpMethods.POST);
         httpPOST.setUrl(Vars.LoginURL);
@@ -193,11 +172,9 @@ public class LoginScreen implements Screen {
         }
 
         Gdx.net.sendHttpRequest(httpPOST, new Net.HttpResponseListener() {
-
             @Override
             public void handleHttpResponse(Net.HttpResponse httpResponse) {
                 JSONObject res;
-
                 try {
                     res = new JSONObject(httpResponse.getResultAsString());
                 } catch (JSONException e) {
@@ -206,10 +183,11 @@ public class LoginScreen implements Screen {
                 Gdx.app.log("MSG", res.toString());
 
                 try {
-                    if(res.get("accessToken")!=null){
+                    if (res.get("accessToken") != null) {
                         Preferences prefs = Gdx.app.getPreferences("accessToken");
                         prefs.putString("token", res.getString("accessToken"));
-                        auth=true;
+                        prefs.flush();
+                        auth = true;
                     }
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
