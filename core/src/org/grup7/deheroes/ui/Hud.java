@@ -23,8 +23,6 @@ public class Hud {
         this.skin = new Skin(Gdx.files.internal(Assets.Skin.uiSkin));
         this.scoreLabel = new Label(String.valueOf(0), skin);
         this.stage = new Stage(new StretchViewport(Vars.gameWidth, Vars.gameHeight, new OrthographicCamera()));
-        addTouchpad();
-        playerMovementAndroid(touchpad, player);
 
         Table table = new Table();
         table.top();
@@ -42,7 +40,7 @@ public class Hud {
     float touchpadX, touchpadY;
 
 
-    public void addTouchpad(){
+    /*public void addTouchpad(){
         Skin skin = new Skin();
         Texture joystick = new Texture(Gdx.files.internal("Joystick.png"));
         skin.add("joystick",joystick);
@@ -87,7 +85,7 @@ public class Hud {
                 player.stopY();
             }
         }
-    }
+    }*/
 
     public void updateScoreLabel(int score) {
         scoreLabel.setText(String.format(String.valueOf(score), skin));

@@ -77,7 +77,7 @@ public class SinglePlayer implements Screen {
 
         world.setContactListener(new WorldContactListener(player));
         stage.addActor(player);
-        addTouchpad();
+        //addTouchpad();
         Gdx.input.setInputProcessor(new InputHandler(player));
         mobsCreation();
     }
@@ -160,7 +160,7 @@ public class SinglePlayer implements Screen {
             }
         });
     }
-
+/*
     Touchpad touchpad; float touchpadX, touchpadY;
 
     public void addTouchpad(){
@@ -177,7 +177,7 @@ public class SinglePlayer implements Screen {
         touchpad = new Touchpad(1, touchpadStyle);
         touchpad.setBounds(2, 4, 10, 10);
         stage.addActor(touchpad);
-    }
+    }*/
 
     protected Vector2 getMobSpawnPosition() {
         return new Vector2(new Random().nextInt(300), new Random().nextInt(300));
