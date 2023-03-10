@@ -11,6 +11,7 @@ import org.grup7.deheroes.Vars;
 import org.grup7.deheroes.actors.heroes.Hero;
 import org.grup7.deheroes.actors.heroes.Witch;
 import org.grup7.deheroes.actors.mobs.Mob;
+import org.grup7.deheroes.actors.spells.Spell;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,6 +19,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
+import java.util.Random;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -27,6 +29,8 @@ public class Multiplayer extends SinglePlayer implements Screen {
     private final ArrayList<String> addPlayerQueue;
     private final HashMap<Integer, Vector2> awakeMobsQueue;
     private final HashMap<Integer, Vector2> updateMobsPosition;
+    private final HashMap<String, ArrayList<Vector2>> updateSpellsPosition;
+    private final HashMap<String, Vector2> updatePlayersPosition;
     private String myId;
     private float timer;
     private Socket socket;
@@ -34,6 +38,8 @@ public class Multiplayer extends SinglePlayer implements Screen {
     public Multiplayer(Game game, String map) {
         super(game, map);
         updateMobsPosition = new HashMap<>();
+        updateSpellsPosition = new HashMap<>();
+        updatePlayersPosition = new HashMap<>();
         addPlayerQueue = new ArrayList<>();
         remotePlayers = new HashMap<>();
         awakeMobsQueue = new HashMap<>();
@@ -45,7 +51,6 @@ public class Multiplayer extends SinglePlayer implements Screen {
     @Override
     public void render(float delta) {
         super.render(delta);
-        System.out.println(allMobs.get(0).getVelocity());
         updateServer(delta);
         addPlayerQueue.forEach(id -> {
             Hero newPlayer = new Witch(world);
@@ -53,14 +58,51 @@ public class Multiplayer extends SinglePlayer implements Screen {
             stage.addActor(newPlayer);
         });
         try {
+            updateSpellsPosition.forEach((key, spells) -> {
+                if (key.equals(myId)) {
+                    for (int i = 0; i < player.getAllSpells().size(); i++) {
+                        Spell spell = player.getAllSpells().get(i);
+                        Vector2 spellVelocity = spell.getVelocity();
+                        Vector2 pos = spells.get(i);
+                        spell.getBody().setTransform(pos, 0);
+                        spell.getBody().setLinearVelocity(spellVelocity);
+                    }
+                } else {
+                    for (int i = 0; i < remotePlayers.get(key).getAllSpells().size(); i++) {
+                        Spell spell = remotePlayers.get(key).getAllSpells().get(i);
+                        Vector2 spellVelocity = spell.getVelocity();
+                        Vector2 pos = spells.get(i);
+                        spell.getBody().setTransform(pos, 0);
+                        spell.getBody().setLinearVelocity(spellVelocity);
+                    }
+                }
+            });
+            updatePlayersPosition.forEach((id, position) -> remotePlayers.get(id).getBody().setTransform(position, 0));
             updateMobsPosition.forEach((id, position) -> allMobs.get(id).getBody().setTransform(position, 0));
             awakeMobsQueue.forEach((id, position) -> allMobs.get(id).awake(position));
         } catch (ConcurrentModificationException e) {
             Gdx.app.log("Box2d", "The Body is already being modified, transform skipped");
         }
+        updateSpellsPosition.clear();
+        updatePlayersPosition.clear();
         updateMobsPosition.clear();
         awakeMobsQueue.clear();
         addPlayerQueue.clear();
+    }
+
+    private Hero closerPlayer(Vector2 distanceMob) {
+        Hero closerPlayer = null;
+        float smallerDistance = Float.MAX_VALUE;
+        ArrayList<Hero> players = new ArrayList<>();
+        players.add(player);
+        remotePlayers.forEach((key, hero) -> players.add(hero));
+        for (Hero player : players) {
+            if (player.getPosition().dst(distanceMob) < smallerDistance) {
+                smallerDistance = player.getPosition().dst(distanceMob);
+                closerPlayer = player;
+            }
+        }
+        return closerPlayer;
     }
 
     @Override
@@ -71,7 +113,7 @@ public class Multiplayer extends SinglePlayer implements Screen {
         for (int i = 0; i < allMobs.size(); i++) {
             Mob mob = allMobs.get(i);
             if (mob.isAlive()) {
-                mob.act(delta, player);
+                mob.act(delta, closerPlayer(mob.getPosition()));
             } else {
                 if (TimeUtils.nanoTime() - lastMobSpawn > 2000000000 && player.isHost()) {
                     Vector2 randomPos = getMobSpawnPosition();
@@ -100,6 +142,8 @@ public class Multiplayer extends SinglePlayer implements Screen {
                 try {
                     data.put("x", player.getVelocity().x);
                     data.put("y", player.getVelocity().y);
+                    data.put("posX", player.getPosition().x);
+                    data.put("posY", player.getPosition().y);
                     data.put("hp", player.getHp());
                     socket.emit("playerMoved", data);
                 } catch (JSONException e) {
@@ -144,8 +188,24 @@ public class Multiplayer extends SinglePlayer implements Screen {
                     }
                 });
                 socket.emit("updateMobs", mobs);
-                /* WIP
+
                 JSONArray allSpells = new JSONArray();
+                JSONArray mySpells = new JSONArray();
+                player.getAllSpells().forEach(spell -> {
+                    JSONObject object = new JSONObject();
+                    try {
+                        object.put("x", spell.getX());
+                        object.put("y", spell.getY());
+                        object.put("velx", spell.getVelocity().x);
+                        object.put("vely", spell.getVelocity().y);
+                        object.put("hp", spell.getHP());
+                        object.put("id", myId);
+                        mySpells.put(object);
+                    } catch (JSONException e) {
+                        Gdx.app.log("SOCKET.IO", "Error sending spell update data");
+                    }
+                });
+                allSpells.put(mySpells);
                 remotePlayers.forEach((key, player) -> {
                     JSONArray spellsPlayer = new JSONArray();
                     player.getAllSpells().forEach(spell -> {
@@ -153,16 +213,19 @@ public class Multiplayer extends SinglePlayer implements Screen {
                         try {
                             object.put("x", spell.getX());
                             object.put("y", spell.getY());
+                            object.put("velx", spell.getVelocity().x);
+                            object.put("vely", spell.getVelocity().y);
                             object.put("hp", spell.getHP());
+                            object.put("id", key);
                             spellsPlayer.put(object);
                         } catch (JSONException e) {
-                            Gdx.app.log("SOCKET.IO", "Error sending update data");
+                            Gdx.app.log("SOCKET.IO", "Error sending spell update data");
                         }
                     });
                     allSpells.put(spellsPlayer);
                 });
                 socket.emit("updateSpells", allSpells);
-                */
+
             }
         }, 0, Vars.correctorInterval);
     }
@@ -213,6 +276,8 @@ public class Multiplayer extends SinglePlayer implements Screen {
                     else if (velocity.x < 0) player.setAnimation(player.getWalkLeft());
                     if (velocity.y > 0) player.setAnimation(player.getWalkUp());
                     else if (velocity.y < 0) player.setAnimation(player.getWalkDown());
+                    if (new Random().nextInt(100) == 1)
+                        updatePlayersPosition.put(data.getString("id"), new Vector2((float) data.getDouble("posX"), (float) data.getDouble("posY")));
                 }
             } catch (JSONException e) {
                 Gdx.app.log("SocketIO", "Error getting disconnected PlayerID");
@@ -223,7 +288,7 @@ public class Multiplayer extends SinglePlayer implements Screen {
                 Mob mob = allMobs.get(data.getInt("id"));
                 mob.setHP((float) data.getDouble("hp"));
                 mob.setAlive(data.getBoolean("isAlive"));
-                mob.setVelocity(new Vector2((float) data.getDouble("x"), (float) data.getDouble("y")));
+                //mob.setVelocity(new Vector2((float) data.getDouble("x"), (float) data.getDouble("y")));
             } catch (JSONException e) {
                 Gdx.app.log("SocketIO", "Error getting disconnected PlayerID");
             }
@@ -256,12 +321,38 @@ public class Multiplayer extends SinglePlayer implements Screen {
             } catch (JSONException e) {
                 Gdx.app.log("SocketIO", "Error Getting Players Data");
             }
+        }).on("getSpells", args -> {
+            JSONArray allSpells = (JSONArray) args[0];
+            try {
+                for (int i = 0; i < allSpells.length(); i++) {
+                    JSONArray allSpellsPlayer = allSpells.getJSONArray(i);
+                    ArrayList<Vector2> spellArrayList = new ArrayList<>();
+                    String playerID = "";
+                    for (int j = 0; j < allSpellsPlayer.length(); j++) {
+                        JSONObject object = allSpellsPlayer.getJSONObject(j);
+                        spellArrayList.add(new Vector2((float) object.getDouble("x"), (float) object.getDouble("y")));
+                        playerID = object.getString("id");
+                        Spell spell;
+                        if (myId.equals(playerID)) {
+                            spell = player.getAllSpells().get(j);
+                        } else {
+                            spell = remotePlayers.get(playerID).getAllSpells().get(j);
+                        }
+                        spell.setHP(object.getInt("hp"));
+                        spell.setVelocity(new Vector2((float) object.getDouble("velx"), (float) object.getDouble("vely")));
+                    }
+                    updateSpellsPosition.put(playerID, spellArrayList);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Gdx.app.log("SocketIO", "Error Getting Players Data");
+            }
         });
     }
 
     private void connectSocket() {
         try {
-            socket = IO.socket(Vars.localURL);
+            socket = IO.socket(Vars.socketURL);
             socket.connect();
         } catch (Exception e) {
             e.printStackTrace();
