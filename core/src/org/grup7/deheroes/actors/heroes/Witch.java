@@ -11,6 +11,7 @@ import org.grup7.deheroes.actors.Actions;
 import org.grup7.deheroes.actors.mobs.Mob;
 import org.grup7.deheroes.actors.spells.IceBall;
 import org.grup7.deheroes.utils.Assets;
+import org.grup7.deheroes.utils.Config;
 
 public class Witch extends Hero implements Actions {
     public Witch(World world) {
@@ -20,8 +21,8 @@ public class Witch extends Hero implements Actions {
                 300,
                 32,
                 32,
-                70,
-                70,
+                Config.Witch.speed,
+                Config.Witch.hp,
                 Assets.Heroes.witch);
         // spells
         for (int i = 0; i < 30; i++) {

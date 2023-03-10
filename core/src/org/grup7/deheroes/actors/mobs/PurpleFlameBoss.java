@@ -10,6 +10,7 @@ import org.grup7.deheroes.actors.heroes.Hero;
 import org.grup7.deheroes.actors.spells.Explosion;
 import org.grup7.deheroes.ui.HealthBar;
 import org.grup7.deheroes.utils.Assets;
+import org.grup7.deheroes.utils.Config;
 
 public class PurpleFlameBoss extends Mob implements Actions {
     private final HealthBar healthBar;
@@ -20,9 +21,9 @@ public class PurpleFlameBoss extends Mob implements Actions {
                 world,
                 64,
                 64,
-                40,
-                500,
-                50,
+                Config.purpleFlameBoss.speed,
+                Config.purpleFlameBoss.hp,
+                Config.purpleFlameBoss.points,
                 Assets.Sounds.purpleFlameBossHit,
                 Assets.Sounds.purpleFlameBossDie,
                 Assets.Mobs.purpleFlameBoss

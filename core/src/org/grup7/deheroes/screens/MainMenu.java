@@ -3,9 +3,12 @@ package org.grup7.deheroes.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.net.HttpRequestBuilder;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -19,14 +22,18 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
+import org.grup7.deheroes.Vars;
 import org.grup7.deheroes.utils.Assets;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainMenu implements Screen {
     private final Game game;
     private final Stage stage;
     private final Music music;
-    private final Table SetNickTable;
     private final Table setMenuTable;
+    private final Table setCharTable;
     protected Skin skin = new Skin(Gdx.files.internal(Assets.Skin.uiSkin));
     private String nickname;
     private TextField nickInput;
@@ -38,16 +45,17 @@ public class MainMenu implements Screen {
         music.play();
         stage = new Stage();
 
-
-        SetNickTable = LoginTable();
         setMenuTable = menuTable();
+        setCharTable = charTable();
 
         stage.addActor(setMenuTable);
-        stage.addActor(SetNickTable);
+        stage.addActor(setCharTable);
 
-        SetNickTable.setVisible(false);
         setMenuTable.setVisible(true);
+        setMenuTable.setVisible(false);
     }
+
+
 
     @Override
     public void render(float delta) {
@@ -100,16 +108,17 @@ public class MainMenu implements Screen {
         startButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SinglePlayer(game, Assets.Maps.landOfDeath));
-                dispose();
+
+                setMenuTable.setVisible(false);
+                setCharTable.setVisible(true);
+                /*game.setScreen(new SinglePlayer(game, Assets.Maps.landOfDeath));
+                dispose();*/
             }
         });
         onlineButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //setMenuTable.setVisible(false);
-                //SetNickTable.setVisible(true);
-                game.setScreen(new Multiplayer(game, Assets.Maps.landOfDeath));
+                game.setScreen(new Multiplayer(game, Assets.Maps.landOfDeath, true));
                 dispose();
             }
         });
@@ -122,48 +131,38 @@ public class MainMenu implements Screen {
         return table;
     }
 
+    private Table charTable() {
+        TextButton witch = new TextButton("Witch", skin);
+        TextButton rogue = new TextButton("Rogue", skin);
 
-    private Table LoginTable() {
-        final Table table = new Table();
+        Window window = new Window("Choose a character", skin);
+        window.add(witch).center();
+        window.row();
+        window.add(rogue).center();
+        window.row();
+
+        Table table = new Table();
         table.setFillParent(true);
-
-        Window window = new Window("Login", skin);
-        window.getTitleLabel().setAlignment(Align.center);
-
-        TextButton join_button = new TextButton("Join", skin);
-        nickInput = new TextField("", skin);
-
-        window.add(new Label("Enter Your Nickname", skin));
-        window.row();
-        window.add(nickInput);
-        window.row();
-        window.add(join_button);
-        window.row();
-        TextButton backButton = new TextButton("Back", skin);
-
-
         table.add(window);
-        join_button.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                nickname = nickInput.getText();
-                if (!nickname.isEmpty()) {
-                    SetNickTable.setVisible(false);
-                    game.setScreen(new Multiplayer(game, Assets.Maps.landOfDeath));
-                    dispose();
-                }
-            }
-        });
-        backButton.addListener(new ClickListener() {
+
+        witch.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                SetNickTable.setVisible(false);
-                setMenuTable.setVisible(true);
+                game.setScreen(new SinglePlayer(game, Assets.Maps.landOfDeath, true));
+                dispose();
             }
         });
+
+        rogue.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new SinglePlayer(game, Assets.Maps.landOfDeath, false));
+                dispose();
+            }
+        });
+
 
         return table;
     }
-
 
 }
