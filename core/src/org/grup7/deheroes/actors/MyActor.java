@@ -15,6 +15,7 @@ public class MyActor extends Actor {
     protected Body body;
     protected World world;
     protected boolean alive;
+    protected Vector2 previousPosition;
 
 
     public boolean isAlive() {
@@ -33,6 +34,15 @@ public class MyActor extends Actor {
     public void sleep() {
         body.setTransform(Vars.deadPoint, 0);
         setAlive(false);
+    }
+
+    public boolean hasMoved() {
+        if (previousPosition.x != getX() || previousPosition.y != getY()) {
+            previousPosition.x = getX();
+            previousPosition.y = getY();
+            return true;
+        }
+        return false;
     }
 
     public Vector2 getPosition() {

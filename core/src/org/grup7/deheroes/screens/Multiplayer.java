@@ -4,11 +4,11 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.TimeUtils;
 
 import org.grup7.deheroes.Vars;
 import org.grup7.deheroes.actors.heroes.Hero;
 import org.grup7.deheroes.actors.heroes.Witch;
+import org.grup7.deheroes.actors.mobs.Mob;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,8 +22,7 @@ import io.socket.client.Socket;
 public class Multiplayer extends SinglePlayer implements Screen {
     private final HashMap<String, Hero> remotePlayers;
     private final ArrayList<String> addPlayerQueue;
-    private final HashMap<String, Vector2> updatePosQueue;
-    private JSONArray mobData;
+    private final HashMap<Integer, Vector2> updateMobsPosition;
     private boolean host;
     private float timer;
     private Socket socket;
@@ -31,10 +30,9 @@ public class Multiplayer extends SinglePlayer implements Screen {
     public Multiplayer(Game game, String map) {
         super(game, map);
         host = false;
-        mobData = new JSONArray();
+        updateMobsPosition = new HashMap<>();
         addPlayerQueue = new ArrayList<>();
         remotePlayers = new HashMap<>();
-        updatePosQueue = new HashMap<>();
         connectSocket();
         configSocketEvents();
     }
@@ -48,44 +46,14 @@ public class Multiplayer extends SinglePlayer implements Screen {
             remotePlayers.put(id, newPlayer);
             stage.addActor(newPlayer);
         });
-        updatePosQueue.forEach((key, value) -> {
-            Hero player = remotePlayers.get(key);
-            player.setVelocity(value);
-            if (value.x == 0) player.stopX();
-            else if (value.y == 0) player.stopY();
-            if (value.x > 0) player.setAnimation(player.getWalkRight());
-            else if (value.x < 0) player.setAnimation(player.getWalkLeft());
-            if (value.y > 0) player.setAnimation(player.getWalkUp());
-            else if (value.y < 0) player.setAnimation(player.getWalkDown());
-        });
-        updatePosQueue.clear();
+        updateMobsPosition.forEach((id, position) -> allMobs.get(id).getBody().setTransform(position, 0));
+        updateMobsPosition.clear();
         addPlayerQueue.clear();
     }
 
     @Override
-    protected void actorAct(float delta) throws JSONException {
-        player.act(delta);
-        System.out.println(mobData);
-        if (host) {
-            allMobs.forEach(mob -> {
-                if (mob.isAlive()) {
-                    mob.act(delta, player);
-                } else {
-                    if (TimeUtils.nanoTime() - lastMobSpawn > 2000000000) {
-                        mob.awake(getMobSpawnPosition());
-                        lastMobSpawn = TimeUtils.nanoTime();
-                    }
-                }
-            });
-        } else {
-            if (mobData.length() != 0) {
-                for (int i = 0; i < allMobs.size(); i++) {
-                    allMobs.get(i).getBody().setActive(true);
-                    allMobs.get(i).setHP((float) mobData.getJSONObject(i).getDouble("health"));
-                    allMobs.get(i).getBody().setTransform((float) mobData.getJSONObject(i).getDouble("x"), (float) mobData.getJSONObject(i).getDouble("y"), 0);
-                }
-            }
-        }
+    protected void actorAct(float delta) {
+        super.actorAct(delta);
         remotePlayers.forEach((key, value) -> value.act(delta));
     }
 
@@ -105,11 +73,12 @@ public class Multiplayer extends SinglePlayer implements Screen {
             if (host) {
                 JSONArray mobs = new JSONArray();
                 allMobs.forEach(mob -> {
+                    JSONObject object = new JSONObject();
                     try {
-                        JSONObject object = new JSONObject();
                         object.put("x", mob.getX());
                         object.put("y", mob.getY());
-                        object.put("health", mob.getHP());
+                        object.put("hp", mob.getHP());
+                        object.put("isAlive", mob.isAlive());
                         mobs.put(object);
                     } catch (JSONException e) {
                         Gdx.app.log("SOCKET.IO", "Error sending update data");
@@ -153,17 +122,19 @@ public class Multiplayer extends SinglePlayer implements Screen {
         }).on("playerMoved", args -> {
             JSONObject data = (JSONObject) args[0];
             try {
-                String playerId = data.getString("id");
-                double x = data.getDouble("x");
-                double y = data.getDouble("y");
-                if (remotePlayers.get(playerId) != null) {
-                    updatePosQueue.put(playerId, new Vector2((float) x, (float) y));
+                Vector2 velocity = new Vector2((float) data.getDouble("x"), (float) data.getDouble("y"));
+                Hero player = remotePlayers.get(data.getString("id"));
+                if (player != null) {
+                    player.setVelocity(velocity);
+                    if (velocity.x == 0 | velocity.y == 0) player.stopAnimation();
+                    if (velocity.x > 0) player.setAnimation(player.getWalkRight());
+                    else if (velocity.x < 0) player.setAnimation(player.getWalkLeft());
+                    if (velocity.y > 0) player.setAnimation(player.getWalkUp());
+                    else if (velocity.y < 0) player.setAnimation(player.getWalkDown());
                 }
             } catch (JSONException e) {
                 Gdx.app.log("SocketIO", "Error getting disconnected PlayerID");
             }
-        }).on("getMobs", args -> {
-            mobData = (JSONArray) args[0];
         }).on("getPlayers", args -> {
             JSONArray objects = (JSONArray) args[0];
             try {
@@ -171,7 +142,21 @@ public class Multiplayer extends SinglePlayer implements Screen {
                     addPlayerQueue.add(objects.getJSONObject(i).getString("id"));
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                Gdx.app.log("SocketIO", "Error Getting Players Data");
+            }
+        }).on("getMobs", args -> {
+            JSONArray mobs = (JSONArray) args[0];
+            try {
+                for (int i = 0; i < mobs.length(); i++) {
+                    JSONObject remoteMob = mobs.getJSONObject(i);
+                    Mob localMob = allMobs.get(i);
+                    Vector2 position = new Vector2((float) remoteMob.getDouble("x"), (float) remoteMob.getDouble("y"));
+                    localMob.setHP((float) remoteMob.getDouble("hp"));
+                    localMob.setAlive(remoteMob.getBoolean("isAlive"));
+                    updateMobsPosition.put(i, position);
+                }
+            } catch (JSONException e) {
+                Gdx.app.log("SocketIO", "Error Getting Players Data");
             }
         }).on("host", args -> host = true);
     }
@@ -188,8 +173,6 @@ public class Multiplayer extends SinglePlayer implements Screen {
     @Override
     public void dispose() {
         socket.close();
-        socket.off();
-        socket.disconnect();
         super.dispose();
     }
 }

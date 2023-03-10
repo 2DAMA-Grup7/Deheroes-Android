@@ -3,9 +3,11 @@ package org.grup7.deheroes.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -21,6 +23,8 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
@@ -35,6 +39,7 @@ import org.grup7.deheroes.ui.Hud;
 import org.grup7.deheroes.utils.Assets;
 import org.grup7.deheroes.utils.WorldContactListener;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -52,8 +57,11 @@ public class SinglePlayer implements Screen {
     protected final Hero player;
     protected final World world;
     protected final Game game;
+    int time=0;
 
     protected long lastMobSpawn;
+
+
 
     public SinglePlayer(Game game, String map) {
         this.game = game;
@@ -78,17 +86,22 @@ public class SinglePlayer implements Screen {
     @Override
     public void render(float delta) {
         if (player.getHp() < 0) {
+            JSONObject data = new JSONObject();
+            try {
+                data.put("score" , score);
+                data.put("time" , time);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+            connect(data);
+
             Gdx.audio.newSound(Gdx.files.internal(Assets.Sounds.gameOver)).play();
             dispose();
             game.setScreen(new GameOver(game));
         } else {
             actorQueue.forEach(stage::addActor);
             actorQueue.clear();
-            try {
-                actorAct(delta);
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
+            actorAct(delta);
             //System.out.println("PlayerX: " + player.getX() + " PlayerY: " + player.getY());
             world.step(delta, 6, 2);
             camera.position.set(player.getX(), player.getY(), 0);
@@ -129,7 +142,7 @@ public class SinglePlayer implements Screen {
         score = 0;
     }
 
-    protected void actorAct(float delta) throws JSONException {
+    protected void actorAct(float delta) {
         // Player
         player.act(delta);
         // Mobs
@@ -144,6 +157,54 @@ public class SinglePlayer implements Screen {
             }
         });
     }
+
+    Touchpad touchpad; float touchpadX, touchpadY;
+
+    public void addTouchpad(){
+
+        Skin skin = new Skin();
+        Texture joystick = new Texture(Gdx.files.internal("Joystick.png"));
+        skin.add("joystick",joystick);
+        Texture joystickknob = new Texture(Gdx.files.internal("SmallHandleFilled.png"));
+        skin.add("knob",joystickknob);
+        skin.setScale(1/32f);
+        Touchpad.TouchpadStyle touchpadStyle = new Touchpad.TouchpadStyle();
+        touchpadStyle.background = skin.getDrawable("joystick");
+        touchpadStyle.knob = skin.getDrawable("knob");
+
+        touchpad = new Touchpad(1, touchpadStyle);
+        touchpad.setBounds(2, 4, 10, 10);
+        stage.addActor(touchpad);
+    }
+
+    public void playerMovementAndroid(){
+        touchpadX = touchpad.getKnobPercentX();
+        touchpadY = touchpad.getKnobPercentY();
+        System.out.println(touchpadX+"      "+touchpadY);
+        if(touchpadX ==0f && touchpadY == 0f){
+            player.stopX();
+            player.stopY();
+        }else{
+            if(touchpadX>0.45f){
+                player.moveRight();
+            }else if(touchpadX<-0.45f){
+                player.moveLeft();
+            } else {
+                player.stopX();
+                player.stopY();
+            }
+            if(touchpadY>0.45f){
+                player.moveUp();
+            }else if(touchpadY<-0.45f){
+                player.moveDown();
+
+            }else {
+                player.stopX();
+                player.stopY();
+            }
+        }
+    }
+
 
     protected Vector2 getMobSpawnPosition() {
         return new Vector2(new Random().nextInt(300), new Random().nextInt(300));
@@ -210,5 +271,32 @@ public class SinglePlayer implements Screen {
         }
         return map;
     }
+    private void connect(JSONObject data){
+        Net.HttpRequest httpPOST = new Net.HttpRequest(Net.HttpMethods.POST);
+        httpPOST.setUrl(Vars.scoreURL);
+        httpPOST.setHeader("x-access-token" ,  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MDcxYjdmMDU4ZmJkZGEwY2I5Y2Q5MCIsImlhdCI6MTY3ODM5MjkyNywiZXhwIjoxNjc4NDc5MzI3fQ.0Ghkd3zpX-X7xChyNcdHrcTnl3KEd7sN8xvhVsT_kn0");
+        try {
+            httpPOST.setContent("score=" + data.getInt("score") + "&time=" + data.getInt("time"));
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        Gdx.net.sendHttpRequest(httpPOST, new Net.HttpResponseListener() {
+            @Override
+            public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                Gdx.app.log("MSG", httpResponse.getResultAsString());
+            }
+
+            @Override
+            public void failed(Throwable t) {
+                Gdx.app.log("Send", "was NOT successful!");
+            }
+
+            @Override
+            public void cancelled() {
+                Gdx.app.log("Send", "was cancelled!");
+            }
+        });
+    }
+
 }
 

@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import org.grup7.deheroes.actors.Actions;
 import org.grup7.deheroes.actors.spells.MeleeSpell;
 import org.grup7.deheroes.utils.Assets;
+import org.grup7.deheroes.utils.Config;
 
 public class Rogue extends Hero implements Actions {
     private final MeleeSpell hit;
@@ -18,8 +19,8 @@ public class Rogue extends Hero implements Actions {
                 300,
                 32,
                 32,
-                120,
-                80,
+                Config.Witch.hp,
+                Config.Witch.speed,
                 Assets.Heroes.rogue);
         this.hit = new MeleeSpell(world);
         actorQueue.add(hit);

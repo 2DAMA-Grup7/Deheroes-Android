@@ -42,6 +42,7 @@ public class Mob extends MyActor {
         this.world = world;
         this.alive = false;
         this.distanceHero = Float.MAX_VALUE;
+        this.previousPosition = new Vector2(getX(), getY());
         spritesSetup(texturePath);
         setBounds(Vars.deadPointX, Vars.deadPointY, width, height);
         collisionSetup(world);
