@@ -12,10 +12,10 @@ public class Vars {
     public static final String socketURL = "http://alumnes.inspedralbes.cat:7379";
 
     public static final String apiURL = "http://alumnes.inspedralbes.cat:7378";
-    public static final String configURL = "http://alumnes.inspedralbes.cat:7378/api/public/config";
-
-    public static final String LoginURL = "http://alumnes.inspedralbes.cat:7378/api/auth/signin";
-    //public static final String LoginURL = "http://localhost:7378/api/auth/signin";
+    //public static final String configURL = "http://alumnes.inspedralbes.cat:7378/api/public/config2";
+    public static final String configURL = "http://localhost:7378/api/public/config2";
+    //public static final String LoginURL = "http://alumnes.inspedralbes.cat:7378/api/auth/signin";
+    public static final String LoginURL = "http://localhost:7378/api/auth/signin";
 
     //public static final String scoreURL = "http://localhost:7378/api/user/newgame";
     public static final String scoreURL = "http://alumnes.inspedralbes.cat:7378/api/user/newgame";

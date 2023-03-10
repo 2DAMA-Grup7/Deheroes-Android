@@ -7,6 +7,7 @@ import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -22,6 +23,8 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
@@ -57,6 +60,8 @@ public class SinglePlayer implements Screen {
     int time=0;
 
     protected long lastMobSpawn;
+
+
 
     public SinglePlayer(Game game, String map) {
         this.game = game;
@@ -152,6 +157,54 @@ public class SinglePlayer implements Screen {
             }
         });
     }
+
+    Touchpad touchpad; float touchpadX, touchpadY;
+
+    public void addTouchpad(){
+
+        Skin skin = new Skin();
+        Texture joystick = new Texture(Gdx.files.internal("Joystick.png"));
+        skin.add("joystick",joystick);
+        Texture joystickknob = new Texture(Gdx.files.internal("SmallHandleFilled.png"));
+        skin.add("knob",joystickknob);
+        skin.setScale(1/32f);
+        Touchpad.TouchpadStyle touchpadStyle = new Touchpad.TouchpadStyle();
+        touchpadStyle.background = skin.getDrawable("joystick");
+        touchpadStyle.knob = skin.getDrawable("knob");
+
+        touchpad = new Touchpad(1, touchpadStyle);
+        touchpad.setBounds(2, 4, 10, 10);
+        stage.addActor(touchpad);
+    }
+
+    public void playerMovementAndroid(){
+        touchpadX = touchpad.getKnobPercentX();
+        touchpadY = touchpad.getKnobPercentY();
+        System.out.println(touchpadX+"      "+touchpadY);
+        if(touchpadX ==0f && touchpadY == 0f){
+            player.stopX();
+            player.stopY();
+        }else{
+            if(touchpadX>0.45f){
+                player.moveRight();
+            }else if(touchpadX<-0.45f){
+                player.moveLeft();
+            } else {
+                player.stopX();
+                player.stopY();
+            }
+            if(touchpadY>0.45f){
+                player.moveUp();
+            }else if(touchpadY<-0.45f){
+                player.moveDown();
+
+            }else {
+                player.stopX();
+                player.stopY();
+            }
+        }
+    }
+
 
     protected Vector2 getMobSpawnPosition() {
         return new Vector2(new Random().nextInt(300), new Random().nextInt(300));

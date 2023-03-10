@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.Json;
 
 import org.grup7.deheroes.Vars;
 import org.grup7.deheroes.utils.Assets;
+import org.grup7.deheroes.utils.Config;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -127,6 +128,60 @@ public class LoginScreen implements Screen {
     boolean auth=false;
 
     private void connect(JSONObject data){
+        Net.HttpRequest httpGET = new Net.HttpRequest(Net.HttpMethods.GET);
+        httpGET.setUrl(Vars.configURL);
+        Gdx.net.sendHttpRequest(httpGET, new Net.HttpResponseListener() {
+            @Override
+            public void handleHttpResponse(Net.HttpResponse httpResponse) {
+                JSONArray res;
+                JSONObject purpleflame = new JSONObject();
+                JSONObject purpleflameBoss = new JSONObject();
+                JSONObject witch = new JSONObject();
+                JSONObject rogue = new JSONObject();
+                try {
+                    res = new JSONArray(httpResponse.getResultAsString());
+                    System.out.println(res.getJSONObject(0).get("name"));
+                    purpleflame = res.getJSONObject(0);
+                    purpleflameBoss = res.getJSONObject(1);
+                    witch = res.getJSONObject(2);
+                    rogue = res.getJSONObject(3);
+
+
+                    Config.purpleFlame.hp = purpleflame.getInt("hp");
+                    Config.purpleFlame.speed = purpleflame.getInt("velocity");
+                    Config.purpleFlame.points = purpleflame.getInt("points");
+
+                    Config.purpleFlameBoss.hp = purpleflameBoss.getInt("hp");
+                    Config.purpleFlameBoss.speed = purpleflameBoss.getInt("velocity");
+                    Config.purpleFlameBoss.points = purpleflameBoss.getInt("points");
+
+                    Config.Witch.hp = witch.getInt("hp");
+                    Config.Witch.speed = witch.getInt("velocity");
+
+                    Config.Rogue.hp = rogue.getInt("hp");
+                    Config.Rogue.speed = rogue.getInt("velocity");
+
+
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                System.out.println(res);
+                Gdx.app.log("MSG", res.toString());
+            }
+
+
+            @Override
+            public void failed(Throwable t) {
+
+            }
+
+            @Override
+            public void cancelled() {
+
+            }
+        });
+
+
         Net.HttpRequest httpPOST = new Net.HttpRequest(Net.HttpMethods.POST);
         httpPOST.setUrl(Vars.LoginURL);
 
@@ -151,32 +206,6 @@ public class LoginScreen implements Screen {
             @Override
             public void cancelled() {
                 Gdx.app.log("LOGIN", "was cancelled!");
-            }
-        });
-
-        Net.HttpRequest httpGET = new Net.HttpRequest(Net.HttpMethods.GET);
-        httpGET.setUrl(Vars.configURL);
-        Gdx.net.sendHttpRequest(httpGET, new Net.HttpResponseListener() {
-            @Override
-            public void handleHttpResponse(Net.HttpResponse httpResponse) {
-                Gdx.app.log("MSG", httpResponse.getResultAsString());
-                JSONArray res;
-                try {
-                    res = new JSONArray(httpResponse.getResultAsString());
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-                System.out.println(res);
-            }
-
-            @Override
-            public void failed(Throwable t) {
-
-            }
-
-            @Override
-            public void cancelled() {
-
             }
         });
     }
