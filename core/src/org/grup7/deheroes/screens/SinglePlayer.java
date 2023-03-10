@@ -70,15 +70,15 @@ public class SinglePlayer implements Screen {
         this.debugRenderer = new Box2DDebugRenderer();
         this.camera = new OrthographicCamera(Vars.gameWidth, Vars.gameHeight);
         this.stage = new Stage(new StretchViewport(Vars.gameWidth, Vars.gameHeight, camera));
-        this.hud = new Hud();
         this.mapRenderer = new OrthogonalTiledMapRenderer(loadMap(map));
         Hero player = new Witch(world);
         this.player = player;
+        this.hud = new Hud(player);
+
         world.setContactListener(new WorldContactListener(player));
         stage.addActor(player);
         addTouchpad();
         Gdx.input.setInputProcessor(new InputHandler(player));
-
         mobsCreation();
     }
 
