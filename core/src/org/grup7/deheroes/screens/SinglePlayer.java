@@ -4,6 +4,7 @@ package org.grup7.deheroes.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -28,6 +29,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import org.grup7.deheroes.Vars;
 import org.grup7.deheroes.actors.heroes.Hero;
 import org.grup7.deheroes.actors.heroes.Rogue;
+import org.grup7.deheroes.actors.heroes.Witch;
 import org.grup7.deheroes.actors.mobs.Mob;
 import org.grup7.deheroes.actors.mobs.PurpleFlame;
 import org.grup7.deheroes.actors.mobs.PurpleFlameBoss;
@@ -40,36 +42,41 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class SinglePlayer implements Screen {
-    public static ConcurrentLinkedDeque<Actor> actorQueue = new ConcurrentLinkedDeque<>();
-    public static ConcurrentLinkedDeque<Mob> allMobs = new ConcurrentLinkedDeque<>();
-    public static int score = 0;
-
+    public static ArrayList<Actor> actorQueue = new ArrayList<>();
+    public static ArrayList<Mob> allMobs = new ArrayList<>();
     protected final Box2DDebugRenderer debugRenderer;
     protected final TiledMapRenderer mapRenderer;
     protected final OrthographicCamera camera;
     protected final Hud hud;
     protected final Stage stage;
-    protected final ArrayList<Hero> players;
+    protected final Hero player;
     protected final World world;
     protected final Game game;
-    int time=0;
-
     protected long lastMobSpawn;
+    int time = 0;
+    boolean Witch;
 
-    public SinglePlayer(Game game, String map) {
+
+    public SinglePlayer(Game game, String map, boolean Witch) {
         this.game = game;
+        this.Witch = Witch;
         this.world = new World(new Vector2(0, 0), true);
         this.debugRenderer = new Box2DDebugRenderer();
         this.camera = new OrthographicCamera(Vars.gameWidth, Vars.gameHeight);
         this.stage = new Stage(new StretchViewport(Vars.gameWidth, Vars.gameHeight, camera));
-        this.players = new ArrayList<>();
-        this.hud = new Hud();
         this.mapRenderer = new OrthogonalTiledMapRenderer(loadMap(map));
-        Hero player = new Rogue(world);
-        players.add(player);
+        Hero player;
+        if (Witch) {
+            player = new Witch(world);
+        } else {
+            player = new Rogue(world);
+        }
+
+        this.player = player;
+        this.hud = new Hud(player);
+
         world.setContactListener(new WorldContactListener(player));
         stage.addActor(player);
         Gdx.input.setInputProcessor(new InputHandler(player));
@@ -83,36 +90,38 @@ public class SinglePlayer implements Screen {
     @Override
     public void render(float delta) {
         time++;
-        if (players.get(0).getHp() < 0) {
+        if (player.getHp() < 0) {
             JSONObject data = new JSONObject();
             try {
-                data.put("score" , score);
-                data.put("time" , time);
+                data.put("score", player.getScore());
+                data.put("time", time);
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
             connect(data);
+
             Gdx.audio.newSound(Gdx.files.internal(Assets.Sounds.gameOver)).play();
             dispose();
-            game.setScreen(new GameOver(game, data));
+            game.setScreen(new GameOver(game, Witch));
         } else {
             actorQueue.forEach(stage::addActor);
             actorQueue.clear();
             actorAct(delta);
             //System.out.println("PlayerX: " + player.getX() + " PlayerY: " + player.getY());
             world.step(delta, 6, 2);
-            camera.position.set(players.get(0).getX(), players.get(0).getY(), 0);
+            camera.position.set(player.getX(), player.getY(), 0);
             camera.update();
             mapRenderer.setView(camera);
             Gdx.gl.glClearColor(0, 0, 0, 1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             mapRenderer.render();
             debugRenderer.render(world, camera.combined);
-            hud.updateScoreLabel(score);
+            hud.updateScoreLabel(player.getScore());
             stage.getBatch().setProjectionMatrix(hud.getStage().getCamera().combined);
             stage.draw();
             hud.getStage().draw();
         }
+
     }
 
     @Override
@@ -136,45 +145,30 @@ public class SinglePlayer implements Screen {
     public void dispose() {
         allMobs.clear();
         actorQueue.clear();
-        score = 0;
-    }
-
-    private Hero closerPlayer(Vector2 distanceMob) {
-        Hero closerPlayer = null;
-        float smallerDistance = Float.MAX_VALUE;
-        for (Hero player : players) {
-            if (player.getPosition().dst(distanceMob) < smallerDistance) {
-                smallerDistance = player.getPosition().dst(distanceMob);
-                closerPlayer = player;
-            }
-        }
-        return closerPlayer;
     }
 
     protected void actorAct(float delta) {
         // Player
-        players.forEach(player -> player.act(delta));
+        player.act(delta);
         // Mobs
         allMobs.forEach(mob -> {
             if (mob.isAlive()) {
-                mob.act(delta, closerPlayer(mob.getPosition()));
+                mob.act(delta, player);
             } else {
                 if (TimeUtils.nanoTime() - lastMobSpawn > 2000000000) {
-                    float randomX = new Random().nextInt(300);
-                    float randomY = new Random().nextInt(300);
-                    mob.awake(new Vector2(randomX, randomY));
-                    multiplayerSetMob(randomX, randomY);
+                    mob.awake(getMobSpawnPosition());
                     lastMobSpawn = TimeUtils.nanoTime();
                 }
             }
         });
     }
 
-    protected void multiplayerSetMob(float randomX, float randomY) {
+    protected Vector2 getMobSpawnPosition() {
+        return new Vector2(new Random().nextInt(300), new Random().nextInt(300));
     }
 
-    private void mobsCreation() {
-        Mob mobBoss = new PurpleFlameBoss(world, players.get(0).getPosition());
+    protected void mobsCreation() {
+        Mob mobBoss = new PurpleFlameBoss(world, player.getPosition());
         allMobs.add(mobBoss);
         stage.addActor(mobBoss);
         // Create x mobs
@@ -235,17 +229,16 @@ public class SinglePlayer implements Screen {
         return map;
     }
 
-    private void connect(JSONObject data){
+    private void connect(JSONObject data) {
         Net.HttpRequest httpPOST = new Net.HttpRequest(Net.HttpMethods.POST);
         httpPOST.setUrl(Vars.scoreURL);
-        httpPOST.setHeader("x-access-token" ,  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MDcxYjdmMDU4ZmJkZGEwY2I5Y2Q5MCIsImlhdCI6MTY3ODM5MjkyNywiZXhwIjoxNjc4NDc5MzI3fQ.0Ghkd3zpX-X7xChyNcdHrcTnl3KEd7sN8xvhVsT_kn0");
+        Preferences prefs = Gdx.app.getPreferences("accessToken");
+        httpPOST.setHeader("x-access-token", prefs.getString("token"));
         try {
             httpPOST.setContent("score=" + data.getInt("score") + "&time=" + data.getInt("time"));
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-
-
         Gdx.net.sendHttpRequest(httpPOST, new Net.HttpResponseListener() {
             @Override
             public void handleHttpResponse(Net.HttpResponse httpResponse) {

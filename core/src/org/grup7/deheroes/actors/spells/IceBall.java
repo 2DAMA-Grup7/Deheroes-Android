@@ -28,5 +28,4 @@ public class IceBall extends Spell implements Actions {
             sleep();
         }
     }
-
 }

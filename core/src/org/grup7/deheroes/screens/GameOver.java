@@ -14,20 +14,19 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import org.grup7.deheroes.utils.Assets;
-import org.json.JSONObject;
 
 public class GameOver implements Screen {
     private final Game game;
     private final Stage stage;
     private final Music music;
 
-    public GameOver(Game game, JSONObject data) {
+    public GameOver(Game game, boolean Witch) {
         this.game = game;
         music = Gdx.audio.newMusic(Gdx.files.internal(Assets.Music.menu));
         music.setLooping(true);
         music.play();
         stage = new Stage();
-        stage.addActor(menuTable());
+        stage.addActor(menuTable(Witch));
     }
 
     @Override
@@ -65,7 +64,7 @@ public class GameOver implements Screen {
         music.stop();
     }
 
-    private Table menuTable() {
+    private Table menuTable(boolean Witch) {
         Skin skin = new Skin(Gdx.files.internal(Assets.Skin.uiSkin));
         TextButton restartButton = new TextButton("New Game", skin);
         TextButton returnButton = new TextButton("Menu", skin);
@@ -82,7 +81,7 @@ public class GameOver implements Screen {
         restartButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new SinglePlayer(game, Assets.Maps.landOfDeath));
+                game.setScreen(new SinglePlayer(game, Assets.Maps.landOfDeath, Witch));
                 dispose();
             }
         });

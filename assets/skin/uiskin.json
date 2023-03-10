@@ -1,10 +1,10 @@
 {
   BitmapFont: {
     default-font: {
-      file: ../fonts/Roboto-hdpi.fnt
+      file: Roboto-hdpi.fnt
     },
     thin-font: {
-      file: ../fonts/Roboto-Thin-hdpi.fnt
+      file: Roboto-Thin-hdpi.fnt
     }
   },
   Color: {

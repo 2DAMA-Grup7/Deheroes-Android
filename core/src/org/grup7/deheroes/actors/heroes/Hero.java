@@ -16,29 +16,22 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.TimeUtils;
 
-import org.grup7.deheroes.Vars;
 import org.grup7.deheroes.actors.MyActor;
 import org.grup7.deheroes.actors.spells.IceBall;
 import org.grup7.deheroes.ui.HealthBar;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-
-import io.socket.client.IO;
-import io.socket.client.Socket;
 
 public class Hero extends MyActor {
     private final HealthBar healthBar;
     private final ArrayList<IceBall> allSpells;
-    private int id;
     private long lastSpellSpawn;
     private boolean direction;
     private float hp;
     private Animation<TextureRegion> currentAnimation;
     private TextureRegion[] walkDown, walkLeft, walkRight, walkUp;
-    private Socket socket;
-
+    private Boolean host;
+    private int score;
 
     public Hero(World world, float startX, float startY, float width, float height, float hp, int speed, String texturePath) {
         this.velocity = new Vector2(0, 0);
@@ -48,9 +41,12 @@ public class Hero extends MyActor {
         this.tick = 0f;
         this.rows = 4;
         this.cols = 5;
-        this.id = -1;
+        this.score = 0;
         this.lastSpellSpawn = TimeUtils.nanoTime();
         this.allSpells = new ArrayList<>();
+        this.world = world;
+        this.previousPosition = new Vector2(startX, startY);
+        this.host = true;
         spritesSetup(texturePath);
         setBounds(startX, startY, width, height);
         setTouchable(Touchable.enabled);
@@ -148,12 +144,20 @@ public class Hero extends MyActor {
         this.hp = hp;
     }
 
-    public int getId() {
-        return id;
+    public int getScore() {
+        return score;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public Boolean isHost() {
+        return host;
+    }
+
+    public void setHost(Boolean host) {
+        this.host = host;
     }
 
     public boolean isDirection() {
@@ -164,65 +168,34 @@ public class Hero extends MyActor {
         return allSpells;
     }
 
-    protected void callMovement() {
-        try {
-            socket = IO.socket(Vars.localURL);
-            socket.connect();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        JSONObject data = new JSONObject();
-        try {
-            data.put("id", this.id);
-            data.put("velocityx", getVelocity().x);
-            data.put("velocityy", getVelocity().y);
-
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-        socket.emit("movement", (data));
-    }
-
     public void moveUp() {
         velocity.y = speed * Gdx.graphics.getDeltaTime();
         setAnimation(walkUp);
-
-        if (id != -1) {
-            callMovement();
-        }
     }
 
     public void moveRight() {
         velocity.x = speed * Gdx.graphics.getDeltaTime();
         setAnimation(walkRight);
         direction = true;
-
-        if (id != -1) {
-            callMovement();
-        }
     }
 
     public void moveDown() {
         velocity.y = -speed * Gdx.graphics.getDeltaTime();
         setAnimation(walkDown);
-
-        if (id != -1) {
-            callMovement();
-        }
     }
 
     public void moveLeft() {
         velocity.x = -speed * Gdx.graphics.getDeltaTime();
         setAnimation(walkLeft);
         direction = false;
-
-        if (id != -1) {
-            callMovement();
-        }
     }
 
     public void stopX() {
         velocity.x = 0;
+        currentAnimation.setPlayMode(Animation.PlayMode.NORMAL);
+    }
+
+    public void stopAnimation() {
         currentAnimation.setPlayMode(Animation.PlayMode.NORMAL);
     }
 
@@ -234,6 +207,7 @@ public class Hero extends MyActor {
     @Override
     public void dispose() {
         super.dispose();
+        healthBar.dispose();
         allSpells.clear();
     }
 }

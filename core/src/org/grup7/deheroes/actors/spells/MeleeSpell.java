@@ -58,6 +58,4 @@ public class MeleeSpell extends Spell implements Actions {
         currentAnimation.setPlayMode(Animation.PlayMode.LOOP);
         batch.draw(currentAnimation.getKeyFrame(tick), body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2, getWidth(), getHeight());
     }
-
-
 }
